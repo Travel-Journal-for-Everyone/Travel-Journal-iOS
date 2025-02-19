@@ -34,6 +34,7 @@ struct TJButton: View {
         } label: {
             Text(title)
                 .foregroundStyle(.white)
+                .frame(height: height)
                 .background {
                     RoundedRectangle(cornerRadius: 8)
                         .frame(width: size.width, height: height)
@@ -46,7 +47,7 @@ struct TJButton: View {
 }
 
 #Preview {
-    VStack(spacing: 50) {
+    VStack(spacing: 30) {
         TJButton(title: "작성 완료", action: { })
         TJButton(title: "작성 완료", action: { }, isDisabled: true)
         

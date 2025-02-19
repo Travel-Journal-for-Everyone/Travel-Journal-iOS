@@ -9,7 +9,47 @@ import SwiftUI
 
 struct LoginView: View {
     var body: some View {
-        Text("LoginView")
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 2) {
+                        Text("모두의 여행 일지")
+                            .fontWeight(.bold)
+                        // TODO: - 색상 정해주기
+                            .background(.purple.opacity(0.2))
+                        Text("와 함께")
+                    }
+                    Text("나만의 여행 일기를")
+                    Text("만들어 보세요!")
+                }
+                .font(.system(size: 24))
+                .fontWeight(.medium)
+                .padding(.bottom, 282)
+                
+                Spacer()
+            }
+            
+            VStack(spacing: 10) {
+                Text("로그인/회원가입")
+                    .fontWeight(.medium)
+                    .font(.system(size: 12))
+                    .padding(.bottom, 8)
+                
+                TJButton(title: "카카오로 로그인") {
+                    
+                }
+                
+                TJButton(title: "애플로 로그인") {
+                    
+                }
+                
+                TJButton(title: "구글 로그인") {
+                    
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 30)
     }
 }
 
