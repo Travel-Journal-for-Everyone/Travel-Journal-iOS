@@ -10,6 +10,9 @@ import SwiftUI
 struct ProfileCreationView: View {
     var isEditingProfile: Bool = false
     
+    // TODO: - 임시로 뷰에 구현
+    @State var nicknameString = ""
+    
     var body: some View {
         VStack(spacing: 0) {
             ProfileImageView(viewType: .profileCreation)
@@ -20,13 +23,22 @@ struct ProfileCreationView: View {
                     // TODO: - 앨범에서 사진 선택 기능 넣기
                     print("앨범에서 사진 선택")
                 }
+                .padding(.bottom, 35)
             
-            VStack(spacing: 40) {
+            VStack(spacing: 15) {
                 userInfoInputAreaFor(.nickname)
                 
                 userInfoInputAreaFor(.profileVisibilityScope)
             }
+            
+            Spacer()
+            
+            TJButton(title: isEditingProfile ? "수정 완료" : "작성 완료") {
+                
+            }
+            .padding(.bottom, 17)
         }
+        .padding(.horizontal, 30)
     }
     
     private var cameraIconView: some View {
@@ -46,7 +58,7 @@ struct ProfileCreationView: View {
     }
     
     func userInfoInputAreaFor(_ type: InputType) -> some View {
-        VStack(alignment: .center, spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(type.title)
                 .fontWeight(.medium)
                 .font(.system(size: 18))
@@ -54,8 +66,27 @@ struct ProfileCreationView: View {
             
             switch type {
             case .nickname:
-                TJButton(title: "닉네임을 입력하세요") {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 10) {
+                        RoundedRectangle(cornerRadius: 9)
+                            .frame(width: 242, height: 50)
+                            // TODO: - 색상 변경 필요
+                            .foregroundStyle(.gray.opacity(0.2))
+                            .overlay {
+                                TextField("닉네임을 입력하세요", text: $nicknameString)
+                                    .padding(.horizontal, 20)
+                            }
+                        
+                        TJButton(title: "중복 확인", size: .short) {
+                            
+                        }
+                    }
                     
+                    // TODO: - 에러 문구 로직 필요
+                    Text("")
+                        .fontWeight(.regular)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.red)
                 }
             case .profileVisibilityScope:
                 TJButton(title: "전체 공개") {
@@ -64,7 +95,6 @@ struct ProfileCreationView: View {
             }
         }
         .frame(width: .infinity)
-        .background(.yellow)
     }
 }
 
