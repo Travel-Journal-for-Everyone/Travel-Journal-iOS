@@ -38,8 +38,7 @@ struct TJButton: View {
                 .foregroundStyle(isDisabled ? .gray : .blue)
                 .overlay {
                     Text(title)
-                        .fontWeight(.medium)
-                        .font(.system(size: 16))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.white)
                 }
         }

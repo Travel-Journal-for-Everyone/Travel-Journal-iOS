@@ -26,8 +26,7 @@ struct SignupCompletionView: View {
                     
                     Text("추억을 만들어 보아요!")
                 }
-                .font(.system(size: 24))
-                .fontWeight(.medium)
+                .font(.system(size: 24, weight: .medium))
                 
                 Spacer()
             }

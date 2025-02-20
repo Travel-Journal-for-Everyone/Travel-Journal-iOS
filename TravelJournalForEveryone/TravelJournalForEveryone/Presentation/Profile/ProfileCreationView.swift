@@ -62,8 +62,7 @@ struct ProfileCreationView: View {
     func userInfoInputAreaFor(_ type: InputType) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(type.title)
-                .fontWeight(.medium)
-                .font(.system(size: 18))
+                .font(.system(size: 18, weight: .medium))
                 .padding(.bottom, 15)
             
             switch type {
@@ -85,8 +84,7 @@ struct ProfileCreationView: View {
                     .foregroundStyle(.gray.opacity(0.2))
                     .overlay {
                         TextField("닉네임을 입력하세요", text: $nicknameString)
-                            .font(.system(size: 16))
-                            .fontWeight(.regular)
+                            .font(.system(size: 16, weight: .regular))
                             .padding(.horizontal, 20)
                     }
                 
@@ -97,8 +95,7 @@ struct ProfileCreationView: View {
             
             // TODO: - 에러 문구 로직 필요
             Text("")
-                .fontWeight(.regular)
-                .font(.system(size: 12))
+                .font(.system(size: 12, weight: .regular))
                 .foregroundStyle(.red)
         }
     }
@@ -118,8 +115,7 @@ struct ProfileCreationView: View {
                         VStack(alignment: .leading, spacing: 5) {
                             HStack(spacing: 2) {
                                 Text(scope.title)
-                                    .font(.system(size: 16))
-                                    .fontWeight(.medium)
+                                    .font(.system(size: 16, weight: .medium))
                                 
                                 Image(systemName: "\(scope.iconName)")
                                 
@@ -128,8 +124,7 @@ struct ProfileCreationView: View {
                             .foregroundStyle(.black)
                             
                             Text(scope.description)
-                                .font(.system(size: 14))
-                                .fontWeight(.regular)
+                                .font(.system(size: 14, weight: .regular))
                                 .foregroundStyle(.gray)
                         }
                     }
@@ -164,8 +159,7 @@ struct ProfileCreationView: View {
                 .overlay {
                     HStack {
                         Text("\(profileVisibilityScope.title)")
-                            .font(.system(size: 16))
-                            .fontWeight(.regular)
+                            .font(.system(size: 16, weight: .regular))
                         
                         Spacer()
                         

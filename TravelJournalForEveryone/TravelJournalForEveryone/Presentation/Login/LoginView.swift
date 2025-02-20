@@ -22,8 +22,7 @@ struct LoginView: View {
                     Text("나만의 여행 일기를")
                     Text("만들어 보세요!")
                 }
-                .font(.system(size: 24))
-                .fontWeight(.medium)
+                .font(.system(size: 24, weight: .medium))
                 .padding(.bottom, 282)
                 
                 Spacer()
@@ -31,8 +30,7 @@ struct LoginView: View {
             
             VStack(spacing: 10) {
                 Text("로그인/회원가입")
-                    .fontWeight(.medium)
-                    .font(.system(size: 12))
+                    .font(.system(size: 12, weight: .medium))
                     .padding(.bottom, 8)
                 
                 TJButton(title: "카카오로 로그인") {
