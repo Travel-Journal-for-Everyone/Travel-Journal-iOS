@@ -12,6 +12,9 @@ struct ProfileCreationView: View {
     
     // TODO: - 임시로 뷰에 구현
     @State var nicknameString = ""
+    @State var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
+    
+    @State var isTappedProfileVisibilityScopeButton: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -38,7 +41,6 @@ struct ProfileCreationView: View {
             }
             .padding(.bottom, 17)
         }
-        .padding(.horizontal, 30)
     }
     
     private var cameraIconView: some View {
@@ -66,35 +68,125 @@ struct ProfileCreationView: View {
             
             switch type {
             case .nickname:
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(spacing: 10) {
-                        RoundedRectangle(cornerRadius: 9)
-                            .frame(width: 242, height: 50)
-                            // TODO: - 색상 변경 필요
-                            .foregroundStyle(.gray.opacity(0.2))
-                            .overlay {
-                                TextField("닉네임을 입력하세요", text: $nicknameString)
-                                    .padding(.horizontal, 20)
-                            }
-                        
-                        TJButton(title: "중복 확인", size: .short) {
-                            
-                        }
-                    }
-                    
-                    // TODO: - 에러 문구 로직 필요
-                    Text("")
-                        .fontWeight(.regular)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.red)
-                }
+                nicknameTextView
             case .profileVisibilityScope:
-                TJButton(title: "전체 공개") {
+                profileVisibilityScopeButton
+            }
+        }
+        .frame(width: 333)
+    }
+    
+    private var nicknameTextView: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                RoundedRectangle(cornerRadius: 9)
+                    .frame(width: 242, height: 50)
+                // TODO: - 색상 변경 필요
+                    .foregroundStyle(.gray.opacity(0.2))
+                    .overlay {
+                        TextField("닉네임을 입력하세요", text: $nicknameString)
+                            .font(.system(size: 16))
+                            .fontWeight(.regular)
+                            .padding(.horizontal, 20)
+                    }
+                
+                TJButton(title: "중복 확인", size: .short) {
                     
                 }
             }
+            
+            // TODO: - 에러 문구 로직 필요
+            Text("")
+                .fontWeight(.regular)
+                .font(.system(size: 12))
+                .foregroundStyle(.red)
         }
-        .frame(width: .infinity)
+    }
+    
+    private var profileVisibilityScopeButton: some View {
+        ZStack(alignment: .top) {
+            VStack(spacing: 10) {
+                ForEach(
+                    Array(ProfileVisibilityScope.allCases.enumerated()),
+                    id: \.offset
+                ) { index, scope in
+                    Button {
+                        // MARK: - 프로필 공개 범위 선택 액션
+                        profileVisibilityScope  = scope
+                        isTappedProfileVisibilityScopeButton.toggle()
+                    } label: {
+                        VStack(alignment: .leading, spacing: 5) {
+                            HStack(spacing: 2) {
+                                Text(scope.title)
+                                    .font(.system(size: 16))
+                                    .fontWeight(.medium)
+                                
+                                Image(systemName: "\(scope.iconName)")
+                                
+                                Spacer()
+                            }
+                            .foregroundStyle(.black)
+                            
+                            Text(scope.description)
+                                .font(.system(size: 14))
+                                .fontWeight(.regular)
+                                .foregroundStyle(.gray)
+                        }
+                    }
+                    
+                    if index < ProfileVisibilityScope.allCases.count - 1 {
+                        Divider()
+                            .background(.gray.opacity(0.2))
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 15)
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .foregroundStyle(.white)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    }
+            }
+            .offset(y: isTappedProfileVisibilityScopeButton ? 51 : 0)
+            .opacity(isTappedProfileVisibilityScopeButton ? 1 : 0)
+            .animation(
+                .easeInOut(duration: 0.2),
+                value: isTappedProfileVisibilityScopeButton
+            )
+            
+            RoundedRectangle(cornerRadius: 8)
+                .frame(width: 333, height: 50)
+            // TODO: - 색상 변경 필요
+                .foregroundStyle(.gray)
+                .overlay {
+                    HStack {
+                        Text("\(profileVisibilityScope.title)")
+                            .font(.system(size: 16))
+                            .fontWeight(.regular)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "arrowtriangle.up.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 12)
+                            .rotationEffect(
+                                .degrees(isTappedProfileVisibilityScopeButton ? 0 : 180)
+                            )
+                            .animation(
+                                .easeInOut(duration: 0.2),
+                                value: isTappedProfileVisibilityScopeButton
+                            )
+                    }
+                    .padding(.horizontal, 20)
+                }
+                .onTapGesture {
+                    isTappedProfileVisibilityScopeButton.toggle()
+                }
+        }
     }
 }
 
