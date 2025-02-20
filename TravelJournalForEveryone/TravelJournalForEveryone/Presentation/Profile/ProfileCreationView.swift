@@ -26,6 +26,7 @@ struct ProfileCreationView: View {
                     // TODO: - 앨범에서 사진 선택 기능 넣기
                     print("앨범에서 사진 선택")
                 }
+                .padding(.top, 30)
                 .padding(.bottom, 35)
             
             VStack(spacing: 15) {
@@ -40,6 +41,10 @@ struct ProfileCreationView: View {
                 
             }
             .padding(.bottom, 17)
+        }
+        .customNavigationBar {
+            Text("프로필 작성")
+                .font(.system(size: 17, weight: .medium))
         }
     }
     
