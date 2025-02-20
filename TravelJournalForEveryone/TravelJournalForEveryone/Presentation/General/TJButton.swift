@@ -32,15 +32,14 @@ struct TJButton: View {
         Button {
             action()
         } label: {
-            RoundedRectangle(cornerRadius: 8)
-                .frame(width: size.width, height: height)
-                // TODO: - 색상 정해주기
-                .foregroundStyle(isDisabled ? .gray : .blue)
-                .overlay {
-                    Text(title)
-                        .fontWeight(.medium)
-                        .font(.system(size: 16))
-                        .foregroundStyle(.white)
+            Text(title)
+                .foregroundStyle(.white)
+                .frame(height: height)
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .frame(width: size.width, height: height)
+                        // TODO: - 색상 정해주기
+                        .foregroundStyle(isDisabled ? .gray : .blue)
                 }
         }
         .disabled(isDisabled)
@@ -48,16 +47,12 @@ struct TJButton: View {
 }
 
 #Preview {
-    VStack(spacing: 40) {
-        VStack {
-            TJButton(title: "작성 완료", action: { })
-            TJButton(title: "작성 완료", action: { }, isDisabled: true)
-        }
+    VStack(spacing: 30) {
+        TJButton(title: "작성 완료", action: { })
+        TJButton(title: "작성 완료", action: { }, isDisabled: true)
         
-        VStack {
-            TJButton(title: "중복확인", action: { }, size: .short)
-            TJButton(title: "중복확인", action: { }, isDisabled: true, size: .short)
-        }
+        TJButton(title: "중복확인", action: { }, size: .short)
+        TJButton(title: "중복확인", action: { }, isDisabled: true, size: .short)
     }
 }
 
