@@ -16,16 +16,16 @@ struct TJButton: View {
     
     init(
         title: String,
-        action: @escaping () -> Void,
         isDisabled: Bool = false,
         size: Size = .long,
-        height: CGFloat = 50
+        height: CGFloat = 50,
+        action: @escaping () -> Void
     ) {
         self.title = title
-        self.action = action
         self.isDisabled = isDisabled
         self.size = size
         self.height = height
+        self.action = action
     }
     
     var body: some View {
@@ -51,12 +51,12 @@ struct TJButton: View {
     VStack(spacing: 40) {
         VStack {
             TJButton(title: "작성 완료", action: { })
-            TJButton(title: "작성 완료", action: { }, isDisabled: true)
+            TJButton(title: "작성 완료", isDisabled: true, action: { })
         }
         
         VStack {
-            TJButton(title: "중복확인", action: { }, size: .short)
-            TJButton(title: "중복확인", action: { }, isDisabled: true, size: .short)
+            TJButton(title: "중복 확인", size: .short, action: { })
+            TJButton(title: "중복 확인", isDisabled: true, size: .short, action: { })
         }
     }
 }
