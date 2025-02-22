@@ -8,6 +8,10 @@
 import SwiftUI
 
 extension Font {
+    static func pretendardBold(_ size: CGFloat) -> Font {
+        return .custom("Pretendard-Bold", size: size)
+    }
+    
     static func pretendardSemiBold(_ size: CGFloat) -> Font {
         return .custom("Pretendard-SemiBold", size: size)
     }
