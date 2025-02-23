@@ -47,7 +47,7 @@ struct LoginView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 30)
+        .padding(.horizontal, 16)
     }
     
     private func loginButtonFor(_ type: LoginType) -> some View {
@@ -62,7 +62,7 @@ struct LoginView: View {
             }
         } label: {
             RoundedRectangle(cornerRadius: 8)
-                .frame(width: 333, height: 50)
+                .frame(height: 50)
                 .foregroundStyle(type.backgroundColor)
                 .overlay {
                     if type == .google {
