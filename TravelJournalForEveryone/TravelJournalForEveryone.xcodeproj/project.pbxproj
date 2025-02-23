@@ -14,7 +14,7 @@
 		4264D3F02D6A12F50050D893 /* Exceptions for "TravelJournalForEveryone" folder in "TravelJournalForEveryone" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 424C121E2D65B73700ABBE8B /* TravelJournalForEveryone */;
 		};
@@ -271,7 +271,7 @@
 				DEVELOPMENT_TEAM = MDA9736J9A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TravelJournalForEveryone/Info.plist;
+				INFOPLIST_FILE = TravelJournalForEveryone/Resources/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -307,7 +307,7 @@
 				DEVELOPMENT_TEAM = MDA9736J9A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TravelJournalForEveryone/Info.plist;
+				INFOPLIST_FILE = TravelJournalForEveryone/Resources/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
