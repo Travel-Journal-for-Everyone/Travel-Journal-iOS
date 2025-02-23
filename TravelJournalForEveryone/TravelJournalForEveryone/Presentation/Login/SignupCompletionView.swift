@@ -11,22 +11,22 @@ struct SignupCompletionView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 2) {
                         Text("마루김마루")
-                            .fontWeight(.bold)
+                            .font(.pretendardBold(24))
                         Text("님 가입 완료!")
                     }
                     
                     HStack(spacing: 0) {
                         Text("모두의 여행일지")
-                            .fontWeight(.bold)
+                            .font(.pretendardBold(24))
                         Text("와")
                     }
                     
                     Text("추억을 만들어 보아요!")
                 }
-                .font(.system(size: 24, weight: .medium))
+                .font(.pretendardMedium(24))
                 
                 Spacer()
             }
@@ -39,8 +39,7 @@ struct SignupCompletionView: View {
             }
             .padding(.bottom, 17)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 30)
+        .padding(.horizontal, 16)
     }
 }
 

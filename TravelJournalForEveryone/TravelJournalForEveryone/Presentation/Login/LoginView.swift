@@ -12,7 +12,7 @@ struct LoginView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 1) {
                         Text("모두의 여행 일지")
                             .font(.pretendardBold(24))
@@ -67,7 +67,7 @@ struct LoginView: View {
                 .overlay {
                     if type == .google {
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(.tjGray4, lineWidth: 1)
+                            .stroke(.tjGray5, lineWidth: 1)
                     }
                 }
                 .overlay {
