@@ -35,10 +35,10 @@ struct TJButton: View {
             RoundedRectangle(cornerRadius: 8)
                 .frame(width: size.width, height: height)
                 // TODO: - 색상 정해주기
-                .foregroundStyle(isDisabled ? .gray : .blue)
+                .foregroundStyle(isDisabled ? .tjGray4 : .tjPrimaryMain)
                 .overlay {
                     Text(title)
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.pretendardMedium(16))
                         .foregroundStyle(.white)
                 }
         }
@@ -67,8 +67,8 @@ extension TJButton {
         
         var width: CGFloat {
             switch self {
-            case .short: return 81
-            case .long: return 333
+            case .short: 88
+            case .long: 362
             }
         }
     }

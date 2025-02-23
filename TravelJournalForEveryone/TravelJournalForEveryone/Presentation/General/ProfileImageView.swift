@@ -13,7 +13,7 @@ struct ProfileImageView: View {
     var body: some View {
         // TODO: - 추후에 이미지 불러오는 코드로 변경
         Circle()
-            .foregroundStyle(.gray)
+            .foregroundStyle(.tjGray4)
             .frame(
                 width: viewType.size,
                 height: viewType.size

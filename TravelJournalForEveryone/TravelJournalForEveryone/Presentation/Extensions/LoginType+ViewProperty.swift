@@ -26,7 +26,7 @@ extension LoginType {
     
     var title: String {
         switch self {
-        case .kakao: "카카오 로그인"
+        case .kakao: "카카오로 로그인"
         case .apple: "Apple로 로그인"
         case .google: "Google로 로그인"
         }
