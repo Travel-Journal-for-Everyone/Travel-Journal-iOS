@@ -6,23 +6,27 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 
 struct LoginView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 2) {
+                    HStack(spacing: 1) {
                         Text("모두의 여행 일지")
-                            .fontWeight(.bold)
-                        // TODO: - 색상 정해주기
-                            .background(.purple.opacity(0.2))
+                            .font(.pretendardBold(24))
+                            .background {
+                                Rectangle()
+                                    .frame(height: 34)
+                                    .foregroundStyle(.tjPrimaryLight)
+                            }
                         Text("와 함께")
                     }
                     Text("나만의 여행 일기를")
                     Text("만들어 보세요!")
                 }
-                .font(.system(size: 24, weight: .medium))
+                .font(.pretendardMedium(24))
                 .padding(.bottom, 282)
                 
                 Spacer()
@@ -30,24 +34,56 @@ struct LoginView: View {
             
             VStack(spacing: 10) {
                 Text("로그인/회원가입")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.pretendardMedium(12))
                     .padding(.bottom, 8)
                 
-                TJButton(title: "카카오로 로그인") {
-                    
-                }
+                loginButtonFor(.kakao)
                 
-                TJButton(title: "애플로 로그인") {
-                    
-                }
+                loginButtonFor(.apple)
                 
-                TJButton(title: "구글 로그인") {
-                    
-                }
+                loginButtonFor(.google)
+                
+                
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 30)
+    }
+    
+    private func loginButtonFor(_ type: LoginType) -> some View {
+        Button {
+            switch type {
+            case .kakao:
+                print("카카오 로그인")
+            case .apple:
+                print("애플 로그인")
+            case .google:
+                print("구글 로그인")
+            }
+        } label: {
+            RoundedRectangle(cornerRadius: 8)
+                .frame(width: 333, height: 50)
+                .foregroundStyle(type.backgroundColor)
+                .overlay {
+                    if type == .google {
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(.tjGray4, lineWidth: 1)
+                    }
+                }
+                .overlay {
+                    HStack(spacing: 8) {
+                        Image("\(type.imageResourceString)")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 21, height: 21)
+                        
+                        Text("\(type.title)")
+                            .font(.pretendardMedium(16))
+                            .foregroundStyle(type.textColor)
+                    }
+                }
+        }
+        
     }
 }
 
