@@ -11,7 +11,7 @@ import SwiftUI
 struct TravelJournalForEveryoneApp: App {
     var body: some Scene {
         WindowGroup {
-            AuthenticationView()
+            AuthenticationView(authViewModel: AuthenticationViewModel())
         }
     }
 }

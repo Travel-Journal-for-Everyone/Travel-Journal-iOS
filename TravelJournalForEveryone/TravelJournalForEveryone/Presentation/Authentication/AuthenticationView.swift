@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct AuthenticationView: View {
+    @StateObject var authViewModel: AuthenticationViewModel
+    
     var body: some View {
-        Text("AuthenticationView")
+        VStack {
+            switch authViewModel.state.authenticationState {
+            case .unauthenticated:
+                LoginView()
+                    .environmentObject(authViewModel)
+            case .authenticated:
+                MainTabView()
+            }
+        }
+        .onAppear {
+            authViewModel.send(.viewOnAppear)
+        }
     }
 }
 
 #Preview {
-    AuthenticationView()
+    AuthenticationView(authViewModel: .init())
 }

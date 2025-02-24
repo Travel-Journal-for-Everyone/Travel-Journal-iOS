@@ -9,56 +9,61 @@ import SwiftUI
 import AuthenticationServices
 
 struct LoginView: View {
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
+    
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 1) {
-                        Text("모두의 여행 일지")
-                            .font(.pretendardBold(24))
-                            .background {
-                                Rectangle()
-                                    .frame(height: 34)
-                                    .foregroundStyle(.tjPrimaryLight)
-                            }
-                        Text("와 함께")
+        NavigationStack {
+            VStack(spacing: 0) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 1) {
+                            Text("모두의 여행 일지")
+                                .font(.pretendardBold(24))
+                                .background {
+                                    Rectangle()
+                                        .frame(height: 34)
+                                        .foregroundStyle(.tjPrimaryLight)
+                                }
+                            Text("와 함께")
+                        }
+                        Text("나만의 여행 일기를")
+                        Text("만들어 보세요!")
                     }
-                    Text("나만의 여행 일기를")
-                    Text("만들어 보세요!")
+                    .font(.pretendardMedium(24))
+                    .padding(.bottom, 282)
+                    
+                    Spacer()
                 }
-                .font(.pretendardMedium(24))
-                .padding(.bottom, 282)
                 
-                Spacer()
+                VStack(spacing: 10) {
+                    Text("로그인/회원가입")
+                        .font(.pretendardMedium(12))
+                        .padding(.bottom, 8)
+                    
+                    loginButtonFor(.kakao)
+                    
+                    loginButtonFor(.apple)
+                    
+                    loginButtonFor(.google)
+                }
             }
-            
-            VStack(spacing: 10) {
-                Text("로그인/회원가입")
-                    .font(.pretendardMedium(12))
-                    .padding(.bottom, 8)
-                
-                loginButtonFor(.kakao)
-                
-                loginButtonFor(.apple)
-                
-                loginButtonFor(.google)
-                
-                
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 16)
+            .navigationDestination(isPresented: Binding(get: { authViewModel.state.isPresentedProfileCreationView }, set: { authViewModel.send(.isPresentedProfileCreationView($0)) })) {
+                ProfileCreationView()
             }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 16)
     }
     
     private func loginButtonFor(_ type: LoginType) -> some View {
         Button {
             switch type {
             case .kakao:
-                print("카카오 로그인")
+                authViewModel.send(.kakaoLogin)
             case .apple:
-                print("애플 로그인")
+                authViewModel.send(.appleLogin)
             case .google:
-                print("구글 로그인")
+                authViewModel.send(.googleLogin)
             }
         } label: {
             RoundedRectangle(cornerRadius: 8)
@@ -89,4 +94,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
+        .environmentObject(AuthenticationViewModel())
 }
