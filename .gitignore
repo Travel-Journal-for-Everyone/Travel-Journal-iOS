@@ -5,6 +5,9 @@
 
 ## User settings
 xcuserdata/
+*.xcconfig
+# 프로젝트의 모든 경로에서 .DS_Store 파일을 포함하지 않도록 함
+**/.DS_Store
 
 ## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
 *.xcscmblueprint
@@ -81,6 +84,3 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
-
-# 프로젝트의 모든 경로에서 .DS_Store 파일을 포함하지 않도록 함
-**/.DS_Store
