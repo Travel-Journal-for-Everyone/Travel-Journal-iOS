@@ -19,13 +19,15 @@ struct TravelJournalForEveryoneApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AuthenticationView(authViewModel: AuthenticationViewModel(loginUsecase: DefaultLoginUseCase(authRepository: DefaultAuthRepository())))
-                // 카카오톡에서 앱으로 돌아올 때 쓰일 URL 핸들러
-                .onOpenURL { url in
-                    if (AuthApi.isKakaoTalkLoginUrl(url)) {
-                        _ = AuthController.handleOpenUrl(url: url)
-                    }
+            AuthenticationView(authViewModel: .init(
+                loginUsecase: DIContainer.shared.loginUsecase)
+            )
+            // 카카오톡에서 앱으로 돌아올 때 쓰일 URL 핸들러
+            .onOpenURL { url in
+                if AuthApi.isKakaoTalkLoginUrl(url) {
+                    _ = AuthController.handleOpenUrl(url: url)
                 }
+            }
         }
     }
 }

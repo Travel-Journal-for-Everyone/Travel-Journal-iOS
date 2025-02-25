@@ -118,29 +118,29 @@ struct ProfileCreationView: View {
                     Array(ProfileVisibilityScope.allCases.enumerated()),
                     id: \.offset
                 ) { index, scope in
-                    Button {
-                        // MARK: - 프로필 공개 범위 선택 액션
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 5) {
+                            Text(scope.title)
+                                .font(.pretendardMedium(16))
+                            
+                            Image(scope.imageResourceString)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+                            
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(.black)
+                        
+                        Text(scope.description)
+                            .font(.pretendardRegular(14))
+                            .foregroundStyle(.tjGray2)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
                         profileVisibilityScope  = scope
                         isTappedProfileVisibilityScopeButton.toggle()
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack(spacing: 5) {
-                                Text(scope.title)
-                                    .font(.pretendardMedium(16))
-                                
-                                Image(scope.imageResourceString)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 16, height: 16)
-                                
-                                Spacer()
-                            }
-                            .foregroundStyle(.black)
-                            
-                            Text(scope.description)
-                                .font(.pretendardRegular(14))
-                                .foregroundStyle(.tjGray2)
-                        }
                     }
                     .padding(.horizontal, 20)
                     
@@ -162,7 +162,7 @@ struct ProfileCreationView: View {
             .offset(y: isTappedProfileVisibilityScopeButton ? 51 : 0)
             .opacity(isTappedProfileVisibilityScopeButton ? 1 : 0)
             .animation(
-                .easeInOut(duration: 0.2),
+                .easeIn(duration: 0.15),
                 value: isTappedProfileVisibilityScopeButton
             )
             

@@ -48,19 +48,24 @@ final class AuthenticationViewModel: ObservableObject {
             break
         case .kakaoLogin:
             print("kakaoLogin")
-            //state.isPresentedProfileCreationView = true
             loginUsecase.loginWith(.kakao)
-                .sink { completion in
-                    
+                .sink { [weak self] completion in
+                    switch completion {
+                    case .finished:
+                        self?.state.isPresentedProfileCreationView = true
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
                 } receiveValue: { token in
-                    
+                    // TODO: - token 처리
                 }
                 .store(in: &cancellables)
-
+            
         case .appleLogin:
             print("appleLogin")
         case .googleLogin:
             print("googleLogin")
+            state.isPresentedProfileCreationView = true
         case .isPresentedProfileCreationView(let value):
             state.isPresentedProfileCreationView = value
         case .logout:

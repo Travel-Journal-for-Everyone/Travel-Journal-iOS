@@ -34,7 +34,6 @@ struct TJButton: View {
         } label: {
             RoundedRectangle(cornerRadius: 8)
                 .frame(width: size.width, height: height)
-                // TODO: - 색상 정해주기
                 .foregroundStyle(isDisabled ? .tjGray4 : .tjPrimaryMain)
                 .overlay {
                     Text(title)

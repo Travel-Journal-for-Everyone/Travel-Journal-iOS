@@ -49,7 +49,10 @@ struct LoginView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 16)
-            .navigationDestination(isPresented: Binding(get: { authViewModel.state.isPresentedProfileCreationView }, set: { authViewModel.send(.isPresentedProfileCreationView($0)) })) {
+            .navigationDestination(isPresented: Binding(
+                get: { authViewModel.state.isPresentedProfileCreationView },
+                set: { authViewModel.send(.isPresentedProfileCreationView($0)) }
+            )) {
                 ProfileCreationView()
             }
         }
@@ -94,5 +97,7 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
-        .environmentObject(AuthenticationViewModel(loginUsecase: DefaultLoginUseCase(authRepository: DefaultAuthRepository())))
+        .environmentObject(AuthenticationViewModel(
+            loginUsecase: DIContainer.shared.loginUsecase)
+        )
 }
