@@ -94,5 +94,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
-        .environmentObject(AuthenticationViewModel())
+        .environmentObject(AuthenticationViewModel(loginUsecase: DefaultLoginUseCase(authRepository: DefaultAuthRepository())))
 }

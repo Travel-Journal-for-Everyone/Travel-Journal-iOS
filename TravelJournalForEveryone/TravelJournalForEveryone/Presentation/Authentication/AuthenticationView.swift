@@ -27,5 +27,5 @@ struct AuthenticationView: View {
 }
 
 #Preview {
-    AuthenticationView(authViewModel: .init())
+    AuthenticationView(authViewModel: .init(loginUsecase: DefaultLoginUseCase(authRepository: DefaultAuthRepository())))
 }
