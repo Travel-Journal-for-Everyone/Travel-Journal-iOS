@@ -91,6 +91,7 @@ struct LoginView: View {
                     }
                 }
         }
+        .buttonStyle(.plain)
         
     }
 }

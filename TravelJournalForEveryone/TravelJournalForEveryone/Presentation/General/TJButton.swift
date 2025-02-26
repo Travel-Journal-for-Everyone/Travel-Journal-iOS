@@ -41,6 +41,7 @@ struct TJButton: View {
                         .foregroundStyle(.white)
                 }
         }
+        .buttonStyle(.plain)
         .disabled(isDisabled)
     }
 }
