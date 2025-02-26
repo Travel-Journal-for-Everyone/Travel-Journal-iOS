@@ -17,38 +17,52 @@ struct ProfileCreationView: View {
     @State var isTappedProfileVisibilityScopeButton: Bool = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            ProfileImageView(viewType: .profileCreation)
-                .overlay(alignment: .bottomTrailing) {
-                    cameraIconView
+        ZStack {
+            Color.white.ignoresSafeArea()
+            
+            GeometryReader { _ in
+                VStack(spacing: 0) {
+                    ProfileImageView(viewType: .profileCreation)
+                        .overlay(alignment: .bottomTrailing) {
+                            cameraIconView
+                        }
+                        .onTapGesture {
+                            // TODO: - 앨범에서 사진 선택 기능 넣기
+                            hideKeyboard()
+                            isTappedProfileVisibilityScopeButton = false
+                            print("앨범에서 사진 선택")
+                        }
+                        .padding(.top, 30)
+                        .padding(.bottom, 40)
+                    
+                    VStack(spacing: 15) {
+                        userInfoInputAreaFor(.nickname)
+                        
+                        userInfoInputAreaFor(.profileVisibilityScope)
+                    }
+                    
+                    Spacer()
+                    
+                    TJButton(
+                        title: isEditingProfile ? "수정 완료" : "작성 완료",
+                        isDisabled: false)
+                    {
+                        
+                    }
+                    .padding(.bottom, 17)
                 }
-                .onTapGesture {
-                    // TODO: - 앨범에서 사진 선택 기능 넣기
-                    print("앨범에서 사진 선택")
-                }
-                .padding(.top, 30)
-                .padding(.bottom, 40)
-            
-            VStack(spacing: 15) {
-                userInfoInputAreaFor(.nickname)
-                
-                userInfoInputAreaFor(.profileVisibilityScope)
+                .padding(.horizontal, 16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea(.keyboard, edges: .bottom)
             }
-            
-            Spacer()
-            
-            TJButton(
-                title: isEditingProfile ? "수정 완료" : "작성 완료",
-                isDisabled: false)
-            {
-                
-            }
-            .padding(.bottom, 17)
         }
-        .padding(.horizontal, 16)
         .customNavigationBar {
             Text(isEditingProfile ? "프로필 수정" : "프로필 작성")
                 .font(.pretendardMedium(17))
+        }
+        .onTapGesture {
+            hideKeyboard()
+            isTappedProfileVisibilityScopeButton = false
         }
     }
     
@@ -100,7 +114,8 @@ struct ProfileCreationView: View {
                     isDisabled: false,
                     size: .short
                 ) {
-                    
+                    hideKeyboard()
+                    isTappedProfileVisibilityScopeButton = false
                 }
             }
             
@@ -196,6 +211,7 @@ struct ProfileCreationView: View {
                     .padding(.horizontal, 20)
                 }
                 .onTapGesture {
+                    hideKeyboard()
                     isTappedProfileVisibilityScopeButton.toggle()
                 }
         }
