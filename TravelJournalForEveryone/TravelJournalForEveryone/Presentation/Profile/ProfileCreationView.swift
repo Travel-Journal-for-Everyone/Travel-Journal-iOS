@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ProfileCreationView: View {
+    @StateObject private var viewModel = ProfileCreationViewModel()
+    
     var isEditingProfile: Bool = false
     
     // TODO: - 임시로 뷰에 구현
@@ -47,7 +49,7 @@ struct ProfileCreationView: View {
                         title: isEditingProfile ? "수정 완료" : "작성 완료",
                         isDisabled: false)
                     {
-                        
+                        viewModel.send(.tappedCompletionButton)
                     }
                     .padding(.bottom, 17)
                 }
@@ -107,6 +109,11 @@ struct ProfileCreationView: View {
                         TextField("닉네임을 입력하세요", text: $nicknameString)
                             .font(.pretendardRegular(16))
                             .padding(.horizontal, 20)
+                            .submitLabel(.done)
+                            .onSubmit {
+                                // TODO: - 중복 확인 메서드 호출
+                                viewModel.send(.tappedNicknameCheckButton)
+                            }
                     }
                 
                 TJButton(
@@ -116,6 +123,8 @@ struct ProfileCreationView: View {
                 ) {
                     hideKeyboard()
                     isTappedProfileVisibilityScopeButton = false
+                    
+                    viewModel.send(.tappedNicknameCheckButton)
                 }
             }
             
@@ -156,6 +165,8 @@ struct ProfileCreationView: View {
                     .onTapGesture {
                         profileVisibilityScope  = scope
                         isTappedProfileVisibilityScopeButton.toggle()
+                        
+                        viewModel.send(.tappedProfileVisibilityScope(scope))
                     }
                     .padding(.horizontal, 20)
                     

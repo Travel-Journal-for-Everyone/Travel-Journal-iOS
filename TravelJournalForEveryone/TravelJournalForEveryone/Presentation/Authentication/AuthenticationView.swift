@@ -9,27 +9,27 @@ import SwiftUI
 
 struct AuthenticationView: View {
     @StateObject var coordinator = DefaultCoordinator()
-    @StateObject var authViewModel: AuthenticationViewModel
+    @StateObject var viewModel: AuthenticationViewModel
     
     var body: some View {
         VStack {
-            switch authViewModel.state.authenticationState {
+            switch viewModel.state.authenticationState {
             case .unauthenticated:
                 LoginView()
-                    .environmentObject(authViewModel)
+                    .environmentObject(viewModel)
             case .authenticated:
                 MainTabView()
                     .environmentObject(coordinator)
             }
         }
         .onAppear {
-            authViewModel.send(.viewOnAppear)
+            viewModel.send(.viewOnAppear)
         }
     }
 }
 
 #Preview {
-    AuthenticationView(authViewModel: .init(
+    AuthenticationView(viewModel: .init(
         loginUsecase: DIContainer.shared.loginUsecase)
     )
 }
