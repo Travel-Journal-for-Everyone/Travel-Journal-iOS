@@ -47,17 +47,22 @@ final class AuthenticationViewModel: ObservableObject {
             // TODO:
             break
         case .kakaoLogin:
-            print("kakaoLogin")
-            loginUsecase.loginWith(.kakao)
+            loginUsecase.execute(loginType: .kakao)
                 .sink { [weak self] completion in
                     switch completion {
                     case .finished:
                         self?.state.isPresentedProfileCreationView = true
                     case .failure(let error):
-                        print(error.localizedDescription)
+                        print("Kakao Login Error: \(error.localizedDescription)")
                     }
-                } receiveValue: { token in
-                    // TODO: - token 처리
+                } receiveValue: { idToken in
+                    // TODO: - idToken 처리, 아마 이 부분은 나중에 private 함수로 처리할 예정!
+                    guard let idToken else {
+                        print("Kakao Login Error: ID Token 없음")
+                        return
+                    }
+                    
+                    _ = idToken
                 }
                 .store(in: &cancellables)
             

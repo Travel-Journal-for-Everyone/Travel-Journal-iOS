@@ -9,14 +9,7 @@ import Foundation
 import Combine
 
 protocol LoginUseCase {
-    func loginWith(_ loginType: LoginType) -> AnyPublisher<String, LoginError>
-}
-
-enum LoginError: Error {
-    case kakaologinFailed
-    case appleLoginFailed
-    case googleLoginFailed
-    case unknown
+    func execute(loginType: LoginType) -> AnyPublisher<String?, Error>
 }
 
 final class DefaultLoginUseCase: LoginUseCase {
@@ -26,14 +19,7 @@ final class DefaultLoginUseCase: LoginUseCase {
         self.authRepository = authRepository
     }
     
-    func loginWith(_ loginType: LoginType) -> AnyPublisher<String, LoginError> {
-        switch loginType {
-        case .kakao:
-            return authRepository.loginWithKakao()
-        case .apple:
-            return Empty().eraseToAnyPublisher()
-        case .google:
-            return Empty().eraseToAnyPublisher()
-        }
+    func execute(loginType: LoginType) -> AnyPublisher<String?, Error> {
+        return authRepository.loginWith(loginType)
     }
 }

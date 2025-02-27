@@ -9,7 +9,5 @@ import Foundation
 import Combine
 
 protocol AuthRepository {
-    func loginWithKakao() -> AnyPublisher<String, LoginError>
-    // func loginWithApple() -> AnyPublisher<String, LoginError>
-    // func loginWithGoogle() -> AnyPublisher<String, LoginError>
+    func loginWith(_ loginType: LoginType) -> AnyPublisher<String?, Error>
 }
