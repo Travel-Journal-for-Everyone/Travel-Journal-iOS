@@ -33,7 +33,8 @@ struct TJButton: View {
             action()
         } label: {
             RoundedRectangle(cornerRadius: 8)
-                .frame(width: size.width, height: height)
+                .frame(height: height)
+                .frame(maxWidth: size.width)
                 .foregroundStyle(isDisabled ? .tjGray4 : .tjPrimaryMain)
                 .overlay {
                     Text(title)
@@ -41,7 +42,6 @@ struct TJButton: View {
                         .foregroundStyle(.white)
                 }
         }
-        .buttonStyle(.plain)
         .disabled(isDisabled)
     }
 }
@@ -68,7 +68,7 @@ extension TJButton {
         var width: CGFloat {
             switch self {
             case .short: 88
-            case .long: 362
+            case .long: .infinity
             }
         }
     }

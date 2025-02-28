@@ -64,7 +64,7 @@ final class ProfileCreationViewModel: ObservableObject {
             state.errorMessage = ""
             state.isDisableNicknameCheckButton = true
         case .tooShort:
-            state.errorMessage = "2글자 이상 입력해주세요."
+            state.errorMessage = "2자 이상 입력해주세요."
             state.isDisableNicknameCheckButton = true
         case .containsWhitespace:
             state.errorMessage = "띄어쓰기는 사용할 수 없습니다."

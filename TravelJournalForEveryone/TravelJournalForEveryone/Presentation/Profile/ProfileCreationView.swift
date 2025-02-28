@@ -108,7 +108,7 @@ struct ProfileCreationView: View {
                     .frame(height: 50)
                     .foregroundStyle(.tjGray6)
                     .overlay {
-                        TextField("닉네임을 입력하세요", text: Binding(
+                        TextField("닉네임을 입력하세요 (2~12자)", text: Binding(
                             get: { viewModel.state.nickname },
                             set: { viewModel.send(.enterNickname($0)) }
                         ))
