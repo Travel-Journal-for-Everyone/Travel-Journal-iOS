@@ -43,6 +43,7 @@ struct ProfileCreationView: View {
                         userInfoInputAreaFor(.nickname)
                         
                         userInfoInputAreaFor(.profileVisibilityScope)
+                            .padding(.bottom, 45)
                     }
                     
                     Spacer()
@@ -196,7 +197,7 @@ struct ProfileCreationView: View {
                             .stroke(.tjGray5, lineWidth: 1)
                     }
             }
-            .offset(y: isTappedProfileVisibilityScopeButton ? 51 : 0)
+            .offset(y: isTappedProfileVisibilityScopeButton ? 50 : 0)
             .opacity(isTappedProfileVisibilityScopeButton ? 1 : 0)
             .animation(
                 .easeIn(duration: 0.15),
