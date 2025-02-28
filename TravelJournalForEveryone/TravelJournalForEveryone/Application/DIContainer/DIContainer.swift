@@ -17,7 +17,8 @@ final class DIContainer {
     lazy var authRepository = DefaultAuthRepository(kakaoAuthService: kakaoAuthService)
     
     // Usecases
-    lazy var loginUsecase = DefaultLoginUseCase(authRepository: authRepository)
+    lazy var loginUseCase = DefaultLoginUseCase(authRepository: authRepository)
+    lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase()
     
     private init() {}
 }

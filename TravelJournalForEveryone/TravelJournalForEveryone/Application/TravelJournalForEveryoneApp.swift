@@ -20,7 +20,7 @@ struct TravelJournalForEveryoneApp: App {
     var body: some Scene {
         WindowGroup {
             AuthenticationView(viewModel: .init(
-                loginUsecase: DIContainer.shared.loginUsecase)
+                loginUsecase: DIContainer.shared.loginUseCase)
             )
             // 카카오톡에서 앱으로 돌아올 때 쓰일 URL 핸들러
             .onOpenURL { url in

@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ProfileCreationView: View {
-    @StateObject private var viewModel = ProfileCreationViewModel()
+    @StateObject private var viewModel = ProfileCreationViewModel(
+        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+    )
     
     var isEditingProfile: Bool = false
     
@@ -47,7 +49,7 @@ struct ProfileCreationView: View {
                     
                     TJButton(
                         title: isEditingProfile ? "수정 완료" : "작성 완료",
-                        isDisabled: false)
+                        isDisabled: viewModel.state.isDisableCompletionButton)
                     {
                         viewModel.send(.tappedCompletionButton)
                     }
@@ -106,19 +108,28 @@ struct ProfileCreationView: View {
                     .frame(height: 50)
                     .foregroundStyle(.tjGray6)
                     .overlay {
-                        TextField("닉네임을 입력하세요", text: $nicknameString)
-                            .font(.pretendardRegular(16))
-                            .padding(.horizontal, 20)
-                            .submitLabel(.done)
-                            .onSubmit {
-                                // TODO: - 중복 확인 메서드 호출
-                                viewModel.send(.tappedNicknameCheckButton)
-                            }
+                        TextField("닉네임을 입력하세요", text: Binding(
+                            get: { viewModel.state.nickname },
+                            set: { viewModel.send(.enterNickname($0)) }
+                        ))
+                        .maxLength(text: Binding(
+                            get: { viewModel.state.nickname },
+                            set: { viewModel.send(.enterNickname($0)) }
+                        ), 12)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .font(.pretendardRegular(16))
+                        .padding(.horizontal, 20)
+                        .submitLabel(.done)
+                        .onSubmit {
+                            // TODO: - 중복 확인 메서드 호출
+                            viewModel.send(.tappedNicknameCheckButton)
+                        }
                     }
                 
                 TJButton(
                     title: "중복 확인",
-                    isDisabled: false,
+                    isDisabled: viewModel.state.isDisableNicknameCheckButton,
                     size: .short
                 ) {
                     hideKeyboard()
@@ -129,7 +140,7 @@ struct ProfileCreationView: View {
             }
             
             // TODO: - 에러 문구 로직 필요
-            Text("")
+            Text(viewModel.state.errorMessage)
                 .font(.pretendardRegular(12))
                 .foregroundStyle(.tjRed)
         }
