@@ -44,38 +44,53 @@ final class AuthenticationViewModel: ObservableObject {
     func send(_ intent: AuthenticationIntent) {
         switch intent {
         case .viewOnAppear:
-            // TODO:
-            break
+            handleViewOnAppear()
         case .kakaoLogin:
-            loginUsecase.execute(loginType: .kakao)
-                .sink { [weak self] completion in
-                    switch completion {
-                    case .finished:
-                        self?.state.isPresentedProfileCreationView = true
-                    case .failure(let error):
-                        print("Kakao Login Error: \(error.localizedDescription)")
-                    }
-                } receiveValue: { idToken in
-                    // TODO: - idToken 처리, 아마 이 부분은 나중에 private 함수로 처리할 예정!
-                    guard let idToken else {
-                        print("Kakao Login Error: ID Token 없음")
-                        return
-                    }
-                    
-                    _ = idToken
-                }
-                .store(in: &cancellables)
-            
+            handleKakaoLogin()
         case .appleLogin:
-            print("appleLogin")
+            handleAppleLogin()
         case .googleLogin:
-            print("googleLogin")
-            state.isPresentedProfileCreationView = true
+            handleGoogleLogin()
         case .isPresentedProfileCreationView(let value):
             state.isPresentedProfileCreationView = value
         case .logout:
-            // TODO:
-            break
+            handleLogout()
         }
     }
+    
+    private func handleViewOnAppear() { }
+    
+    private func handleKakaoLogin() {
+        loginUsecase.execute(loginType: .kakao)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                switch completion {
+                case .finished:
+                    self.state.isPresentedProfileCreationView = true
+                case .failure(let error):
+                    print("Kakao Login Error: \(error.localizedDescription)")
+                }
+            } receiveValue: { idToken in
+                // TODO: - idToken 처리
+                guard let idToken else {
+                    print("Kakao Login Error: ID Token 없음")
+                    return
+                }
+                
+                _ = idToken
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func handleAppleLogin() {
+        print("appleLogin")
+    }
+    
+    private func handleGoogleLogin() {
+        print("googleLogin")
+        // 임시 테스트
+        state.isPresentedProfileCreationView = true
+    }
+    
+    private func handleLogout() { }
 }

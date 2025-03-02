@@ -6,21 +6,21 @@
 //
 
 import Foundation
+import Combine
 
 protocol NicknameCheckUseCase {
-    func validateNickname(_ nickname: String) -> NicknameValidationResult
-}
-
-enum NicknameValidationResult {
-    case valid
-    case empty
-    case tooShort
-    case containsWhitespace
-    case invalidCharacters
+    func validateNicknameByRegex(_ nickname: String) -> NicknameRegexCheckResult
+    func validateNicknameByServer(_ nickname: String) -> AnyPublisher<NicknameServerCheckResult, Error>
 }
 
 final class DefaultNicknameCheckUseCase: NicknameCheckUseCase {
-    func validateNickname(_ nickname: String) -> NicknameValidationResult {
+    private let userRepository: UserRepository
+    
+    init(userRepository: UserRepository) {
+        self.userRepository = userRepository
+    }
+    
+    func validateNicknameByRegex(_ nickname: String) -> NicknameRegexCheckResult {
         if nickname.isEmpty {
             return .empty
         }
@@ -41,5 +41,11 @@ final class DefaultNicknameCheckUseCase: NicknameCheckUseCase {
         }
         
         return .valid
+    }
+    
+    func validateNicknameByServer(_ nickname: String) -> AnyPublisher<NicknameServerCheckResult, Error> {
+        return userRepository.validateNickname(nickname)
+            .map { NicknameServerCheckResult.from(response: $0) }
+            .eraseToAnyPublisher()
     }
 }

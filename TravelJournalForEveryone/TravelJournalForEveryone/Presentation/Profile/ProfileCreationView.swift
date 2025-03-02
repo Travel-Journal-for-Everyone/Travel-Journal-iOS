@@ -15,7 +15,6 @@ struct ProfileCreationView: View {
     var isEditingProfile: Bool = false
     
     // TODO: - 임시로 뷰에 구현
-    @State var nicknameString = ""
     @State var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
     
     @State var isTappedProfileVisibilityScopeButton: Bool = false
@@ -69,6 +68,9 @@ struct ProfileCreationView: View {
             hideKeyboard()
             isTappedProfileVisibilityScopeButton = false
         }
+        .onAppear {
+            viewModel.send(.viewOnAppear)
+        }
     }
     
     private var cameraIconView: some View {
@@ -110,11 +112,11 @@ struct ProfileCreationView: View {
                     .foregroundStyle(.tjGray6)
                     .overlay {
                         TextField("닉네임을 입력하세요 (2~12자)", text: Binding(
-                            get: { viewModel.state.nickname },
+                            get: { viewModel.state.tempNickname },
                             set: { viewModel.send(.enterNickname($0)) }
                         ))
                         .maxLength(text: Binding(
-                            get: { viewModel.state.nickname },
+                            get: { viewModel.state.tempNickname },
                             set: { viewModel.send(.enterNickname($0)) }
                         ), 12)
                         .textInputAutocapitalization(.never)
@@ -123,7 +125,6 @@ struct ProfileCreationView: View {
                         .padding(.horizontal, 20)
                         .submitLabel(.done)
                         .onSubmit {
-                            // TODO: - 중복 확인 메서드 호출
                             viewModel.send(.tappedNicknameCheckButton)
                         }
                     }
@@ -140,7 +141,6 @@ struct ProfileCreationView: View {
                 }
             }
             
-            // TODO: - 에러 문구 로직 필요
             Text(viewModel.state.errorMessage)
                 .font(.pretendardRegular(12))
                 .foregroundStyle(.tjRed)

@@ -10,15 +10,22 @@ import Foundation
 final class DIContainer {
     @MainActor static let shared = DIContainer()
     
-    // Services
+    // MARK: - Services
     lazy var kakaoAuthService = DefaultKakaoAuthService()
     
-    // Repositories
-    lazy var authRepository = DefaultAuthRepository(kakaoAuthService: kakaoAuthService)
     
-    // Usecases
+    // MARK: - Repositories
+    lazy var authRepository = DefaultAuthRepository(kakaoAuthService: kakaoAuthService)
+    lazy var userRepository = DefaultUserRepository()
+    
+    // mock
+    lazy var mockUserRepository = MockUserRepository()
+    
+    
+    // MARK: - Usecases
     lazy var loginUseCase = DefaultLoginUseCase(authRepository: authRepository)
-    lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase()
+    lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase(userRepository: mockUserRepository)
+    
     
     private init() {}
 }
