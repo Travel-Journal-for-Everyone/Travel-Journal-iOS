@@ -130,7 +130,7 @@ struct ProfileCreationView: View {
                     }
                 
                 TJButton(
-                    title: "중복 확인",
+                    title: viewModel.state.isCheckingNickname ? "" : "중복 확인",
                     isDisabled: viewModel.state.isDisableNicknameCheckButton,
                     size: .short
                 ) {
@@ -139,11 +139,16 @@ struct ProfileCreationView: View {
                     
                     viewModel.send(.tappedNicknameCheckButton)
                 }
+                .overlay {
+                    if viewModel.state.isCheckingNickname {
+                        ProgressView()
+                    }
+                }
             }
             
             Text(viewModel.state.errorMessage)
                 .font(.pretendardRegular(12))
-                .foregroundStyle(.tjRed)
+                .foregroundStyle(viewModel.state.messageColor)
         }
     }
     

@@ -5,7 +5,7 @@
 //  Created by 김성민 on 2/26/25.
 //
 
-import Foundation
+import SwiftUI
 import Combine
 
 // MARK: - State
@@ -14,9 +14,11 @@ struct ProfileCreationModelState {
     var nickname: String = ""
     var tempNickname: String = ""
     var errorMessage: String = ""
+    var messageColor: Color = .tjRed
     var profileVisibilityScopre: ProfileVisibilityScope = .publicProfile
     var isDisableNicknameCheckButton: Bool = true
     var isDisableCompletionButton: Bool = true
+    var isCheckingNickname: Bool = false
 }
 
 // MARK: - Intent
@@ -85,9 +87,14 @@ final class ProfileCreationViewModel: ObservableObject {
     private func handleViewOnAppear() { }
     
     private func handleTappedNicknameCheckButton() {
+        state.isCheckingNickname = true
+        state.isDisableNicknameCheckButton = true
+        
         nicknameCheckUseCase.validateNicknameByServer(tempNickname)
-            .sink { _ in
+            .sink { [weak self] _ in
+                guard let self else { return }
                 // TODO: - 에러 처리
+                self.state.isCheckingNickname = false
             } receiveValue: { [weak self] result in
                 self?.updateStateForNicknameValidationForServer(result)
             }
@@ -104,6 +111,7 @@ final class ProfileCreationViewModel: ObservableObject {
             state.isDisableNicknameCheckButton = (state.tempNickname == state.nickname)
         } else {
             state.isDisableNicknameCheckButton = true
+            state.messageColor = .tjRed
         }
         
         switch result {
@@ -119,18 +127,17 @@ final class ProfileCreationViewModel: ObservableObject {
     }
     
     private func updateStateForNicknameValidationForServer(_ result: NicknameServerCheckResult) {
-        state.isDisableNicknameCheckButton = true
-        
         if result == .valid {
             state.isDisableCompletionButton = false
+            state.messageColor = .tjGreen
         } else {
             state.isDisableCompletionButton = true
+            state.messageColor = .tjRed
         }
         
         switch result {
         case .valid:
-            // 성공 메시지 표시
-            break
+            state.errorMessage = "사용 가능한 닉네임 입니다."
         case .containsBadWord:
             state.errorMessage = "이 닉네임은 사용할 수 없습니다."
         case .duplicate:

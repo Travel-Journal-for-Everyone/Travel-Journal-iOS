@@ -29,20 +29,19 @@ struct TJButton: View {
     }
     
     var body: some View {
-        Button {
-            action()
-        } label: {
-            RoundedRectangle(cornerRadius: 8)
-                .frame(height: height)
-                .frame(maxWidth: size.width)
-                .foregroundStyle(isDisabled ? .tjGray4 : .tjPrimaryMain)
-                .overlay {
-                    Text(title)
-                        .font(.pretendardMedium(16))
-                        .foregroundStyle(.white)
-                }
-        }
-        .disabled(isDisabled)
+        RoundedRectangle(cornerRadius: 8)
+            .frame(height: height)
+            .frame(maxWidth: size.width)
+            .foregroundStyle(isDisabled ? .tjGray4 : .tjPrimaryMain)
+            .overlay {
+                Text(title)
+                    .font(.pretendardMedium(16))
+                    .foregroundStyle(.white)
+            }
+            .onTapGesture {
+                action()
+            }
+            .disabled(isDisabled)
     }
 }
 

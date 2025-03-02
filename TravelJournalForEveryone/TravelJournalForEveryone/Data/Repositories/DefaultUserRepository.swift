@@ -18,8 +18,10 @@ final class DefaultUserRepository: UserRepository {
 
 final class MockUserRepository: UserRepository {
     func validateNickname(_ nickname: String) -> AnyPublisher<String, Error> {
-        return Just("valid")
+        return ["valid", "valid", "valid", "containsBadWord", "duplicate"]
+            .randomElement().publisher
             .setFailureType(to: Error.self)
+            .delay(for: .seconds(1.5), scheduler: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }
