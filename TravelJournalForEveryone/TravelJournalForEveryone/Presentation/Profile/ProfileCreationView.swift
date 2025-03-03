@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct ProfileCreationView: View {
-//    @StateObject private var viewModel = ProfileCreationViewModel(
-//        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
-//    )
     @StateObject var viewModel: ProfileCreationViewModel
     
     var isEditingProfile: Bool = false
