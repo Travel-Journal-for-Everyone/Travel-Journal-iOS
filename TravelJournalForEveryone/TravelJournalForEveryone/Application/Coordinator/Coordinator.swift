@@ -1,0 +1,78 @@
+//
+//  Coordinator.swift
+//  TravelJournalForEveryone
+//
+//  Created by 김성민 on 2/25/25.
+//
+
+import SwiftUI
+
+protocol CoordinatorProtocol: ObservableObject {
+    var myJournalPath: NavigationPath { get set }
+    var searchPath: NavigationPath { get set }
+    var explorePath: NavigationPath { get set }
+    var profilePath: NavigationPath { get set }
+    
+    var selectedTab: Tab { get set }
+    
+    func push(_ screen: Screen)
+    func pop()
+    func popToRoot()
+}
+
+final class DefaultCoordinator: CoordinatorProtocol {
+    @Published var myJournalPath =  NavigationPath()
+    @Published var searchPath =  NavigationPath()
+    @Published var explorePath =  NavigationPath()
+    @Published var profilePath =  NavigationPath()
+    
+    var selectedTab: Tab = .myJournal
+    
+    func push(_ screen: Screen) {
+        switch selectedTab {
+        case .myJournal:
+            myJournalPath.append(screen)
+        case .search:
+            searchPath.append(screen)
+        case .explore:
+            explorePath.append(screen)
+        case .profile:
+            profilePath.append(screen)
+        }
+    }
+    
+    func pop() {
+        switch selectedTab {
+        case .myJournal:
+            myJournalPath.removeLast()
+        case .search:
+            searchPath.removeLast()
+        case .explore:
+            explorePath.removeLast()
+        case .profile:
+            profilePath.removeLast()
+        }
+    }
+    
+    func popToRoot() {
+        switch selectedTab {
+        case .myJournal:
+            myJournalPath.removeLast(myJournalPath.count)
+        case .search:
+            searchPath.removeLast(searchPath.count)
+        case .explore:
+            explorePath.removeLast(explorePath.count)
+        case .profile:
+            profilePath.removeLast(profilePath.count)
+        }
+    }
+    
+    @MainActor
+    @ViewBuilder
+    func build(_ screen: Screen) -> some View {
+        switch screen {
+        case .myJournal:
+            MyJournalView()
+        }
+    }
+}

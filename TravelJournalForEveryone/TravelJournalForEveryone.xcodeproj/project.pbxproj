@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		428FB84E2D6C64230001B414 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 428FB84D2D6C64230001B414 /* KakaoSDK */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		424C121F2D65B73700ABBE8B /* TravelJournalForEveryone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelJournalForEveryone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				428FB84E2D6C64230001B414 /* KakaoSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = TravelJournalForEveryone;
 			packageProductDependencies = (
+				428FB84D2D6C64230001B414 /* KakaoSDK */,
 			);
 			productName = TravelJournalForEveryone;
 			productReference = 424C121F2D65B73700ABBE8B /* TravelJournalForEveryone.app */;
@@ -108,6 +114,9 @@
 			);
 			mainGroup = 424C12162D65B73700ABBE8B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				428FB84C2D6C64230001B414 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 424C12202D65B73700ABBE8B /* Products */;
 			projectDirPath = "";
@@ -262,6 +271,8 @@
 		};
 		424C122E2D65B73800ABBE8B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 424C12212D65B73700ABBE8B /* TravelJournalForEveryone */;
+			baseConfigurationReferenceRelativePath = Resources/Secrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -298,6 +309,8 @@
 		};
 		424C122F2D65B73800ABBE8B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 424C12212D65B73700ABBE8B /* TravelJournalForEveryone */;
+			baseConfigurationReferenceRelativePath = Resources/Secrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -354,6 +367,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		428FB84C2D6C64230001B414 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		428FB84D2D6C64230001B414 /* KakaoSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 428FB84C2D6C64230001B414 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 424C12172D65B73700ABBE8B /* Project object */;
 }

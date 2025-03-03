@@ -8,47 +8,69 @@
 import SwiftUI
 
 struct ProfileCreationView: View {
+//    @StateObject private var viewModel = ProfileCreationViewModel(
+//        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+//    )
+    @StateObject var viewModel: ProfileCreationViewModel
+    
     var isEditingProfile: Bool = false
     
     // TODO: - 임시로 뷰에 구현
-    @State var nicknameString = ""
     @State var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
     
     @State var isTappedProfileVisibilityScopeButton: Bool = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            ProfileImageView(viewType: .profileCreation)
-                .overlay(alignment: .bottomTrailing) {
-                    cameraIconView
+        ZStack {
+            Color.white.ignoresSafeArea()
+            
+            GeometryReader { _ in
+                VStack(spacing: 0) {
+                    ProfileImageView(viewType: .profileCreation)
+                        .overlay(alignment: .bottomTrailing) {
+                            cameraIconView
+                        }
+                        .onTapGesture {
+                            // TODO: - 앨범에서 사진 선택 기능 넣기
+                            hideKeyboard()
+                            isTappedProfileVisibilityScopeButton = false
+                            print("앨범에서 사진 선택")
+                        }
+                        .padding(.top, 30)
+                        .padding(.bottom, 40)
+                    
+                    VStack(spacing: 15) {
+                        userInfoInputAreaFor(.nickname)
+                        
+                        userInfoInputAreaFor(.profileVisibilityScope)
+                            .padding(.bottom, 45)
+                    }
+                    
+                    Spacer()
+                    
+                    TJButton(
+                        title: isEditingProfile ? "수정 완료" : "작성 완료",
+                        isDisabled: viewModel.state.isDisableCompletionButton)
+                    {
+                        viewModel.send(.tappedCompletionButton)
+                    }
+                    .padding(.bottom, 17)
                 }
-                .onTapGesture {
-                    // TODO: - 앨범에서 사진 선택 기능 넣기
-                    print("앨범에서 사진 선택")
-                }
-                .padding(.top, 30)
-                .padding(.bottom, 40)
-            
-            VStack(spacing: 15) {
-                userInfoInputAreaFor(.nickname)
-                
-                userInfoInputAreaFor(.profileVisibilityScope)
+                .padding(.horizontal, 16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea(.keyboard, edges: .bottom)
             }
-            
-            Spacer()
-            
-            TJButton(
-                title: isEditingProfile ? "수정 완료" : "작성 완료",
-                isDisabled: false)
-            {
-                
-            }
-            .padding(.bottom, 17)
         }
-        .padding(.horizontal, 16)
         .customNavigationBar {
             Text(isEditingProfile ? "프로필 수정" : "프로필 작성")
                 .font(.pretendardMedium(17))
+        }
+        .onTapGesture {
+            hideKeyboard()
+            isTappedProfileVisibilityScopeButton = false
+        }
+        .onAppear {
+            viewModel.send(.viewOnAppear)
         }
     }
     
@@ -90,24 +112,44 @@ struct ProfileCreationView: View {
                     .frame(height: 50)
                     .foregroundStyle(.tjGray6)
                     .overlay {
-                        TextField("닉네임을 입력하세요", text: $nicknameString)
-                            .font(.pretendardRegular(16))
-                            .padding(.horizontal, 20)
+                        TextField("닉네임을 입력하세요 (2~12자)", text: Binding(
+                            get: { viewModel.state.tempNickname },
+                            set: { viewModel.send(.enterNickname($0)) }
+                        ))
+                        .maxLength(text: Binding(
+                            get: { viewModel.state.tempNickname },
+                            set: { viewModel.send(.enterNickname($0)) }
+                        ), 12)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .font(.pretendardRegular(16))
+                        .padding(.horizontal, 20)
+                        .submitLabel(.done)
+                        .onSubmit {
+                            viewModel.send(.tappedNicknameCheckButton)
+                        }
                     }
                 
                 TJButton(
-                    title: "중복 확인",
-                    isDisabled: false,
+                    title: viewModel.state.isCheckingNickname ? "" : "중복 확인",
+                    isDisabled: viewModel.state.isDisableNicknameCheckButton,
                     size: .short
                 ) {
+                    hideKeyboard()
+                    isTappedProfileVisibilityScopeButton = false
                     
+                    viewModel.send(.tappedNicknameCheckButton)
+                }
+                .overlay {
+                    if viewModel.state.isCheckingNickname {
+                        ProgressView()
+                    }
                 }
             }
             
-            // TODO: - 에러 문구 로직 필요
-            Text("")
+            Text(viewModel.state.nicknameValidationMessage)
                 .font(.pretendardRegular(12))
-                .foregroundStyle(.tjRed)
+                .foregroundStyle(viewModel.state.messageColor)
         }
     }
     
@@ -118,29 +160,31 @@ struct ProfileCreationView: View {
                     Array(ProfileVisibilityScope.allCases.enumerated()),
                     id: \.offset
                 ) { index, scope in
-                    Button {
-                        // MARK: - 프로필 공개 범위 선택 액션
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 5) {
+                            Text(scope.title)
+                                .font(.pretendardMedium(16))
+                            
+                            Image(scope.imageResourceString)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+                            
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(.black)
+                        
+                        Text(scope.description)
+                            .font(.pretendardRegular(14))
+                            .foregroundStyle(.tjGray2)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
                         profileVisibilityScope  = scope
                         isTappedProfileVisibilityScopeButton.toggle()
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack(spacing: 5) {
-                                Text(scope.title)
-                                    .font(.pretendardMedium(16))
-                                
-                                Image(scope.imageResourceString)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 16, height: 16)
-                                
-                                Spacer()
-                            }
-                            .foregroundStyle(.black)
-                            
-                            Text(scope.description)
-                                .font(.pretendardRegular(14))
-                                .foregroundStyle(.tjGray2)
-                        }
+                        
+                        viewModel.send(.tappedProfileVisibilityScope(scope))
                     }
                     .padding(.horizontal, 20)
                     
@@ -159,10 +203,10 @@ struct ProfileCreationView: View {
                             .stroke(.tjGray5, lineWidth: 1)
                     }
             }
-            .offset(y: isTappedProfileVisibilityScopeButton ? 51 : 0)
+            .offset(y: isTappedProfileVisibilityScopeButton ? 50 : 0)
             .opacity(isTappedProfileVisibilityScopeButton ? 1 : 0)
             .animation(
-                .easeInOut(duration: 0.2),
+                .easeIn(duration: 0.15),
                 value: isTappedProfileVisibilityScopeButton
             )
             
@@ -196,6 +240,7 @@ struct ProfileCreationView: View {
                     .padding(.horizontal, 20)
                 }
                 .onTapGesture {
+                    hideKeyboard()
                     isTappedProfileVisibilityScopeButton.toggle()
                 }
         }
@@ -203,7 +248,11 @@ struct ProfileCreationView: View {
 }
 
 #Preview {
-    ProfileCreationView()
+    ProfileCreationView(
+        viewModel: ProfileCreationViewModel(
+            nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+        )
+    )
 }
 
 extension ProfileCreationView {
