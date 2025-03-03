@@ -53,7 +53,11 @@ struct LoginView: View {
                 get: { authViewModel.state.isPresentedProfileCreationView },
                 set: { authViewModel.send(.isPresentedProfileCreationView($0)) }
             )) {
-                ProfileCreationView()
+                ProfileCreationView(
+                    viewModel: ProfileCreationViewModel(
+                        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+                    )
+                )
             }
         }
     }

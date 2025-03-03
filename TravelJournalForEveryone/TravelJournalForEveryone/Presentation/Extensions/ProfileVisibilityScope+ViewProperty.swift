@@ -24,7 +24,6 @@ extension ProfileVisibilityScope {
         }
     }
     
-    // MARK: - 추후에 변경될 수 있음
     var imageResourceString: String {
         switch self {
         case .publicProfile: "TJGlobe"

@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct ProfileCreationView: View {
-    @StateObject private var viewModel = ProfileCreationViewModel(
-        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
-    )
+//    @StateObject private var viewModel = ProfileCreationViewModel(
+//        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+//    )
+    @StateObject var viewModel: ProfileCreationViewModel
     
     var isEditingProfile: Bool = false
     
@@ -146,7 +147,7 @@ struct ProfileCreationView: View {
                 }
             }
             
-            Text(viewModel.state.errorMessage)
+            Text(viewModel.state.nicknameValidationMessage)
                 .font(.pretendardRegular(12))
                 .foregroundStyle(viewModel.state.messageColor)
         }
@@ -247,7 +248,11 @@ struct ProfileCreationView: View {
 }
 
 #Preview {
-    ProfileCreationView()
+    ProfileCreationView(
+        viewModel: ProfileCreationViewModel(
+            nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+        )
+    )
 }
 
 extension ProfileCreationView {

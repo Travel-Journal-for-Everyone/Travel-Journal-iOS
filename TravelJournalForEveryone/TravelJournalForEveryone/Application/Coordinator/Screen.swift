@@ -7,10 +7,11 @@
 
 import Foundation
 
-//enum Screen: Identifiable, Hashable {
 enum Screen {
     // MyJournal Tab
     case myJournal
     
-    // var id: Self { return self }
+    // Search Tab
+    // Explore Tab
+    // Profile Tab
 }

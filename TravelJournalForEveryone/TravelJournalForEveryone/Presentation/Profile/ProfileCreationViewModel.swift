@@ -13,9 +13,10 @@ struct ProfileCreationModelState {
     var profileImageString: String = ""
     var nickname: String = ""
     var tempNickname: String = ""
-    var errorMessage: String = ""
+    var nicknameValidationMessage: String = ""
     var messageColor: Color = .tjRed
-    var profileVisibilityScopre: ProfileVisibilityScope = .publicProfile
+    var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
+    
     var isDisableNicknameCheckButton: Bool = true
     var isDisableCompletionButton: Bool = true
     var isCheckingNickname: Bool = false
@@ -116,13 +117,13 @@ final class ProfileCreationViewModel: ObservableObject {
         
         switch result {
         case .valid, .empty:
-            state.errorMessage = ""
+            state.nicknameValidationMessage = ""
         case .tooShort:
-            state.errorMessage = "2자 이상 입력해주세요."
+            state.nicknameValidationMessage = "2자 이상 입력해주세요."
         case .containsWhitespace:
-            state.errorMessage = "띄어쓰기는 사용할 수 없습니다."
+            state.nicknameValidationMessage = "띄어쓰기는 사용할 수 없습니다."
         case .invalidCharacters:
-            state.errorMessage = "한글, 영문, 숫자만 사용할 수 있습니다."
+            state.nicknameValidationMessage = "한글, 영문, 숫자만 사용할 수 있습니다."
         }
     }
     
@@ -137,11 +138,11 @@ final class ProfileCreationViewModel: ObservableObject {
         
         switch result {
         case .valid:
-            state.errorMessage = "사용 가능한 닉네임 입니다."
+            state.nicknameValidationMessage = "사용 가능한 닉네임 입니다."
         case .containsBadWord:
-            state.errorMessage = "이 닉네임은 사용할 수 없습니다."
+            state.nicknameValidationMessage = "이 닉네임은 사용할 수 없습니다."
         case .duplicate:
-            state.errorMessage = "이미 사용중인 닉네임 입니다."
+            state.nicknameValidationMessage = "이미 사용중인 닉네임 입니다."
         case .unknownStringCode:
             break
         }

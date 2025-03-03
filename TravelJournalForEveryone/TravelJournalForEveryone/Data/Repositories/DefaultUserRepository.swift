@@ -9,9 +9,10 @@ import Foundation
 import Combine
 
 final class DefaultUserRepository: UserRepository {
-    // 서버와 통신할 수 있는 Service 객체를 가진다.
+    // 서버와 통신할 수 있는 Network Service 객체를 가진다.
+    
     func validateNickname(_ nickname: String) -> AnyPublisher<String, Error> {
-        // Service 객체를 String 데이터를 받는다.
+        // Network Service 객체를 통해 String 데이터를 받는다.
         Empty().eraseToAnyPublisher()
     }
 }

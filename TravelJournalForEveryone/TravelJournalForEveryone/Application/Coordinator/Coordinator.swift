@@ -15,7 +15,7 @@ protocol CoordinatorProtocol: ObservableObject {
     
     var selectedTab: Tab { get set }
     
-    func push(_ screen:  Screen)
+    func push(_ screen: Screen)
     func pop()
     func popToRoot()
 }
