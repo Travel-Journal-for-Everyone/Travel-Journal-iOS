@@ -90,7 +90,7 @@ struct ProfileCreationView: View {
     func userInfoInputAreaFor(_ type: InputType) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(type.title)
-                .font(.pretendardMedium(18))
+                .font(.pretendardMedium(16))
                 .padding(.bottom, 15)
             
             switch type {

@@ -34,7 +34,7 @@ struct SignupCompletionView: View {
             
             Spacer()
             
-            TJButton(title: "여행 일지 작성하러 가기") {
+            TJButton(title: "모두의 여행 시작하기") {
                 
             }
             .padding(.bottom, 17)
