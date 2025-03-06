@@ -11,6 +11,7 @@ import Alamofire
 
 enum NetworkError: Error {
     case invalidURL
+    case invalidResponse
     case unauthorized
     case forbidden
     case notFound
@@ -40,35 +41,47 @@ final class DefaultNetworkService: NetworkService {
         )
         .validate()
         .publishDecodable(type: T.self)
-        .value()
-        /* 간단한 에러처리 방식
-         .mapError { error in
-         print(error.localizedDescription)
-         return NetworkError.networkingError(error: error)
-         }
-         */
-        .mapError { afError -> NetworkError in
-            switch afError {
-            case .invalidURL(let url):
-                print("Invalid URL: \(url)")
-                return .invalidURL
-            case .responseValidationFailed(let reason):
-                switch reason {
-                case .unacceptableStatusCode(let code):
-                    if code == 401 { return .unauthorized }
-                    if code == 403 { return .forbidden }
-                    if code == 404 { return .notFound }
-                    if code >= 500 { return .serverError(statusCode: code) }
-                    return .networkingError(error: afError)
+        .tryMap { dataResponse in
+            guard let httpResponse = dataResponse.response,
+                  let value = dataResponse.value
+            else { throw NetworkError.invalidResponse }
+            
+            self.extractAccessToken(from: httpResponse)
+            
+            return value
+        }
+        .mapError { error -> NetworkError in
+            if let afError = error as? AFError {
+                switch afError {
+                case .invalidURL(let url):
+                    print("Invalid URL: \(url)")
+                    return .invalidURL
+                case .responseValidationFailed(let reason):
+                    switch reason {
+                    case .unacceptableStatusCode(let code):
+                        if code == 401 { return .unauthorized }
+                        if code == 403 { return .forbidden }
+                        if code == 404 { return .notFound }
+                        if code >= 500 { return .serverError(statusCode: code) }
+                        return .networkingError(error: afError)
+                    default:
+                        return .networkingError(error: afError)
+                    }
+                case .responseSerializationFailed(reason: let reason):
+                    return .decodingError(error: reason as! Error)
                 default:
                     return .networkingError(error: afError)
                 }
-            case .responseSerializationFailed(reason: let reason):
-                return .decodingError(error: reason as! Error)
-            default:
-                return .networkingError(error: afError)
             }
+            
+            return .networkingError(error: error)
         }
         .eraseToAnyPublisher()
+    }
+    
+    private func extractAccessToken(from response: HTTPURLResponse) {
+        if let accessToken = response.allHeaderFields["Authorization"] as? String {
+            print("📌 accessToken: \(accessToken)")
+        }
     }
 }
