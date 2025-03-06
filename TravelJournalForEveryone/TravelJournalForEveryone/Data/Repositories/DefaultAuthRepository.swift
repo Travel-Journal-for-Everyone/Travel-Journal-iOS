@@ -11,9 +11,14 @@ import Combine
 final class DefaultAuthRepository: AuthRepository {
     
     private let kakaoAuthService: KakaoAuthService
+    private let appleAuthService: AppleAuthService
     
-    init(kakaoAuthService: KakaoAuthService) {
+    init(
+        kakaoAuthService: KakaoAuthService,
+        appleAuthService: AppleAuthService
+    ) {
         self.kakaoAuthService = kakaoAuthService
+        self.appleAuthService = appleAuthService
     }
     
     func loginWith(_ loginType: LoginType) -> AnyPublisher<String?, Error> {
@@ -21,7 +26,7 @@ final class DefaultAuthRepository: AuthRepository {
         case .kakao:
             return kakaoAuthService.login()
         case .apple:
-            return Empty().eraseToAnyPublisher()
+            return appleAuthService.login()
         case .google:
             return Empty().eraseToAnyPublisher()
         }

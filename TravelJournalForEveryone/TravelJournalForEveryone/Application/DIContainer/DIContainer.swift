@@ -12,10 +12,13 @@ final class DIContainer {
     
     // MARK: - Services
     lazy var kakaoAuthService = DefaultKakaoAuthService()
-    
+    lazy var appleAuthService = DefaultAppleAuthService()
     
     // MARK: - Repositories
-    lazy var authRepository = DefaultAuthRepository(kakaoAuthService: kakaoAuthService)
+    lazy var authRepository = DefaultAuthRepository(
+        kakaoAuthService: kakaoAuthService,
+        appleAuthService: appleAuthService
+    )
     lazy var userRepository = DefaultUserRepository()
     
     // mock
