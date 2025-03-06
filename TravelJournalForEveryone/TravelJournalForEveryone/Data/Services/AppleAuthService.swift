@@ -18,7 +18,6 @@ final class DefaultAppleAuthService: NSObject, AppleAuthService {
     
     func login() -> AnyPublisher<String?, Error> {
         let request = ASAuthorizationAppleIDProvider().createRequest()
-        request.requestedScopes = [.email, .fullName]
         
         let controller = ASAuthorizationController(authorizationRequests: [request])
         controller.delegate = self
@@ -41,7 +40,10 @@ extension DefaultAppleAuthService: ASAuthorizationControllerDelegate, ASAuthoriz
     }
     
     // apple id 연동 성공 시
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+    func authorizationController(
+        controller: ASAuthorizationController,
+        didCompleteWithAuthorization authorization: ASAuthorization
+    ) {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
 
         let name = appleIDCredential.fullName
@@ -59,7 +61,10 @@ extension DefaultAppleAuthService: ASAuthorizationControllerDelegate, ASAuthoriz
     }
     
     // apple id 연동 실패 시
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+    func authorizationController(
+        controller: ASAuthorizationController,
+        didCompleteWithError error: Error
+    ) {
         print("Apple Login Failed \(error)")
     }
 }
