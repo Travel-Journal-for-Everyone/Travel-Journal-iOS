@@ -15,4 +15,12 @@ extension Bundle {
         
         return result
     }
+    
+    var serverHostURL: String {
+        guard let result = infoDictionary?["SERVER_HOST_URL"] as? String else {
+            fatalError("SERVER_HOST_URL not found in Info.plist")
+        }
+        
+        return result
+    }
 }
