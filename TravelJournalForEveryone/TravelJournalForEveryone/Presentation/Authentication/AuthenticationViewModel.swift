@@ -83,7 +83,23 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleAppleLogin() {
-        print("appleLogin")
+        loginUsecase.execute(loginType: .apple)
+            .sink {  completion in
+                switch completion {
+                case .finished:
+                    print("apple login success")
+                case .failure(let error):
+                    print("Apple Login Error: \(error.localizedDescription)")
+                }
+            } receiveValue: { [weak self] token in
+                // 임시
+                guard let self else { return }
+                if let token {
+                    self.state.isPresentedProfileCreationView = true
+                }
+                return
+            }
+            .store(in: &cancellables)
     }
     
     private func handleGoogleLogin() {
