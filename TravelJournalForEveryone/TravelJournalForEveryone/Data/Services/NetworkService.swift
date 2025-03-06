@@ -16,7 +16,7 @@ enum NetworkError: Error {
     case forbidden
     case notFound
     case serverError(statusCode: Int)
-    case decodingError(error: Error)
+    case decodingError
     case networkingError(error: Error)
 }
 
@@ -68,7 +68,7 @@ final class DefaultNetworkService: NetworkService {
                         return .networkingError(error: afError)
                     }
                 case .responseSerializationFailed(reason: let reason):
-                    return .decodingError(error: reason as! Error)
+                    return .decodingError
                 default:
                     return .networkingError(error: afError)
                 }
