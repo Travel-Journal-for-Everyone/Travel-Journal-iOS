@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ProfileCreationView: View {
     @StateObject var viewModel: ProfileCreationViewModel
+    @State private var selectedItem: PhotosPickerItem? = nil
     
     var isEditingProfile: Bool = false
     
@@ -22,19 +24,18 @@ struct ProfileCreationView: View {
             Color.white.ignoresSafeArea()
             
             GeometryReader { _ in
+            
                 VStack(spacing: 0) {
-                    ProfileImageView(viewType: .profileCreation)
-                        .overlay(alignment: .bottomTrailing) {
-                            cameraIconView
-                        }
-                        .onTapGesture {
-                            // TODO: - 앨범에서 사진 선택 기능 넣기
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
+                        ProfileImageView(viewType: .profileCreation)
+                    }
+                    .simultaneousGesture(
+                        TapGesture().onEnded {
                             hideKeyboard()
                             isTappedProfileVisibilityScopeButton = false
-                            print("앨범에서 사진 선택")
-                        }
-                        .padding(.top, 30)
-                        .padding(.bottom, 40)
+                    })
+                    .padding(.top, 30)
+                    .padding(.bottom, 40)
                     
                     VStack(spacing: 15) {
                         userInfoInputAreaFor(.nickname)
@@ -55,7 +56,7 @@ struct ProfileCreationView: View {
                 }
                 .padding(.horizontal, 16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .ignoresSafeArea(.keyboard, edges: .bottom)
+//                .ignoresSafeArea(.keyboard, edges: .bottom)
             }
         }
         .customNavigationBar {

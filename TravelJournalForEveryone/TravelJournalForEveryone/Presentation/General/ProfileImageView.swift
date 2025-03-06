@@ -18,6 +18,27 @@ struct ProfileImageView: View {
                 width: viewType.size,
                 height: viewType.size
             )
+            .overlay(alignment: .bottomTrailing) {
+                if viewType == .profileCreation || viewType == .profileEditing {
+                    cameraIconView
+                }
+            }
+    }
+    
+    private var cameraIconView: some View {
+        Circle()
+            .foregroundStyle(.tjWhite)
+            .frame(width: 40, height: 40)
+            .overlay {
+                Circle()
+                    .stroke(.tjGray6, lineWidth: 1)
+            }
+            .overlay {
+                Image("TJCamera.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 21)
+            }
     }
 }
 
