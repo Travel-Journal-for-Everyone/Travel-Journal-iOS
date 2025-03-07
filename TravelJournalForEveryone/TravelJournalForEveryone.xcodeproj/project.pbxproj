@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4250454B2D7A8A630052E2DA /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 4250454A2D7A8A630052E2DA /* GoogleSignIn */; };
 		428FB84E2D6C64230001B414 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 428FB84D2D6C64230001B414 /* KakaoSDK */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				428FB84E2D6C64230001B414 /* KakaoSDK in Frameworks */,
+				4250454B2D7A8A630052E2DA /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +86,7 @@
 			name = TravelJournalForEveryone;
 			packageProductDependencies = (
 				428FB84D2D6C64230001B414 /* KakaoSDK */,
+				4250454A2D7A8A630052E2DA /* GoogleSignIn */,
 			);
 			productName = TravelJournalForEveryone;
 			productReference = 424C121F2D65B73700ABBE8B /* TravelJournalForEveryone.app */;
@@ -116,6 +119,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				428FB84C2D6C64230001B414 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				425045492D7A8A630052E2DA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 424C12202D65B73700ABBE8B /* Products */;
@@ -381,6 +385,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		425045492D7A8A630052E2DA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 		428FB84C2D6C64230001B414 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
@@ -392,6 +404,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4250454A2D7A8A630052E2DA /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 425045492D7A8A630052E2DA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
 		428FB84D2D6C64230001B414 /* KakaoSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 428FB84C2D6C64230001B414 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
