@@ -12,11 +12,17 @@
 				<string>kakao${KAKAO_NATIVE_APPKEY}</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(REVERSED_CLIENT_ID)</string>
+			</array>
+		</dict>
 	</array>
 	<key>KAKAO_NATIVE_APPKEY</key>
 	<string>$(KAKAO_NATIVE_APPKEY)</string>
-	<key>SERVER_HOST_URL</key>
-	<string>$(SERVER_HOST_URL)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>
@@ -24,6 +30,8 @@
 		<string>kakaoplus</string>
 		<string>kakaotalk</string>
 	</array>
+	<key>SERVER_HOST_URL</key>
+	<string>$(SERVER_HOST_URL)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Bold.otf</string>
