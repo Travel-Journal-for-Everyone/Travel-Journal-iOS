@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import PhotosUI
 
 // MARK: - State
 struct ProfileCreationModelState {
@@ -20,6 +21,9 @@ struct ProfileCreationModelState {
     var isDisableNicknameCheckButton: Bool = true
     var isDisableCompletionButton: Bool = true
     var isCheckingNickname: Bool = false
+    
+    var selectedItem: PhotosPickerItem? = nil
+    var selectedImage: TransferableImage?
 }
 
 // MARK: - Intent
@@ -29,9 +33,12 @@ enum ProfileCreationIntent {
     case tappedNicknameCheckButton
     case tappedProfileVisibilityScope(ProfileVisibilityScope)
     case tappedCompletionButton
+    case selectedPhoto(PhotosPickerItem?)
+    case changeImage
 }
 
 // MARK: - ViewModel(State + Intent)
+@MainActor
 final class ProfileCreationViewModel: ObservableObject {
     @Published private(set) var state = ProfileCreationModelState()
     
@@ -39,9 +46,8 @@ final class ProfileCreationViewModel: ObservableObject {
     @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
     
     private let nicknameCheckUseCase: NicknameCheckUseCase
-    
     private var cancellables: Set<AnyCancellable> = []
-    
+
     init(nicknameCheckUseCase: NicknameCheckUseCase) {
         self.nicknameCheckUseCase = nicknameCheckUseCase
         
@@ -82,6 +88,13 @@ final class ProfileCreationViewModel: ObservableObject {
             print("Tapped: 계정 범위 설정 - \(profileVisibilityScope)")
         case .tappedCompletionButton:
             handleTappedCompletionButton()
+        case .selectedPhoto(let item):
+            state.selectedItem = item
+            send(.changeImage)
+        case .changeImage:
+            Task {
+                await loadImage()
+            }
         }
     }
     
@@ -147,4 +160,24 @@ final class ProfileCreationViewModel: ObservableObject {
             break
         }
     }
+    
+    private func loadImage() async {
+        guard let item = state.selectedItem else { return }
+        
+        item.loadTransferable(type: TransferableImage.self) { result in
+            Task { @MainActor [weak self] in
+                switch result {
+                case .success(let data):
+                    self?.state.selectedImage = data
+//                    if let image = data?.image {
+//                        self?.state.selectedImage = image
+//                    }
+                case .failure(let failure):
+                    print(failure)
+                }
+            }
+        }
+        
+    }
+    
 }

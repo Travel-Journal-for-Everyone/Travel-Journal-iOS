@@ -9,20 +9,33 @@ import SwiftUI
 
 struct ProfileImageView: View {
     let viewType: ViewType
+    var image: Image?
     
     var body: some View {
-        // TODO: - 추후에 이미지 불러오는 코드로 변경
-        Circle()
-            .foregroundStyle(.tjGray4)
-            .frame(
-                width: viewType.size,
-                height: viewType.size
-            )
-            .overlay(alignment: .bottomTrailing) {
-                if viewType == .profileCreation || viewType == .profileEditing {
-                    cameraIconView
+        // 임시...
+        if let image {
+            image
+                .frame(
+                    width: viewType.size,
+                    height: viewType.size
+                ).overlay(alignment: .bottomTrailing) {
+                    if viewType == .profileCreation || viewType == .profileEditing {
+                        cameraIconView
+                    }
                 }
-            }
+        } else {
+            Circle()
+                .foregroundStyle(.tjGray4)
+                .frame(
+                    width: viewType.size,
+                    height: viewType.size
+                )
+                .overlay(alignment: .bottomTrailing) {
+                    if viewType == .profileCreation || viewType == .profileEditing {
+                        cameraIconView
+                    }
+                }
+        }
     }
     
     private var cameraIconView: some View {
@@ -43,7 +56,7 @@ struct ProfileImageView: View {
 }
 
 #Preview {
-    ProfileImageView(viewType: .listCell)
+//    ProfileImageView(viewType: .listCell, image: nil)
 }
 
 extension ProfileImageView {

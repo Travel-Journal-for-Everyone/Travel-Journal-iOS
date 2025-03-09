@@ -10,8 +10,6 @@ import PhotosUI
 
 struct ProfileCreationView: View {
     @StateObject var viewModel: ProfileCreationViewModel
-    @State private var selectedItem: PhotosPickerItem? = nil
-    
     var isEditingProfile: Bool = false
     
     // TODO: - 임시로 뷰에 구현
@@ -26,8 +24,20 @@ struct ProfileCreationView: View {
             GeometryReader { _ in
             
                 VStack(spacing: 0) {
-                    PhotosPicker(selection: $selectedItem, matching: .images) {
-                        ProfileImageView(viewType: .profileCreation)
+                    PhotosPicker(selection:
+                                    Binding(get: { viewModel.state.selectedItem },
+                                            set: { newValue in
+                        viewModel.send(.selectedPhoto(newValue))
+                    }),
+                                 matching: .images) {
+
+                        // 여기에 image 매개변수로 viewModel.state.selectedImage를 주고 싶은데...
+                        // 어뜨케 하면 좋을까요 ㅜ
+                        // 아니면 혹시 다른 방법이 잇을가요 ???...
+                        // 분명 해 본 적 잇는 기능인데 아키텍처 도입하구 컨커런시 생기구 이러면서 안됨 도와줘요 마루
+                        ProfileImageView(
+                            viewType: .profileCreation
+                        )
                     }
                     .simultaneousGesture(
                         TapGesture().onEnded {
