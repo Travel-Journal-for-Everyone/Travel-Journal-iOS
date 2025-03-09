@@ -12,23 +12,23 @@ final class DefaultAuthRepository: AuthRepository {
     
     private let kakaoAuthService: KakaoAuthService
     private let appleAuthService: AppleAuthService
+    private let googleAuthService: GoogleAuthService
     
     init(
         kakaoAuthService: KakaoAuthService,
-        appleAuthService: AppleAuthService
+        appleAuthService: AppleAuthService,
+        googleAuthService: GoogleAuthService
     ) {
         self.kakaoAuthService = kakaoAuthService
         self.appleAuthService = appleAuthService
+        self.googleAuthService = googleAuthService
     }
     
     func loginWith(_ loginType: LoginType) -> AnyPublisher<String?, Error> {
         switch loginType {
-        case .kakao:
-            return kakaoAuthService.login()
-        case .apple:
-            return appleAuthService.login()
-        case .google:
-            return Empty().eraseToAnyPublisher()
+        case .kakao: kakaoAuthService.login()
+        case .apple: appleAuthService.login()
+        case .google: googleAuthService.login()
         }
     }
 }
