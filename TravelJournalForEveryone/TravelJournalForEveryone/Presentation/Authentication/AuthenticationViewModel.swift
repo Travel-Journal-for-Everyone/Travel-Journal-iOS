@@ -103,24 +103,24 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleGoogleLogin() {
-        print("googleLogin")
         loginUsecase.execute(loginType: .google)
             .sink { [weak self] completion in
+                guard let self else { return }
                 switch completion {
                 case .finished:
                     print("Google login success")
-                    self?.state.isPresentedProfileCreationView = true
+                    self.state.isPresentedProfileCreationView = true
                 case .failure(let error):
                     print("Google Login Error: \(error.localizedDescription)")
                 }
             } receiveValue: { idToken in
-                // TODO: - idToken 처리
                 guard let idToken else {
                     print("Google Login Error: ID Token 없음")
                     return
                 }
                 
-                print("✅✅✅ \(idToken)")
+                // TODO: - idToken 처리
+                print("Google ID Token: \(idToken)")
             }
             .store(in: &cancellables)
     }
