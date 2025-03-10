@@ -12,19 +12,12 @@ struct ProfileImageView: View {
     var image: Image?
     
     var body: some View {
-        
         profileImageView
             .clipShape(Circle())
             .frame(
                 width: viewType.size,
                 height: viewType.size
             )
-            .overlay(alignment: .bottomTrailing) {
-                if viewType == .profileCreation || viewType == .profileEditing {
-                    cameraIconView
-                }
-            }
-        
     }
     
     private var profileImageView: some View {
@@ -34,26 +27,10 @@ struct ProfileImageView: View {
                     .resizable()
                     .scaledToFill()
             } else {
-                Circle()
+                Image(.defaultProfile)
                     .foregroundStyle(.tjGray4)
             }
         }
-    }
-    
-    private var cameraIconView: some View {
-        Circle()
-            .foregroundStyle(.tjWhite)
-            .frame(width: 40, height: 40)
-            .overlay {
-                Circle()
-                    .stroke(.tjGray6, lineWidth: 1)
-            }
-            .overlay {
-                Image("TJCamera.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 21)
-            }
     }
 }
 

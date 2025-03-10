@@ -34,6 +34,9 @@ struct ProfileCreationView: View {
                             image: state.selectedImage
                         )
                     }
+                    .overlay(alignment: .bottomTrailing) {
+                        cameraIconView
+                    }
                     .simultaneousGesture(
                         TapGesture().onEnded {
                             hideKeyboard()
@@ -90,6 +93,7 @@ struct ProfileCreationView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 21)
             }
+            .allowsHitTesting(false)
     }
     
     func userInfoInputAreaFor(_ type: InputType) -> some View {
