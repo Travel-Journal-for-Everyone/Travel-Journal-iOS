@@ -23,7 +23,7 @@ struct ProfileCreationModelState {
     var isCheckingNickname: Bool = false
     
     var selectedItem: PhotosPickerItem? = nil
-    var selectedImage: TransferableImage?
+    var selectedImage: Image?
 }
 
 // MARK: - Intent
@@ -164,20 +164,19 @@ final class ProfileCreationViewModel: ObservableObject {
     private func loadImage() async {
         guard let item = state.selectedItem else { return }
         
-        item.loadTransferable(type: TransferableImage.self) { result in
+        item.loadTransferable(type: Data.self) { result in
             Task { @MainActor [weak self] in
                 switch result {
                 case .success(let data):
-                    self?.state.selectedImage = data
-//                    if let image = data?.image {
-//                        self?.state.selectedImage = image
-//                    }
+                    guard let data,
+                          let uiImage = UIImage(data: data) else { return }
+                    let image = Image(uiImage: uiImage)
+                    self?.state.selectedImage = image
                 case .failure(let failure):
                     print(failure)
                 }
             }
         }
-        
     }
     
 }

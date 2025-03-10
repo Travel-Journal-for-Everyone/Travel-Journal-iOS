@@ -12,29 +12,31 @@ struct ProfileImageView: View {
     var image: Image?
     
     var body: some View {
-        // 임시...
-        if let image {
-            image
-                .frame(
-                    width: viewType.size,
-                    height: viewType.size
-                ).overlay(alignment: .bottomTrailing) {
-                    if viewType == .profileCreation || viewType == .profileEditing {
-                        cameraIconView
-                    }
+        
+        profileImageView
+            .clipShape(Circle())
+            .frame(
+                width: viewType.size,
+                height: viewType.size
+            )
+            .overlay(alignment: .bottomTrailing) {
+                if viewType == .profileCreation || viewType == .profileEditing {
+                    cameraIconView
                 }
-        } else {
-            Circle()
-                .foregroundStyle(.tjGray4)
-                .frame(
-                    width: viewType.size,
-                    height: viewType.size
-                )
-                .overlay(alignment: .bottomTrailing) {
-                    if viewType == .profileCreation || viewType == .profileEditing {
-                        cameraIconView
-                    }
-                }
+            }
+        
+    }
+    
+    private var profileImageView: some View {
+        Group {
+            if let image {
+                image
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Circle()
+                    .foregroundStyle(.tjGray4)
+            }
         }
     }
     
@@ -56,7 +58,7 @@ struct ProfileImageView: View {
 }
 
 #Preview {
-//    ProfileImageView(viewType: .listCell, image: nil)
+    ProfileImageView(viewType: .listCell, image: nil)
 }
 
 extension ProfileImageView {
