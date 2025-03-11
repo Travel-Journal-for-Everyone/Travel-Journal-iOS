@@ -87,7 +87,7 @@ final class AuthenticationViewModel: ObservableObject {
             .sink {  completion in
                 switch completion {
                 case .finished:
-                    print("apple login success")
+                    print("Apple login success")
                 case .failure(let error):
                     print("Apple Login Error: \(error.localizedDescription)")
                 }
@@ -103,9 +103,26 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleGoogleLogin() {
-        print("googleLogin")
-        // 임시 테스트
-        state.isPresentedProfileCreationView = true
+        loginUsecase.execute(loginType: .google)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                switch completion {
+                case .finished:
+                    print("Google login success")
+                    self.state.isPresentedProfileCreationView = true
+                case .failure(let error):
+                    print("Google Login Error: \(error.localizedDescription)")
+                }
+            } receiveValue: { idToken in
+                guard let idToken else {
+                    print("Google Login Error: ID Token 없음")
+                    return
+                }
+                
+                // TODO: - idToken 처리
+                print("Google ID Token: \(idToken)")
+            }
+            .store(in: &cancellables)
     }
     
     private func handleLogout() { }

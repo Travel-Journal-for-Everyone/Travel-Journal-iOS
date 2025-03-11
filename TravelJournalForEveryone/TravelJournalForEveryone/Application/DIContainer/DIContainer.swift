@@ -13,11 +13,13 @@ final class DIContainer {
     // MARK: - Services
     lazy var kakaoAuthService = DefaultKakaoAuthService()
     lazy var appleAuthService = DefaultAppleAuthService()
+    lazy var googleAuthService = DefaultGoogleAuthService()
     
     // MARK: - Repositories
     lazy var authRepository = DefaultAuthRepository(
         kakaoAuthService: kakaoAuthService,
-        appleAuthService: appleAuthService
+        appleAuthService: appleAuthService,
+        googleAuthService: googleAuthService
     )
     lazy var userRepository = DefaultUserRepository()
     
