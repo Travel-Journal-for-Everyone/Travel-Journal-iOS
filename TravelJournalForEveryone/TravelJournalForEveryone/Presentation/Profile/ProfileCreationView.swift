@@ -67,9 +67,11 @@ struct ProfileCreationView: View {
         }
         .photosPicker(
             isPresented: $isShowingPhotosPicker,
-            selection: Binding( get: { viewModel.state.selectedItem },
-                                set: {  viewModel.send(.selectedPhoto($0)) }),
-                      matching: .images)
+            selection:
+                Binding( get: { viewModel.state.selectedItem },
+                         set: {  viewModel.send(.selectedPhoto($0)) }
+                       ),
+            matching: .images)
         .confirmationDialog("프로필 사진 선택", isPresented: $isShowingDialog, actions: {
             Button("기본 이미지 선택하기") {
                 viewModel.send(.changeDefaultImage)
@@ -101,7 +103,6 @@ struct ProfileCreationView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 21)
             }
-            .allowsHitTesting(false)
     }
     
     func userInfoInputAreaFor(_ type: InputType) -> some View {

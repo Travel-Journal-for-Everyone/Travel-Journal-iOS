@@ -34,7 +34,6 @@ enum ProfileCreationIntent {
     case tappedProfileVisibilityScope(ProfileVisibilityScope)
     case tappedCompletionButton
     case selectedPhoto(PhotosPickerItem?)
-    case changeImage
     case changeDefaultImage
 }
 
@@ -91,8 +90,6 @@ final class ProfileCreationViewModel: ObservableObject {
             handleTappedCompletionButton()
         case .selectedPhoto(let item):
             state.selectedItem = item
-            send(.changeImage)
-        case .changeImage:
             Task {
                 await loadImage()
             }
