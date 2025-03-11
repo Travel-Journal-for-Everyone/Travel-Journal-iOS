@@ -9,20 +9,33 @@ import SwiftUI
 
 struct ProfileImageView: View {
     let viewType: ViewType
+    var image: Image?
     
     var body: some View {
-        // TODO: - 추후에 이미지 불러오는 코드로 변경
-        Circle()
-            .foregroundStyle(.tjGray4)
+        profileImageView
+            .clipShape(Circle())
             .frame(
                 width: viewType.size,
                 height: viewType.size
             )
     }
+    
+    private var profileImageView: some View {
+        Group {
+            if let image {
+                image
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Image(.defaultProfile)
+                    .foregroundStyle(.tjGray4)
+            }
+        }
+    }
 }
 
 #Preview {
-    ProfileImageView(viewType: .listCell)
+    ProfileImageView(viewType: .listCell, image: nil)
 }
 
 extension ProfileImageView {

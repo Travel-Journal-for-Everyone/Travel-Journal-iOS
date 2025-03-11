@@ -66,5 +66,6 @@ extension DefaultAppleAuthService: ASAuthorizationControllerDelegate, ASAuthoriz
         didCompleteWithError error: Error
     ) {
         print("Apple Login Failed \(error)")
+        subject.send(completion: .failure(error))
     }
 }

@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ProfileCreationView: View {
     @StateObject var viewModel: ProfileCreationViewModel
-    
     var isEditingProfile: Bool = false
     
     // TODO: - 임시로 뷰에 구현
     @State var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
     
     @State var isTappedProfileVisibilityScopeButton: Bool = false
+    @State private var isShowingDialog: Bool = false
+    @State private var isShowingPhotosPicker: Bool = false
     
     var body: some View {
         ZStack {
@@ -23,22 +25,24 @@ struct ProfileCreationView: View {
             
             GeometryReader { _ in
                 VStack(spacing: 0) {
-                    ProfileImageView(viewType: .profileCreation)
-                        .overlay(alignment: .bottomTrailing) {
-                            cameraIconView
-                        }
-                        .onTapGesture {
-                            // TODO: - 앨범에서 사진 선택 기능 넣기
-                            hideKeyboard()
-                            isTappedProfileVisibilityScopeButton = false
-                            print("앨범에서 사진 선택")
-                        }
-                        .padding(.top, 30)
-                        .padding(.bottom, 40)
+                    
+                    ProfileImageView(
+                        viewType: .profileCreation,
+                        image: viewModel.state.selectedImage
+                    )
+                    .overlay(alignment: .bottomTrailing) {
+                        cameraIconView
+                    }
+                    .onTapGesture {
+                        hideKeyboard()
+                        isTappedProfileVisibilityScopeButton = false
+                        isShowingDialog = true
+                    }
+                    .padding(.top, 30)
+                    .padding(.bottom, 40)
                     
                     VStack(spacing: 15) {
                         userInfoInputAreaFor(.nickname)
-                        
                         userInfoInputAreaFor(.profileVisibilityScope)
                             .padding(.bottom, 45)
                     }
@@ -55,13 +59,27 @@ struct ProfileCreationView: View {
                 }
                 .padding(.horizontal, 16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .ignoresSafeArea(.keyboard, edges: .bottom)
             }
         }
         .customNavigationBar {
             Text(isEditingProfile ? "프로필 수정" : "프로필 작성")
                 .font(.pretendardMedium(17))
         }
+        .photosPicker(
+            isPresented: $isShowingPhotosPicker,
+            selection:
+                Binding( get: { viewModel.state.selectedItem },
+                         set: {  viewModel.send(.selectedPhoto($0)) }
+                       ),
+            matching: .images)
+        .confirmationDialog("프로필 사진 선택", isPresented: $isShowingDialog, actions: {
+            Button("기본 이미지 선택하기") {
+                viewModel.send(.changeDefaultImage)
+            }
+            Button("앨범에서 가져오기") {
+                isShowingPhotosPicker = true
+            }
+        })
         .onTapGesture {
             hideKeyboard()
             isTappedProfileVisibilityScopeButton = false
