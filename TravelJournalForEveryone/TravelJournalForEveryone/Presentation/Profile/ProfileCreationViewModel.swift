@@ -35,6 +35,7 @@ enum ProfileCreationIntent {
     case tappedCompletionButton
     case selectedPhoto(PhotosPickerItem?)
     case changeImage
+    case changeDefaultImage
 }
 
 // MARK: - ViewModel(State + Intent)
@@ -95,6 +96,9 @@ final class ProfileCreationViewModel: ObservableObject {
             Task {
                 await loadImage()
             }
+        case .changeDefaultImage:
+            state.selectedImage = nil
+            state.selectedItem = nil
         }
     }
     

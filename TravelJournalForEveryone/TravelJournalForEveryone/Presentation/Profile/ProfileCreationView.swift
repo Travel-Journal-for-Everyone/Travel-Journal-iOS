@@ -16,6 +16,8 @@ struct ProfileCreationView: View {
     @State var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
     
     @State var isTappedProfileVisibilityScopeButton: Bool = false
+    @State private var isShowingDialog: Bool = false
+    @State private var isShowingPhotosPicker: Bool = false
     
     var body: some View {
         ZStack {
@@ -23,31 +25,24 @@ struct ProfileCreationView: View {
             
             GeometryReader { _ in
                 VStack(spacing: 0) {
-                    PhotosPicker(
-                        selection:
-                            Binding( get: { viewModel.state.selectedItem },
-                                set: {  viewModel.send(.selectedPhoto($0)) }),
-                        matching: .images
-                    ) { [state = viewModel.state] in
-                        ProfileImageView(
-                            viewType: .profileCreation,
-                            image: state.selectedImage
-                        )
-                    }
+                    
+                    ProfileImageView(
+                        viewType: .profileCreation,
+                        image: viewModel.state.selectedImage
+                    )
                     .overlay(alignment: .bottomTrailing) {
                         cameraIconView
                     }
-                    .simultaneousGesture(
-                        TapGesture().onEnded {
-                            hideKeyboard()
-                            isTappedProfileVisibilityScopeButton = false
-                    })
+                    .onTapGesture {
+                        hideKeyboard()
+                        isTappedProfileVisibilityScopeButton = false
+                        isShowingDialog = true
+                    }
                     .padding(.top, 30)
                     .padding(.bottom, 40)
                     
                     VStack(spacing: 15) {
                         userInfoInputAreaFor(.nickname)
-                        
                         userInfoInputAreaFor(.profileVisibilityScope)
                             .padding(.bottom, 45)
                     }
@@ -70,6 +65,19 @@ struct ProfileCreationView: View {
             Text(isEditingProfile ? "프로필 수정" : "프로필 작성")
                 .font(.pretendardMedium(17))
         }
+        .photosPicker(
+            isPresented: $isShowingPhotosPicker,
+            selection: Binding( get: { viewModel.state.selectedItem },
+                                set: {  viewModel.send(.selectedPhoto($0)) }),
+                      matching: .images)
+        .confirmationDialog("프로필 사진 선택", isPresented: $isShowingDialog, actions: {
+            Button("기본 이미지 선택하기") {
+                viewModel.send(.changeDefaultImage)
+            }
+            Button("앨범에서 가져오기") {
+                isShowingPhotosPicker = true
+            }
+        })
         .onTapGesture {
             hideKeyboard()
             isTappedProfileVisibilityScopeButton = false
