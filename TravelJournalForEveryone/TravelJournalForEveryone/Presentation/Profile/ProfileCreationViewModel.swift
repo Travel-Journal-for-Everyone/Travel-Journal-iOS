@@ -23,7 +23,7 @@ struct ProfileCreationModelState {
     var isCheckingNickname: Bool = false
     
     var selectedItem: PhotosPickerItem? = nil
-    var selectedImage: Image?
+    var selectedImage: Image? = nil
 }
 
 // MARK: - Intent
