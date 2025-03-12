@@ -9,26 +9,13 @@ import Foundation
 import Combine
 
 final class DefaultAuthRepository: AuthRepository {
+    private let socialLoginAuthService: SocialLoginAuthService
     
-    private let kakaoAuthService: KakaoAuthService
-    private let appleAuthService: AppleAuthService
-    private let googleAuthService: GoogleAuthService
-    
-    init(
-        kakaoAuthService: KakaoAuthService,
-        appleAuthService: AppleAuthService,
-        googleAuthService: GoogleAuthService
-    ) {
-        self.kakaoAuthService = kakaoAuthService
-        self.appleAuthService = appleAuthService
-        self.googleAuthService = googleAuthService
+    init(socialLoginAuthService: SocialLoginAuthService) {
+        self.socialLoginAuthService = socialLoginAuthService
     }
     
     func loginWith(_ loginProvider: LoginProvider) -> AnyPublisher<String?, Error> {
-        switch loginProvider {
-        case .kakao: kakaoAuthService.login()
-        case .apple: appleAuthService.login()
-        case .google: googleAuthService.login()
-        }
+        socialLoginAuthService.loginWith(loginProvider)
     }
 }

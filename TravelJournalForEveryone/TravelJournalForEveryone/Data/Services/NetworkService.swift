@@ -67,7 +67,7 @@ final class DefaultNetworkService: NetworkService {
                     default:
                         return .networkingError(error: afError)
                     }
-                case .responseSerializationFailed(reason: let reason):
+                case .responseSerializationFailed:
                     return .decodingError
                 default:
                     return .networkingError(error: afError)
