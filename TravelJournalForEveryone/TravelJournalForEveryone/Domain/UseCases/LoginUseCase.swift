@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol LoginUseCase {
-    func execute(loginType: LoginType) -> AnyPublisher<String?, Error>
+    func execute(loginProvider: LoginProvider) -> AnyPublisher<String?, Error>
 }
 
 final class DefaultLoginUseCase: LoginUseCase {
@@ -19,7 +19,7 @@ final class DefaultLoginUseCase: LoginUseCase {
         self.authRepository = authRepository
     }
     
-    func execute(loginType: LoginType) -> AnyPublisher<String?, Error> {
-        return authRepository.loginWith(loginType)
+    func execute(loginProvider: LoginProvider) -> AnyPublisher<String?, Error> {
+        return authRepository.loginWith(loginProvider)
     }
 }

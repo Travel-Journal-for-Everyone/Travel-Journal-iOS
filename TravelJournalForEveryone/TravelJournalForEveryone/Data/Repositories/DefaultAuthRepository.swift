@@ -24,8 +24,8 @@ final class DefaultAuthRepository: AuthRepository {
         self.googleAuthService = googleAuthService
     }
     
-    func loginWith(_ loginType: LoginType) -> AnyPublisher<String?, Error> {
-        switch loginType {
+    func loginWith(_ loginProvider: LoginProvider) -> AnyPublisher<String?, Error> {
+        switch loginProvider {
         case .kakao: kakaoAuthService.login()
         case .apple: appleAuthService.login()
         case .google: googleAuthService.login()

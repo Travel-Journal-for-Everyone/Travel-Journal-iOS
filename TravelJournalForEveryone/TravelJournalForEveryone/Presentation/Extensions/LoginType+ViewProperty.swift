@@ -1,5 +1,5 @@
 //
-//  LoginType+ViewProperty.swift
+//  loginProvider+ViewProperty.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 2/23/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension LoginType {
+extension LoginProvider {
     var backgroundColor: Color {
         switch self {
         case .kakao: .kakaoYellow

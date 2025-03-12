@@ -9,5 +9,5 @@ import Foundation
 import Combine
 
 protocol AuthRepository {
-    func loginWith(_ loginType: LoginType) -> AnyPublisher<String?, Error>
+    func loginWith(_ loginProvider: LoginProvider) -> AnyPublisher<String?, Error>
 }

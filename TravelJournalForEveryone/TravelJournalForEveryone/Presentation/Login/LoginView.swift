@@ -62,7 +62,7 @@ struct LoginView: View {
         }
     }
     
-    private func loginButtonFor(_ type: LoginType) -> some View {
+    private func loginButtonFor(_ type: LoginProvider) -> some View {
         Button {
             switch type {
             case .kakao:

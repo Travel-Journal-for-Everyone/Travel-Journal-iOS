@@ -61,7 +61,7 @@ final class AuthenticationViewModel: ObservableObject {
     private func handleViewOnAppear() { }
     
     private func handleKakaoLogin() {
-        loginUsecase.execute(loginType: .kakao)
+        loginUsecase.execute(loginProvider: .kakao)
             .sink { [weak self] completion in
                 guard let self else { return }
                 switch completion {
@@ -83,7 +83,7 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleAppleLogin() {
-        loginUsecase.execute(loginType: .apple)
+        loginUsecase.execute(loginProvider: .apple)
             .sink {  completion in
                 switch completion {
                 case .finished:
@@ -103,7 +103,7 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleGoogleLogin() {
-        loginUsecase.execute(loginType: .google)
+        loginUsecase.execute(loginProvider: .google)
             .sink { [weak self] completion in
                 guard let self else { return }
                 switch completion {
