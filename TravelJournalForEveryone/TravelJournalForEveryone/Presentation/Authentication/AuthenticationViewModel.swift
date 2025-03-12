@@ -62,65 +62,51 @@ final class AuthenticationViewModel: ObservableObject {
     
     private func handleKakaoLogin() {
         loginUsecase.execute(loginProvider: .kakao)
-            .sink { [weak self] completion in
-                guard let self else { return }
+            .sink { completion in
                 switch completion {
                 case .finished:
-                    self.state.isPresentedProfileCreationView = true
+                    print("✅ Kakao Login Success")
                 case .failure(let error):
-                    print("Kakao Login Error: \(error.localizedDescription)")
+                    print("⛔️ Kakao Login Failure: \(error)")
                 }
-            } receiveValue: { idToken in
-                // TODO: - idToken 처리
-                guard let idToken else {
-                    print("Kakao Login Error: ID Token 없음")
-                    return
+            } receiveValue: { result in
+                if result {
+                    self.state.isPresentedProfileCreationView = true
                 }
-                
-                _ = idToken
             }
             .store(in: &cancellables)
     }
     
     private func handleAppleLogin() {
         loginUsecase.execute(loginProvider: .apple)
-            .sink {  completion in
+            .sink { completion in
                 switch completion {
                 case .finished:
-                    print("Apple login success")
+                    print("✅ Apple Login Success")
                 case .failure(let error):
-                    print("Apple Login Error: \(error.localizedDescription)")
+                    print("⛔️ Apple Login Failure: \(error)")
                 }
-            } receiveValue: { [weak self] token in
-                // 임시
-                guard let self else { return }
-                if let token {
+            } receiveValue: { result in
+                if result {
                     self.state.isPresentedProfileCreationView = true
                 }
-                return
             }
             .store(in: &cancellables)
     }
     
     private func handleGoogleLogin() {
         loginUsecase.execute(loginProvider: .google)
-            .sink { [weak self] completion in
-                guard let self else { return }
+            .sink { completion in
                 switch completion {
                 case .finished:
-                    print("Google login success")
-                    self.state.isPresentedProfileCreationView = true
+                    print("✅ Google Login Success")
                 case .failure(let error):
-                    print("Google Login Error: \(error.localizedDescription)")
+                    print("⛔️ Google Login Failure: \(error)")
                 }
-            } receiveValue: { idToken in
-                guard let idToken else {
-                    print("Google Login Error: ID Token 없음")
-                    return
+            } receiveValue: { result in
+                if result {
+                    self.state.isPresentedProfileCreationView = true
                 }
-                
-                // TODO: - idToken 처리
-                print("Google ID Token: \(idToken)")
             }
             .store(in: &cancellables)
     }

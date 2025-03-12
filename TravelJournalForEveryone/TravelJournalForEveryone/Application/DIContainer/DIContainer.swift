@@ -12,9 +12,13 @@ final class DIContainer {
     
     // MARK: - Services
     lazy var socialLoginAuthService = DefaultSocialLoginAuthService()
+    lazy var networkService = DefaultNetworkService()
     
     // MARK: - Repositories
-    lazy var authRepository = DefaultAuthRepository(socialLoginAuthService: socialLoginAuthService)
+    lazy var authRepository = DefaultAuthRepository(
+        socialLoginAuthService: socialLoginAuthService,
+        networkService: networkService
+    )
     lazy var userRepository = DefaultUserRepository()
     
     // mock

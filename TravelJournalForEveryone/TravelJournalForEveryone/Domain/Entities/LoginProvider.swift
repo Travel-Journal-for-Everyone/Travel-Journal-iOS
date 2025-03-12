@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum LoginProvider {
+enum LoginProvider: String {
     case kakao
     case apple
     case google
