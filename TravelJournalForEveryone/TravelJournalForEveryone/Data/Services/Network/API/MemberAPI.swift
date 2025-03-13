@@ -31,26 +31,28 @@ extension MemberAPI {
         }
     }
     
-    var method: Alamofire.HTTPMethod {
+    var method: HTTPMethod {
         switch self {
         case .checkNickname:
             return .get
         }
     }
     
-    var headers: Alamofire.HTTPHeaders? {
-        //TODO: 임시
-        return HeaderType.bearer(KeychainManager.load(forAccount: .accessToken) ?? "").value
+    var headers: HTTPHeaders? {
+        switch self {
+        case .checkNickname:
+            return nil
+        }
     }
     
-    var parameterEncoding: any Alamofire.ParameterEncoding {
+    var parameterEncoding: ParameterEncoding {
         switch self {
         case .checkNickname:
             return URLEncoding.default
         }
     }
     
-    var bodyParameters: Alamofire.Parameters? {
+    var bodyParameters: Parameters? {
         switch self {
         case .checkNickname:
             return nil

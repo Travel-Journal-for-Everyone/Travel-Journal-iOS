@@ -39,7 +39,7 @@ extension AuthAPI: EndPoint {
         }
     }
     
-    var parameterEncoding: any ParameterEncoding {
+    var parameterEncoding: ParameterEncoding {
         switch self {
         case .fetchJWTToken: URLEncoding.default
         }
