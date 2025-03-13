@@ -35,7 +35,7 @@ final class DefaultAuthRepository: AuthRepository {
         
         return networkService.request(
             AuthAPI.fetchJWTToken(request),
-            decodingType: FetchJWTTokenResponsDTO.self
+            decodingType: FetchJWTTokenResponseDTO.self
         )
         .map { response in
             // TODO: Response의 다른 정보들 나중에 처리하기

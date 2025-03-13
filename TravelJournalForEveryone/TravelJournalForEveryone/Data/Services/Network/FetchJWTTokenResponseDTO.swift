@@ -1,5 +1,5 @@
 //
-//  FetchJWTTokenResponsDTO.swift
+//  FetchJWTTokenResponseDTO.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 3/12/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct FetchJWTTokenResponsDTO: Decodable, Sendable {
+struct FetchJWTTokenResponseDTO: Decodable, Sendable {
     let memberID: Int
     let isFirstLogin: Bool
     let refreshToken: String
