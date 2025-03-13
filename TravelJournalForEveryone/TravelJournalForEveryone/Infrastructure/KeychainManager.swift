@@ -16,7 +16,9 @@ struct KeychainManager {
     @discardableResult
     static func save(forAccount: AccountType, value: String) -> Bool {
         guard let data = value.data(using: .utf8) else {
-            print("⛔️ Keychain-Saving Error: Failed to convert string to data.")
+            #if DEBUG
+            print("⛔️ Keychain-Saving Error(\(forAccount)): Failed to convert string to data.")
+            #endif
             return false
         }
         
@@ -32,11 +34,14 @@ struct KeychainManager {
         let status = SecItemAdd(keychainQuery as CFDictionary, nil)
         
         guard status == errSecSuccess else {
-            print("⛔️ Keychain-Saving Error: Failed to save data.")
+            #if DEBUG
+            print("⛔️ Keychain-Saving Error(\(forAccount)): Failed to save data.")
+            #endif
             return false
         }
-        
-        print("✅ Keychain-Saving Success")
+        #if DEBUG
+        print("✅ Keychain-Saving Success(\(forAccount))")
+        #endif
         return true
     }
     
@@ -55,17 +60,25 @@ struct KeychainManager {
         if status == errSecSuccess {
             if let data = result as? Data,
                let value = String(data: data, encoding: .utf8) {
-                print("✅ Keychain-Loading Success")
+                #if DEBUG
+                print("✅ Keychain-Loading Success(\(forAccount))")
+                #endif
                 return value
             } else {
-                print("⛔️ Keychain-Loading Error: Invalid data.")
+                #if DEBUG
+                print("⛔️ Keychain-Loading Error(\(forAccount)): Invalid data.")
+                #endif
                 return nil
             }
         } else if status == errSecItemNotFound {
-            print("⛔️ Keychain-Loading Error: Data was not found.")
+            #if DEBUG
+            print("⛔️ Keychain-Loading Error(\(forAccount)): Data was not found.")
+            #endif
             return nil
         } else {
-            print("⛔️ Keychain-Loading Error: Failed to load data.")
+            #if DEBUG
+            print("⛔️ Keychain-Loading Error(\(forAccount)): Failed to load data.")
+            #endif
             return nil
         }
     }
@@ -81,16 +94,21 @@ struct KeychainManager {
         let status = SecItemDelete(keychainQuery as CFDictionary)
         
         guard status != errSecItemNotFound else {
-            print("⛔️ Keychain-Delete Error: Data was not found.")
+            #if DEBUG
+            print("⛔️ Keychain-Delete Error(\(forAccount)): Data was not found.")
+            #endif
             return false
         }
         
         guard status == errSecSuccess else {
-            print("⛔️ Keychain-Delete Error: Failed to delete data.")
+            #if DEBUG
+            print("⛔️ Keychain-Delete Error(\(forAccount)): Failed to delete data.")
+            #endif
             return false
         }
-        
-        print("✅ Keychain-Delete Success")
+        #if DEBUG
+        print("✅ Keychain-Delete Success(\(forAccount))")
+        #endif
         return true
     }
 }
