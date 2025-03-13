@@ -19,7 +19,7 @@ final class DIContainer {
         socialLoginAuthService: socialLoginAuthService,
         networkService: networkService
     )
-    lazy var userRepository = DefaultUserRepository()
+    lazy var userRepository = DefaultUserRepository(networkService: networkService)
     
     // mock
     lazy var mockUserRepository = MockUserRepository()
@@ -27,7 +27,7 @@ final class DIContainer {
     
     // MARK: - Usecases
     lazy var loginUseCase = DefaultLoginUseCase(authRepository: authRepository)
-    lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase(userRepository: mockUserRepository)
+    lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase(userRepository: userRepository)
     
     
     private init() {}
