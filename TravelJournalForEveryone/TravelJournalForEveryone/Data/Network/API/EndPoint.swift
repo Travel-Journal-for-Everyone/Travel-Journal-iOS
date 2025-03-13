@@ -48,7 +48,11 @@ enum HeaderType {
         case .basic:
             ["Content-Type": "application/json"]
         case .bearer(let string):
-            ["Content-Type": "application/json", "Authorization": "Bearer \(string)"]
+            [
+                "Content-Type": "application/json",
+                "Authorization": "Bearer \(string)",
+                "X-Platform": "ios"
+            ]
         }
     }
 }
