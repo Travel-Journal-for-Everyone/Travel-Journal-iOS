@@ -9,26 +9,39 @@ import Foundation
 import Combine
 
 final class DefaultAuthRepository: AuthRepository {
-    
-    private let kakaoAuthService: KakaoAuthService
-    private let appleAuthService: AppleAuthService
-    private let googleAuthService: GoogleAuthService
+    private let socialLoginAuthService: SocialLoginAuthService
+    private let networkService: NetworkService
     
     init(
-        kakaoAuthService: KakaoAuthService,
-        appleAuthService: AppleAuthService,
-        googleAuthService: GoogleAuthService
+        socialLoginAuthService: SocialLoginAuthService,
+        networkService: NetworkService
     ) {
-        self.kakaoAuthService = kakaoAuthService
-        self.appleAuthService = appleAuthService
-        self.googleAuthService = googleAuthService
+        self.socialLoginAuthService = socialLoginAuthService
+        self.networkService = networkService
     }
     
-    func loginWith(_ loginType: LoginType) -> AnyPublisher<String?, Error> {
-        switch loginType {
-        case .kakao: kakaoAuthService.login()
-        case .apple: appleAuthService.login()
-        case .google: googleAuthService.login()
+    func fetchIDToken(loginProvider: LoginProvider) -> AnyPublisher<String?, Error> {
+        socialLoginAuthService.loginWith(loginProvider)
+    }
+    
+    func fetchJWTToken(
+        idToken: String,
+        loginProvider: LoginProvider
+    ) -> AnyPublisher<String?, Error> {
+        let request = FetchJWTTokenRequest(
+            idToken: idToken,
+            loginProvider: loginProvider.rawValue
+        )
+        
+        return networkService.request(
+            AuthAPI.fetchJWTToken(request),
+            decodingType: FetchJWTTokenResponseDTO.self
+        )
+        .map { response in
+            // TODO: Response의 다른 정보들 나중에 처리하기
+            response.refreshToken
         }
+        .mapError { $0 as Error }
+        .eraseToAnyPublisher()
     }
 }

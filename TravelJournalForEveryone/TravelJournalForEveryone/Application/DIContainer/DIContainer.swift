@@ -11,15 +11,13 @@ final class DIContainer {
     @MainActor static let shared = DIContainer()
     
     // MARK: - Services
-    lazy var kakaoAuthService = DefaultKakaoAuthService()
-    lazy var appleAuthService = DefaultAppleAuthService()
-    lazy var googleAuthService = DefaultGoogleAuthService()
+    lazy var socialLoginAuthService = DefaultSocialLoginAuthService()
+    lazy var networkService = DefaultNetworkService()
     
     // MARK: - Repositories
     lazy var authRepository = DefaultAuthRepository(
-        kakaoAuthService: kakaoAuthService,
-        appleAuthService: appleAuthService,
-        googleAuthService: googleAuthService
+        socialLoginAuthService: socialLoginAuthService,
+        networkService: networkService
     )
     lazy var userRepository = DefaultUserRepository()
     
