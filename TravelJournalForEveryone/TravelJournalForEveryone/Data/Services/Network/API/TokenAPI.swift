@@ -1,59 +1,60 @@
 //
-//  AuthAPI.swift
+//  TokenAPI.swift
 //  TravelJournalForEveryone
 //
-//  Created by 김성민 on 3/12/25.
+//  Created by 김성민 on 3/13/25.
 //
 
 import Foundation
 import Alamofire
 
-enum AuthAPI {
-    case fetchJWTToken(FetchJWTTokenRequest)
+enum TokenAPI {
+    case refreshJWTToken(RefreshJWTTokenRequestDTO)
 }
 
-extension AuthAPI: EndPoint {
-    var basePath: String { "/v1/auth" }
+extension TokenAPI: EndPoint {
+    var basePath: String { "/v1/tokens" }
     
     var path: String {
         switch self {
-        case .fetchJWTToken(let request): "/login/\(request.loginProvider)/id-token"
+        case .refreshJWTToken: "/reissue"
         }
     }
     
     var queryParameters: [String : String]? {
         switch self {
-        case .fetchJWTToken: nil
+        case .refreshJWTToken: nil
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .fetchJWTToken: .post
+        case .refreshJWTToken: .post
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .fetchJWTToken(let request): HeaderType.bearer(request.idToken).value
+        case .refreshJWTToken: nil
         }
     }
     
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .fetchJWTToken: URLEncoding.default
+        case .refreshJWTToken: JSONEncoding.default
         }
     }
     
     var bodyParameters: Parameters? {
         switch self {
-        case .fetchJWTToken: nil
+        case .refreshJWTToken(let requestDTO):
+            ["refreshToken": requestDTO.refreshToken, "deviceId": requestDTO.deviceID]
         }
     }
     
     var requiresAuth: Bool {
         switch self {
-        case .fetchJWTToken: false
+        case .refreshJWTToken: false
         }
     }
 }

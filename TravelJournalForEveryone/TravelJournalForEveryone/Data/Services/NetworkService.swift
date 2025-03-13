@@ -21,6 +21,21 @@ protocol NetworkService {
 }
 
 final class DefaultNetworkService: NetworkService {
+    private let interceptor: RequestInterceptor?
+    
+    init() {
+        let credential = OAuthCredential(
+            accessToken: KeychainManager.load(forAccount: .accessToken) ?? "",
+            refreshToken: KeychainManager.load(forAccount: .refreshToken) ?? ""
+        )
+        let authenticator = OAuthAuthenticator()
+        
+        self.interceptor = AuthenticationInterceptor(
+            authenticator: authenticator,
+            credential: credential
+        )
+    }
+    
     func request<T: Decodable & Sendable>(
         _ endPoint: EndPoint,
         decodingType: T.Type
@@ -30,7 +45,8 @@ final class DefaultNetworkService: NetworkService {
             method: endPoint.method,
             parameters: endPoint.bodyParameters,
             encoding: endPoint.parameterEncoding,
-            headers: endPoint.headers
+            headers: endPoint.headers,
+            interceptor: endPoint.requiresAuth ? interceptor : nil
         )
         .validate()
         .publishDecodable(type: T.self)
@@ -49,19 +65,19 @@ final class DefaultNetworkService: NetworkService {
     }
     
     private func extractAccessToken(from response: HTTPURLResponse) {
-        if let value = response.allHeaderFields["Authorization"] as? String {
-            if value.prefix(7) == "Bearer " {
-                let accessToken = String(value.split(separator: " ").last!)
-                
-                #if DEBUG
-                print("📌 accessToken: \(accessToken)")
-                #endif
-                
-                KeychainManager.save(
-                    forAccount: .accessToken,
-                    value: accessToken
-                )
-            }
-        }
+        guard let authorizationValue = response.value(forHTTPHeaderField: "Authorization"),
+              authorizationValue.hasPrefix("Bearer ")
+        else { return }
+        
+        let accessToken = authorizationValue.replacingOccurrences(of: "Bearer ", with: "")
+        
+        #if DEBUG
+        print("📌 Updated Access Token: \(accessToken)")
+        #endif
+        
+        KeychainManager.save(
+            forAccount: .accessToken,
+            value: accessToken
+        )
     }
 }

@@ -38,9 +38,9 @@ final class NetworkEventMonitor: EventMonitor {
         )
         if let bodyData = response.data,
            let bodyString = String(data: bodyData, encoding: .utf8) {
-            print("🚗 Body: " + bodyString)
+            print("🚗 Body: " + bodyString + "\n\n")
         } else {
-            print("🚗 Body Empty")
+            print("🚗 Body Empty\n\n")
         }
     }
     
