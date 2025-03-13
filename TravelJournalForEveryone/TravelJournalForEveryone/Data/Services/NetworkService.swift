@@ -25,12 +25,29 @@ final class DefaultNetworkService: NetworkService {
         _ endPoint: EndPoint,
         decodingType: T.Type
     ) -> AnyPublisher<T, NetworkError> {
+        var interceptor: RequestInterceptor?
+        
+        if endPoint.requiresAuth {
+            let credential = OAuthCredential(
+                accessToken: KeychainManager.load(forAccount: .accessToken) ?? "",
+                refreshToken: KeychainManager.load(forAccount: .refreshToken) ?? "",
+                expiration: Date(timeIntervalSinceNow: 60 * 30)
+            )
+            let authenticator = OAuthAuthenticator()
+            
+            interceptor = AuthenticationInterceptor(
+                authenticator: authenticator,
+                credential: credential
+            )
+        }
+        
         return AF.request(
             endPoint.requestURL,
             method: endPoint.method,
             parameters: endPoint.bodyParameters,
             encoding: endPoint.parameterEncoding,
-            headers: endPoint.headers
+            headers: endPoint.headers,
+            interceptor: interceptor
         )
         .validate()
         .publishDecodable(type: T.self)
