@@ -16,15 +16,15 @@ final class NetworkEventMonitor: EventMonitor {
         print("\n\n🐿️ NETWORK Reqeust LOG")
         
         print(
-            "🐿️URL: " + (request.request?.url?.absoluteString ?? "")  + "\n"
-            + "🐿️Method: " + (request.request?.httpMethod ?? "") + "\n"
-            + "🐿️Headers: " + "\(request.request?.allHTTPHeaderFields ?? [:])"
+            "🐿️ URL: " + (request.request?.url?.absoluteString ?? "")  + "\n"
+            + "🐿️ Method: " + (request.request?.httpMethod ?? "") + "\n"
+            + "🐿️ Headers: " + "\(request.request?.allHTTPHeaderFields ?? [:])"
         )
         if let bodyData = request.request?.httpBody,
            let bodyString = String(data: bodyData, encoding: .utf8) {
-            print("🐿️Body: " + bodyString)
+            print("🐿️ Body: " + bodyString)
         } else {
-            print("🐿️Body Empty")
+            print("🐿️ Body Empty")
         }
     }
     
@@ -32,15 +32,15 @@ final class NetworkEventMonitor: EventMonitor {
     func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) where Value : Sendable {
         print("\n\n🚗 NETWORK Response LOG")
         print(
-            "🚗URL: " + (request.request?.url?.absoluteString ?? "") + "\n"
-            + "🚗Result: " + "\(response.result)" + "\n"
-            + "🚗StatusCode: " + "\(response.response?.statusCode ?? 0)"
+            "🚗 URL: " + (request.request?.url?.absoluteString ?? "") + "\n"
+            + "🚗 Result: " + "\(response.result)" + "\n"
+            + "🚗 StatusCode: " + "\(response.response?.statusCode ?? 0)"
         )
         if let bodyData = response.data,
            let bodyString = String(data: bodyData, encoding: .utf8) {
-            print("🚗Body: " + bodyString)
+            print("🚗 Body: " + bodyString)
         } else {
-            print("🚗Body Empty")
+            print("🚗 Body Empty")
         }
     }
     
