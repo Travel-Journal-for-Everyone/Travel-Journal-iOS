@@ -25,7 +25,8 @@ final class DefaultNetworkService: NetworkService {
         _ endPoint: EndPoint,
         decodingType: T.Type
     ) -> AnyPublisher<T, NetworkError> {
-        return AF.request(
+        let session = AFSession.session
+        return session.request(
             endPoint.requestURL,
             method: endPoint.method,
             parameters: endPoint.bodyParameters,

@@ -21,7 +21,6 @@ final class DefaultUserRepository: UserRepository {
             decodingType: CheckNicknameResponseDTO.self
         )
         .map { response in
-            print("response: \(response.message)")
             return response.message
         }
         .mapError { $0 as Error }
