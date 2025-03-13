@@ -69,7 +69,7 @@ final class AuthenticationViewModel: ObservableObject {
                 case .failure(let error):
                     print("⛔️ Kakao Login Failure: \(error)")
                 }
-            } receiveValue: { result in
+            } receiveValue: { [unowned self] result in
                 if result {
                     self.state.isPresentedProfileCreationView = true
                 }
@@ -86,7 +86,7 @@ final class AuthenticationViewModel: ObservableObject {
                 case .failure(let error):
                     print("⛔️ Apple Login Failure: \(error)")
                 }
-            } receiveValue: { result in
+            } receiveValue: { [unowned self] result in
                 if result {
                     self.state.isPresentedProfileCreationView = true
                 }
@@ -103,7 +103,7 @@ final class AuthenticationViewModel: ObservableObject {
                 case .failure(let error):
                     print("⛔️ Google Login Failure: \(error)")
                 }
-            } receiveValue: { result in
+            } receiveValue: { [unowned self] result in
                 if result {
                     self.state.isPresentedProfileCreationView = true
                 }
