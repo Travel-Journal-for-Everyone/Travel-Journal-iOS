@@ -41,7 +41,7 @@ final class DefaultNetworkService: NetworkService {
             )
         }
         
-        return AF.request(
+        return AFSession.session.request(
             endPoint.requestURL,
             method: endPoint.method,
             parameters: endPoint.bodyParameters,

@@ -111,7 +111,8 @@ final class ProfileCreationViewModel: ObservableObject {
                 // TODO: - 에러 처리
                 self.state.isCheckingNickname = false
             } receiveValue: { [weak self] result in
-                self?.updateStateForNicknameValidationForServer(result)
+                guard let self else { return }
+                self.updateStateForNicknameValidationForServer(result)
             }
             .store(in: &cancellables)
     }
@@ -145,9 +146,11 @@ final class ProfileCreationViewModel: ObservableObject {
         if result == .valid {
             state.isDisableCompletionButton = false
             state.messageColor = .tjGreen
+            state.nickname = state.tempNickname
         } else {
             state.isDisableCompletionButton = true
             state.messageColor = .tjRed
+            state.tempNickname = ""
         }
         
         switch result {
