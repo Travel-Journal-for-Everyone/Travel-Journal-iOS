@@ -11,9 +11,6 @@ import Alamofire
 struct OAuthCredential: AuthenticationCredential {
     let accessToken: String
     let refreshToken: String
-    let expiration: Date
     
-    var requiresRefresh: Bool {
-        Date(timeIntervalSinceNow: 60 * 30) > expiration
-    }
+    var requiresRefresh: Bool = false
 }

@@ -54,7 +54,7 @@ final class OAuthAuthenticator: Authenticator {
         )
         let refreshTokenAPI: EndPoint = TokenAPI.refreshJWTToken(refreshTokenRequestDTO)
         
-        AF.request(
+        AFSession.session.request(
             refreshTokenAPI.requestURL,
             method: refreshTokenAPI.method,
             parameters: refreshTokenAPI.bodyParameters,
@@ -63,21 +63,24 @@ final class OAuthAuthenticator: Authenticator {
         )
         .validate()
         .response { response in
-            if let httpResponse = response.response,
-               let value = httpResponse.allHeaderFields["Authorization"] as? String,
-               value.prefix(7) == "Bearer "
-            {
-                let accessToken = String(value.split(separator: " ").last!)
-                
-                #if DEBUG
-                print("📌 accessToken: \(accessToken)")
-                #endif
-                
-                KeychainManager.save(
-                    forAccount: .accessToken,
-                    value: accessToken
-                )
+            guard let httpResponse = response.response,
+                  let authorizationValue = httpResponse.value(forHTTPHeaderField: "Authorization"),
+                  authorizationValue.hasPrefix("Bearer ")
+            else {
+                completion(.failure(response.error!))
+                return
             }
+            
+            let accessToken = authorizationValue.replacingOccurrences(of: "Bearer ", with: "")
+            
+            #if DEBUG
+            print("📌 Updated Access Token: \(accessToken)")
+            #endif
+            
+            KeychainManager.save(
+                forAccount: .accessToken,
+                value: accessToken
+            )
         }
         .responseDecodable(of: RefreshJWTTokenResponseDTO.self) { response in
             switch response.result {
@@ -89,6 +92,10 @@ final class OAuthAuthenticator: Authenticator {
                     return
                 }
                 
+                #if DEBUG
+                print("📌 Updated Refresh Token: \(refreshJWTTokenResponseDTO.refreshToken)")
+                #endif
+                
                 KeychainManager.save(
                     forAccount: .refreshToken,
                     value: refreshJWTTokenResponseDTO.refreshToken
@@ -96,8 +103,7 @@ final class OAuthAuthenticator: Authenticator {
                 
                 let newCredential: OAuthCredential = .init(
                     accessToken: accessToken,
-                    refreshToken: refreshJWTTokenResponseDTO.refreshToken,
-                    expiration: Date(timeIntervalSinceNow: 60 * 30)
+                    refreshToken: refreshJWTTokenResponseDTO.refreshToken
                 )
                 
                 completion(.success(newCredential))
