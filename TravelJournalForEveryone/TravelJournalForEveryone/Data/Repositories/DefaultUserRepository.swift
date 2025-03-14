@@ -26,6 +26,18 @@ final class DefaultUserRepository: UserRepository {
         .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
+    
+    func completeFirstLogin(_ request: CompleteFirstLoginRequestDTO) -> AnyPublisher<Bool, Error> {
+        return networkService.request(
+            MemberAPI.completeFirstLogin(request),
+            decodingType: CompleteFirstLoginResponseDTO.self
+        )
+        .map { response in
+            return response.success
+        }
+        .mapError{ $0 as Error }
+        .eraseToAnyPublisher()
+    }
 }
 
 final class MockUserRepository: UserRepository {
@@ -34,6 +46,12 @@ final class MockUserRepository: UserRepository {
             .randomElement().publisher
             .setFailureType(to: Error.self)
             .delay(for: .seconds(1.5), scheduler: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+    
+    func completeFirstLogin(_ request: CompleteFirstLoginRequestDTO) -> AnyPublisher<Bool, Error> {
+        return Just(true)
+            .setFailureType(to: Error.self)
             .eraseToAnyPublisher()
     }
 }

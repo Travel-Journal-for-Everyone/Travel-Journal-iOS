@@ -87,6 +87,14 @@ struct ProfileCreationView: View {
         .onAppear {
             viewModel.send(.viewOnAppear)
         }
+        .navigationDestination(
+            isPresented: Binding(
+                get: { viewModel.state.isPresentedSignupCompletionView },
+                set: { viewModel.send(.isPresentedProfileCreationView($0)) }
+            )
+        ) {
+            SignupCompletionView()
+        }
     }
     
     private var cameraIconView: some View {
@@ -265,7 +273,7 @@ struct ProfileCreationView: View {
 #Preview {
     ProfileCreationView(
         viewModel: ProfileCreationViewModel(
-            nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+            nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase, loginCompleteUseCase: DIContainer.shared.firstLoginUseCase
         )
     )
 }

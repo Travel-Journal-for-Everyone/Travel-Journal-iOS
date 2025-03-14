@@ -24,6 +24,8 @@ struct ProfileCreationModelState {
     
     var selectedItem: PhotosPickerItem? = nil
     var selectedImage: Image? = nil
+    
+    var isPresentedSignupCompletionView: Bool = false
 }
 
 // MARK: - Intent
@@ -35,6 +37,7 @@ enum ProfileCreationIntent {
     case tappedCompletionButton
     case selectedPhoto(PhotosPickerItem?)
     case changeDefaultImage
+    case isPresentedProfileCreationView(Bool)
 }
 
 // MARK: - ViewModel(State + Intent)
@@ -46,11 +49,15 @@ final class ProfileCreationViewModel: ObservableObject {
     @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
     
     private let nicknameCheckUseCase: NicknameCheckUseCase
+    private let loginCompleteUseCase: LoginCompleteUseCase
     private var cancellables: Set<AnyCancellable> = []
-
-    init(nicknameCheckUseCase: NicknameCheckUseCase) {
+    
+    init(
+        nicknameCheckUseCase: NicknameCheckUseCase,
+        loginCompleteUseCase: LoginCompleteUseCase
+    ) {
         self.nicknameCheckUseCase = nicknameCheckUseCase
-        
+        self.loginCompleteUseCase = loginCompleteUseCase
         bind()
     }
     
@@ -96,6 +103,8 @@ final class ProfileCreationViewModel: ObservableObject {
         case .changeDefaultImage:
             state.selectedImage = nil
             state.selectedItem = nil
+        case .isPresentedProfileCreationView(let result):
+            state.isPresentedSignupCompletionView = result
         }
     }
     
@@ -118,8 +127,16 @@ final class ProfileCreationViewModel: ObservableObject {
     }
     
     private func handleTappedCompletionButton() {
-        // 입력된 프로필 사진, 닉네임, 계정 범위를 서버로 전달해야 함
-        print("Tapped: 작성 완료 버튼 눌림")
+        loginCompleteUseCase.postFirstLoginData(state.nickname, state.profileVisibilityScope)
+            .sink { _ in
+                // TODO: - 에러 처리
+            } receiveValue: { [weak self] result in
+                if result {
+                    self?.state.isPresentedSignupCompletionView = true
+                }
+            }
+            .store(in: &cancellables)
+
     }
     
     private func updateStateForNicknameValidationForRegex(_ result: NicknameRegexCheckResult) {

@@ -55,7 +55,7 @@ struct LoginView: View {
             )) {
                 ProfileCreationView(
                     viewModel: ProfileCreationViewModel(
-                        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+                        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase, loginCompleteUseCase: DIContainer.shared.firstLoginUseCase
                     )
                 )
             }

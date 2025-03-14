@@ -10,4 +10,5 @@ import Combine
 
 protocol UserRepository {
     func validateNickname(_ nickname: String) -> AnyPublisher<String, Error>
+    func completeFirstLogin(_ request: CompleteFirstLoginRequestDTO) -> AnyPublisher<Bool, Error>
 }
