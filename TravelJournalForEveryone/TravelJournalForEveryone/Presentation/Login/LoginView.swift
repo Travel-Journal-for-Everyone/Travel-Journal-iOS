@@ -59,13 +59,7 @@ struct LoginView: View {
                         signUpUseCase: DIContainer.shared.signUpUseCase
                     )
                 )
-            }
-            .navigationDestination(isPresented: Binding(
-                get: { authViewModel.state.isPresentedMainTabView },
-                set: { authViewModel.send(.isPresentedMainTabView($0)) }
-            )) {
-                MainTabView()
-                    .navigationBarBackButtonHidden()
+                .environmentObject(authViewModel)
             }
         }
     }

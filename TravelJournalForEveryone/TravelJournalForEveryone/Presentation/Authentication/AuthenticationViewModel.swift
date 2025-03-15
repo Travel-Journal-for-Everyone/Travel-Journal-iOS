@@ -12,7 +12,6 @@ import Combine
 struct AuthenticationModelState {
     var authenticationState: AuthenticationState = .unauthenticated
     var isPresentedProfileCreationView: Bool = false
-    var isPresentedMainTabView: Bool = false
 }
 
 enum AuthenticationState {
@@ -27,7 +26,7 @@ enum AuthenticationIntent {
     case appleLogin
     case googleLogin
     case isPresentedProfileCreationView(Bool)
-    case isPresentedMainTabView(Bool)
+    case startButtonTapped
     case logout
 }
 
@@ -55,8 +54,8 @@ final class AuthenticationViewModel: ObservableObject {
             handleGoogleLogin()
         case .isPresentedProfileCreationView(let value):
             state.isPresentedProfileCreationView = value
-        case .isPresentedMainTabView(let value):
-            state.isPresentedMainTabView = value
+        case .startButtonTapped:
+            state.authenticationState = .authenticated
         case .logout:
             handleLogout()
         }
@@ -68,7 +67,7 @@ final class AuthenticationViewModel: ObservableObject {
         if result {
             state.isPresentedProfileCreationView = true
         } else {
-            state.isPresentedMainTabView = true
+            state.authenticationState = .authenticated
         }
     }
     
