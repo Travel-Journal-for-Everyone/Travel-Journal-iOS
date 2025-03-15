@@ -115,21 +115,43 @@ final class ProfileCreationViewModel: ObservableObject {
         state.isDisableNicknameCheckButton = true
         
         nicknameCheckUseCase.validateNicknameByServer(tempNickname)
-            .sink { [weak self] _ in
+            .sink { [weak self] completion in
                 guard let self else { return }
-                // TODO: - 에러 처리
+        
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    switch error {
+                    case .invalidNickname(let reason):
+                        let errorReason = NicknameServerCheckResult.from(response: reason)
+                        self.updateStateForNicknameValidationForServer(errorReason)
+                    default:
+                        print("error: \(error)")
+                    }
+                }
+                
                 self.state.isCheckingNickname = false
             } receiveValue: { [weak self] result in
                 guard let self else { return }
+            
                 self.updateStateForNicknameValidationForServer(result)
             }
             .store(in: &cancellables)
     }
     
     private func handleTappedCompletionButton() {
-        loginCompleteUseCase.postFirstLoginData(state.nickname, state.profileVisibilityScope)
-            .sink { _ in
-                // TODO: - 에러 처리
+        loginCompleteUseCase.postFirstLoginData(
+            state.nickname,
+            state.profileVisibilityScope
+        )
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print("온보딩 실패 : \(error)")
+                }
             } receiveValue: { [weak self] result in
                 if result {
                     self?.state.isPresentedSignupCompletionView = true

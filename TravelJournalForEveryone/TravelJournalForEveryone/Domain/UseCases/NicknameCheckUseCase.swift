@@ -10,7 +10,7 @@ import Combine
 
 protocol NicknameCheckUseCase {
     func validateNicknameByRegex(_ nickname: String) -> NicknameRegexCheckResult
-    func validateNicknameByServer(_ nickname: String) -> AnyPublisher<NicknameServerCheckResult, Error>
+    func validateNicknameByServer(_ nickname: String) -> AnyPublisher<NicknameServerCheckResult, NetworkError>
 }
 
 final class DefaultNicknameCheckUseCase: NicknameCheckUseCase {
@@ -43,7 +43,7 @@ final class DefaultNicknameCheckUseCase: NicknameCheckUseCase {
         return .valid
     }
     
-    func validateNicknameByServer(_ nickname: String) -> AnyPublisher<NicknameServerCheckResult, Error> {
+    func validateNicknameByServer(_ nickname: String) -> AnyPublisher<NicknameServerCheckResult, NetworkError> {
         return userRepository.validateNickname(nickname)
             .map { NicknameServerCheckResult.from(response: $0) }
             .eraseToAnyPublisher()

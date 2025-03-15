@@ -15,7 +15,7 @@ final class DefaultUserRepository: UserRepository {
         self.networkService = networkService
     }
     
-    func validateNickname(_ nickname: String) -> AnyPublisher<String, Error> {
+    func validateNickname(_ nickname: String) -> AnyPublisher<String, NetworkError> {
         return networkService.request(
             MemberAPI.checkNickname(nickname),
             decodingType: CheckNicknameResponseDTO.self
@@ -23,7 +23,6 @@ final class DefaultUserRepository: UserRepository {
         .map { response in
             return response.message
         }
-        .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
     
@@ -41,10 +40,10 @@ final class DefaultUserRepository: UserRepository {
 }
 
 final class MockUserRepository: UserRepository {
-    func validateNickname(_ nickname: String) -> AnyPublisher<String, Error> {
+    func validateNickname(_ nickname: String) -> AnyPublisher<String, NetworkError> {
         return ["valid", "valid", "valid", "containsBadWord", "duplicate"]
             .randomElement().publisher
-            .setFailureType(to: Error.self)
+            .setFailureType(to: NetworkError.self)
             .delay(for: .seconds(1.5), scheduler: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
