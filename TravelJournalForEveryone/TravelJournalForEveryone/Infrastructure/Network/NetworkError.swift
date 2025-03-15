@@ -10,9 +10,6 @@ import Foundation
 enum NetworkError: Error {
     case invalidResponse
     case decodingFailed(Data)
-    case networkError(Error)
-    
     case invalidNickname(reason: String)
-    
-    case unknownError
+    case unknownError(Error)
 }
