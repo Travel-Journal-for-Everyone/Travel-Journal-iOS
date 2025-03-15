@@ -49,15 +49,15 @@ final class ProfileCreationViewModel: ObservableObject {
     @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
     
     private let nicknameCheckUseCase: NicknameCheckUseCase
-    private let loginCompleteUseCase: LoginCompleteUseCase
+    private let signUpUseCase: SignUpUseCase
     private var cancellables: Set<AnyCancellable> = []
     
     init(
         nicknameCheckUseCase: NicknameCheckUseCase,
-        loginCompleteUseCase: LoginCompleteUseCase
+        signUpUseCase: SignUpUseCase
     ) {
         self.nicknameCheckUseCase = nicknameCheckUseCase
-        self.loginCompleteUseCase = loginCompleteUseCase
+        self.signUpUseCase = signUpUseCase
         bind()
     }
     
@@ -68,8 +68,13 @@ final class ProfileCreationViewModel: ObservableObject {
                 guard let self else { return .empty }
                 
                 self.state.tempNickname = tempNickname
+                // 닉네임 검증하고 valid -> 닉네임 수정하고 나서 같은 닉네임으로 돌아왔을 때
+                // 완료 버튼이 비활성화 되어있음 + 닉네임 체크 버튼도 비활성화 되어 있음.. -> 앱을 꺼야함.. 이건 빅이슈
+                // 그래서 닉네임 체크 버튼의 tempNickname과 nickname을 비교하는 로직을 삭제하고
+                // 닉네임을 검증한 후에 다시 수정한다면 다시 검증하도록 유도
+                // 코드리뷰 후에 수정하거나 주석 삭제하겠습니다 !
                 self.state.isDisableCompletionButton = true
-                self.state.isDisableNicknameCheckButton = (tempNickname == self.state.nickname)
+                self.state.isDisableNicknameCheckButton = false
                 
                 return self.nicknameCheckUseCase.validateNicknameByRegex(tempNickname)
             }
@@ -141,7 +146,7 @@ final class ProfileCreationViewModel: ObservableObject {
     }
     
     private func handleTappedCompletionButton() {
-        loginCompleteUseCase.postFirstLoginData(
+        signUpUseCase.completeSignUp(
             state.nickname,
             state.profileVisibilityScope
         )

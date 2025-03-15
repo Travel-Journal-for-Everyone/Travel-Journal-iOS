@@ -26,15 +26,14 @@ final class DefaultUserRepository: UserRepository {
         .eraseToAnyPublisher()
     }
     
-    func completeFirstLogin(_ request: CompleteFirstLoginRequestDTO) -> AnyPublisher<Bool, Error> {
+    func completeSignUp(_ request: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError> {
         return networkService.request(
-            MemberAPI.completeFirstLogin(request),
-            decodingType: CompleteFirstLoginResponseDTO.self
+            MemberAPI.signUp(request),
+            decodingType: SignUpResponseDTO.self
         )
         .map { response in
             return response.success
         }
-        .mapError{ $0 as Error }
         .eraseToAnyPublisher()
     }
 }
@@ -48,9 +47,9 @@ final class MockUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    func completeFirstLogin(_ request: CompleteFirstLoginRequestDTO) -> AnyPublisher<Bool, Error> {
+    func completeSignUp(_ request: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError> {
         return Just(true)
-            .setFailureType(to: Error.self)
+            .setFailureType(to: NetworkError.self)
             .eraseToAnyPublisher()
     }
 }

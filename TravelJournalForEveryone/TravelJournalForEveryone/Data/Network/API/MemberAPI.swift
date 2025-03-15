@@ -10,7 +10,7 @@ import Alamofire
 
 enum MemberAPI: EndPoint {
     case checkNickname(String)
-    case completeFirstLogin(CompleteFirstLoginRequestDTO)
+    case signUp(SignUpRequestDTO)
 }
 
 extension MemberAPI {
@@ -22,14 +22,14 @@ extension MemberAPI {
         switch self {
         case .checkNickname(let nickname):
             return "/check-nickname/\(nickname)"
-        case .completeFirstLogin:
+        case .signUp:
             return "/complete-first-login"
         }
     }
     
     var queryParameters: [String : String]? {
         switch self {
-        case .checkNickname, .completeFirstLogin:
+        case .checkNickname, .signUp:
             return nil
         }
     }
@@ -38,14 +38,14 @@ extension MemberAPI {
         switch self {
         case .checkNickname:
             return .get
-        case .completeFirstLogin:
+        case .signUp:
             return .post
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .checkNickname, .completeFirstLogin:
+        case .checkNickname, .signUp:
             return nil
         }
     }
@@ -54,7 +54,7 @@ extension MemberAPI {
         switch self {
         case .checkNickname:
             return URLEncoding.default
-        case .completeFirstLogin:
+        case .signUp:
             return JSONEncoding.default
         }
     }
@@ -64,7 +64,7 @@ extension MemberAPI {
         switch self {
         case .checkNickname:
             return nil
-        case .completeFirstLogin(let request):
+        case .signUp(let request):
             params["nickname"] = request.nickname
             params["accountScope"] = request.accountScope.key
             return params
@@ -73,7 +73,7 @@ extension MemberAPI {
     
     var requiresAuth: Bool {
         switch self {
-        case .checkNickname, .completeFirstLogin:
+        case .checkNickname, .signUp:
             return true
         }
     }
