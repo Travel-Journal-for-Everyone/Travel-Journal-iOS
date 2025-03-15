@@ -59,6 +59,13 @@ struct LoginView: View {
                     )
                 )
             }
+            .navigationDestination(isPresented: Binding(
+                get: { authViewModel.state.isPresentedMainTabView },
+                set: { authViewModel.send(.isPresentedMainTabView($0)) }
+            )) {
+                MainTabView()
+                    .navigationBarBackButtonHidden()
+            }
         }
     }
     

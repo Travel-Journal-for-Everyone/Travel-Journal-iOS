@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct SignupCompletionView: View {
+    // 임시 !!
+    @State private var isPresentedMainTabView: Bool = false
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -35,11 +38,16 @@ struct SignupCompletionView: View {
             Spacer()
             
             TJButton(title: "모두의 여행 시작하기") {
-                
+                isPresentedMainTabView = true
             }
             .padding(.bottom, 17)
         }
         .padding(.horizontal, 16)
+        .navigationBarBackButtonHidden()
+        .navigationDestination(isPresented: $isPresentedMainTabView) {
+            MainTabView()
+                .navigationBarBackButtonHidden()
+        }
     }
 }
 
