@@ -9,10 +9,6 @@ import Foundation
 import Combine
 import Alamofire
 
-enum NetworkError: Error {
-    case networkError(Error)
-}
-
 protocol NetworkService {
     func request<T: Decodable & Sendable>(
         _ endPoint: EndPoint,
@@ -59,13 +55,29 @@ final class DefaultNetworkService: NetworkService {
         .validate()
         .publishDecodable(type: T.self)
         .tryMap { dataResponse in
-            if let httpResponse = dataResponse.response {
-                self.extractAccessToken(from: httpResponse)
+            guard let httpResponse = dataResponse.response,
+                  let data = dataResponse.data
+            else {
+                throw NetworkError.invalidResponse
             }
             
-            switch dataResponse.result {
-            case .success(let value): return value
-            case .failure(let error): throw error
+            self.extractAccessToken(from: httpResponse)
+            
+            switch httpResponse.statusCode {
+            case 200...299:
+                guard let decodedData = dataResponse.value else {
+                    throw NetworkError.decodingFailed(data)
+                }
+                return decodedData
+            default:
+                guard let afError = dataResponse.error else {
+                    throw NetworkError.unknownError
+                }
+                throw self.handleStatusCode(
+                    httpResponse.statusCode,
+                    data: data,
+                    afError: afError
+                )
             }
         }
         .mapError { .networkError($0) }
@@ -87,5 +99,35 @@ final class DefaultNetworkService: NetworkService {
             forAccount: .accessToken,
             value: accessToken
         )
+    }
+    
+    private func handleStatusCode(
+        _ statusCode: Int,
+        data: Data,
+        afError: AFError
+    ) -> NetworkError {
+        let errorMessage = extractErrorMessage(from: data)
+        
+        switch (statusCode, errorMessage) {
+        case (409, "duplicate"):
+            return .invalidNickname(reason: errorMessage)
+        case (409, "containsBadWord"):
+            return .invalidNickname(reason: errorMessage)
+        case(_, "Failed to decode error response"):
+            return .decodingFailed(data)
+        default:
+            return .networkError(afError)
+        }
+    }
+    
+    private func extractErrorMessage(from data: Data) -> String {
+        guard let errorResponse = try? JSONDecoder().decode(
+            ErrorResponseDTO.self,
+            from: data
+        ) else {
+            return "Failed to decode error response"
+        }
+        
+        return errorResponse.message
     }
 }
