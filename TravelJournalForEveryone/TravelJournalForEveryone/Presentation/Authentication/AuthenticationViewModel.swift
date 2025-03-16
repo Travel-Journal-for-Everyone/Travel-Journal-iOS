@@ -14,11 +14,6 @@ struct AuthenticationModelState {
     var isPresentedProfileCreationView: Bool = false
 }
 
-enum AuthenticationState {
-    case unauthenticated
-    case authenticated
-}
-
 // MARK: - Intent
 enum AuthenticationIntent {
     case viewOnAppear
@@ -30,15 +25,33 @@ enum AuthenticationIntent {
 }
 
 // MARK: - ViewModel(State + Intent)
+@MainActor
 final class AuthenticationViewModel: ObservableObject {
     @Published private(set) var state = AuthenticationModelState()
     
+    @Published private var authState = DIContainer.shared.authStateManager.authState
+    
     private let loginUsecase: LoginUseCase
+    private let authStateCheckUseCase: AuthStateCheckUseCase
     
     private var cancellables: Set<AnyCancellable> = []
     
-    init(loginUsecase: LoginUseCase) {
+    init(
+        loginUsecase: LoginUseCase,
+        authStateCheckUseCase: AuthStateCheckUseCase
+    ) {
         self.loginUsecase = loginUsecase
+        self.authStateCheckUseCase = authStateCheckUseCase
+        
+        bind()
+    }
+    
+    private func bind() {
+        $authState
+            .sink { [unowned self] authState in
+                self.state.authenticationState = authState
+            }
+            .store(in: &cancellables)
     }
     
     func send(_ intent: AuthenticationIntent) {
@@ -58,7 +71,18 @@ final class AuthenticationViewModel: ObservableObject {
         }
     }
     
-    private func handleViewOnAppear() { }
+    private func handleViewOnAppear() {
+        authStateCheckUseCase.execute()
+            .sink { authState in
+                switch authState {
+                case .unauthenticated:
+                    DIContainer.shared.authStateManager.unauthenticate()
+                case .authenticated:
+                    DIContainer.shared.authStateManager.authenticate()
+                }
+            }
+            .store(in: &cancellables)
+    }
     
     private func handleKakaoLogin() {
         loginUsecase.execute(loginProvider: .kakao)

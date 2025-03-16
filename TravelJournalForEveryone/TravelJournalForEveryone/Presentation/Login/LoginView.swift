@@ -103,6 +103,7 @@ struct LoginView: View {
 #Preview {
     LoginView()
         .environmentObject(AuthenticationViewModel(
-            loginUsecase: DIContainer.shared.loginUseCase)
-        )
+            loginUsecase: DIContainer.shared.loginUseCase,
+            authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase
+        ))
 }
