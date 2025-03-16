@@ -60,14 +60,14 @@ extension MemberAPI {
     }
     
     var bodyParameters: Parameters? {
-        var params: Parameters = [:]
         switch self {
         case .checkNickname:
             return nil
         case .signUp(let request):
-            params["nickname"] = request.nickname
-            params["accountScope"] = request.accountScope.key
-            return params
+            return [
+                "nickname": request.nickname,
+                "accountScope": request.accountScope.key
+            ]
         }
     }
     
