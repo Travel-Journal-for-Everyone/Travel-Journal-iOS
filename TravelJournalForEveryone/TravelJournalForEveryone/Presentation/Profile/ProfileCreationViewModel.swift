@@ -141,7 +141,9 @@ final class ProfileCreationViewModel: ObservableObject {
     }
     
     private func handleTappedCompletionButton() {
-        signUpUseCase.completeSignUp(
+        state.nickname = state.tempNickname
+        
+        signUpUseCase.excute(
             state.nickname,
             state.profileVisibilityScope
         )
@@ -185,7 +187,6 @@ final class ProfileCreationViewModel: ObservableObject {
         if result == .valid {
             state.isDisableCompletionButton = false
             state.messageColor = .tjGreen
-            state.nickname = state.tempNickname
         } else {
             state.isDisableCompletionButton = true
             state.messageColor = .tjRed

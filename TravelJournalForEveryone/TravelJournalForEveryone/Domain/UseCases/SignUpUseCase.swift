@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol SignUpUseCase {
-    func completeSignUp(_ nickname: String, _ visibility: ProfileVisibilityScope) -> AnyPublisher<Bool, NetworkError>
+    func excute(_ nickname: String, _ visibility: ProfileVisibilityScope) -> AnyPublisher<Bool, NetworkError>
 }
 
 struct DefaultLoginCompleteUseCase: SignUpUseCase {
@@ -19,7 +19,7 @@ struct DefaultLoginCompleteUseCase: SignUpUseCase {
         self.userRepository = userRepository
     }
     
-    func completeSignUp(_ nickname: String, _ visibility: ProfileVisibilityScope) -> AnyPublisher<Bool, NetworkError> {
+    func excute(_ nickname: String, _ visibility: ProfileVisibilityScope) -> AnyPublisher<Bool, NetworkError> {
         let request = SignUpRequestDTO(
             nickname: nickname,
             accountScope: visibility
