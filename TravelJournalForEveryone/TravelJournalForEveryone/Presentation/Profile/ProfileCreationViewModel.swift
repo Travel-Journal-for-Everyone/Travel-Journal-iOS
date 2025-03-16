@@ -24,6 +24,8 @@ struct ProfileCreationModelState {
     
     var selectedItem: PhotosPickerItem? = nil
     var selectedImage: Image? = nil
+    
+    var isPresentedSignupCompletionView: Bool = false
 }
 
 // MARK: - Intent
@@ -35,6 +37,7 @@ enum ProfileCreationIntent {
     case tappedCompletionButton
     case selectedPhoto(PhotosPickerItem?)
     case changeDefaultImage
+    case isPresentedProfileCreationView(Bool)
 }
 
 // MARK: - ViewModel(State + Intent)
@@ -46,11 +49,15 @@ final class ProfileCreationViewModel: ObservableObject {
     @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
     
     private let nicknameCheckUseCase: NicknameCheckUseCase
+    private let signUpUseCase: SignUpUseCase
     private var cancellables: Set<AnyCancellable> = []
-
-    init(nicknameCheckUseCase: NicknameCheckUseCase) {
+    
+    init(
+        nicknameCheckUseCase: NicknameCheckUseCase,
+        signUpUseCase: SignUpUseCase
+    ) {
         self.nicknameCheckUseCase = nicknameCheckUseCase
-        
+        self.signUpUseCase = signUpUseCase
         bind()
     }
     
@@ -62,7 +69,7 @@ final class ProfileCreationViewModel: ObservableObject {
                 
                 self.state.tempNickname = tempNickname
                 self.state.isDisableCompletionButton = true
-                self.state.isDisableNicknameCheckButton = (tempNickname == self.state.nickname)
+                self.state.isDisableNicknameCheckButton = false
                 
                 return self.nicknameCheckUseCase.validateNicknameByRegex(tempNickname)
             }
@@ -96,6 +103,8 @@ final class ProfileCreationViewModel: ObservableObject {
         case .changeDefaultImage:
             state.selectedImage = nil
             state.selectedItem = nil
+        case .isPresentedProfileCreationView(let result):
+            state.isPresentedSignupCompletionView = result
         }
     }
     
@@ -106,20 +115,52 @@ final class ProfileCreationViewModel: ObservableObject {
         state.isDisableNicknameCheckButton = true
         
         nicknameCheckUseCase.validateNicknameByServer(tempNickname)
-            .sink { [weak self] _ in
+            .sink { [weak self] completion in
                 guard let self else { return }
-                // TODO: - 에러 처리
+        
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    switch error {
+                    case .invalidNickname(let reason):
+                        let errorReason = NicknameServerCheckResult.from(response: reason)
+                        self.updateStateForNicknameValidationForServer(errorReason)
+                    default:
+                        print("error: \(error)")
+                    }
+                }
+                
                 self.state.isCheckingNickname = false
             } receiveValue: { [weak self] result in
                 guard let self else { return }
+            
                 self.updateStateForNicknameValidationForServer(result)
             }
             .store(in: &cancellables)
     }
     
     private func handleTappedCompletionButton() {
-        // 입력된 프로필 사진, 닉네임, 계정 범위를 서버로 전달해야 함
-        print("Tapped: 작성 완료 버튼 눌림")
+        state.nickname = state.tempNickname
+        
+        signUpUseCase.excute(
+            state.nickname,
+            state.profileVisibilityScope
+        )
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print("온보딩 실패 : \(error)")
+                }
+            } receiveValue: { [weak self] result in
+                if result {
+                    self?.state.isPresentedSignupCompletionView = true
+                }
+            }
+            .store(in: &cancellables)
+
     }
     
     private func updateStateForNicknameValidationForRegex(_ result: NicknameRegexCheckResult) {
@@ -146,7 +187,6 @@ final class ProfileCreationViewModel: ObservableObject {
         if result == .valid {
             state.isDisableCompletionButton = false
             state.messageColor = .tjGreen
-            state.nickname = state.tempNickname
         } else {
             state.isDisableCompletionButton = true
             state.messageColor = .tjRed

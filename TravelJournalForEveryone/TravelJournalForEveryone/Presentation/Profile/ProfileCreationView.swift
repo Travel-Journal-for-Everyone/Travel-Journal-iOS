@@ -12,9 +12,6 @@ struct ProfileCreationView: View {
     @StateObject var viewModel: ProfileCreationViewModel
     var isEditingProfile: Bool = false
     
-    // TODO: - 임시로 뷰에 구현
-    @State var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
-    
     @State var isTappedProfileVisibilityScopeButton: Bool = false
     @State private var isShowingDialog: Bool = false
     @State private var isShowingPhotosPicker: Bool = false
@@ -36,7 +33,7 @@ struct ProfileCreationView: View {
                     .onTapGesture {
                         hideKeyboard()
                         isTappedProfileVisibilityScopeButton = false
-                        isShowingDialog = true
+                        isShowingDialog = true  
                     }
                     .padding(.top, 30)
                     .padding(.bottom, 40)
@@ -86,6 +83,14 @@ struct ProfileCreationView: View {
         }
         .onAppear {
             viewModel.send(.viewOnAppear)
+        }
+        .navigationDestination(
+            isPresented: Binding(
+                get: { viewModel.state.isPresentedSignupCompletionView },
+                set: { viewModel.send(.isPresentedProfileCreationView($0)) }
+            )
+        ) {
+            SignupCompletionView()
         }
     }
     
@@ -196,7 +201,6 @@ struct ProfileCreationView: View {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        profileVisibilityScope  = scope
                         isTappedProfileVisibilityScopeButton.toggle()
                         
                         viewModel.send(.tappedProfileVisibilityScope(scope))
@@ -230,10 +234,10 @@ struct ProfileCreationView: View {
                 .foregroundStyle(.tjGray6)
                 .overlay {
                     HStack(spacing: 5) {
-                        Text("\(profileVisibilityScope.title)")
+                        Text("\(viewModel.state.profileVisibilityScope.title)")
                             .font(.pretendardRegular(16))
                         
-                        Image(profileVisibilityScope.imageResourceString)
+                        Image(viewModel.state.profileVisibilityScope.imageResourceString)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 16, height: 16)
@@ -265,7 +269,8 @@ struct ProfileCreationView: View {
 #Preview {
     ProfileCreationView(
         viewModel: ProfileCreationViewModel(
-            nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase
+            nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
+            signUpUseCase: DIContainer.shared.signUpUseCase
         )
     )
 }

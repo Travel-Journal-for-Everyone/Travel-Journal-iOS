@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 protocol UserRepository {
-    func validateNickname(_ nickname: String) -> AnyPublisher<String, Error>
+    func validateNickname(_ nickname: String) -> AnyPublisher<String, NetworkError>
+    func completeSignUp(_ request: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError>
     func fetchUser(memberID: Int) -> AnyPublisher<User, NetworkError>
 }

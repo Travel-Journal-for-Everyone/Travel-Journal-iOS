@@ -21,9 +21,16 @@ struct DefaultLoginUseCase: LoginUseCase {
     
     func execute(loginProvider: LoginProvider) -> AnyPublisher<Bool, Error> {
         return fetchIDToken(loginProvider: loginProvider)
-            .flatMap { idToken -> AnyPublisher<String?, Error> in
+            .flatMap { idToken -> AnyPublisher<FetchJWTTokenResponseDTO, Error> in
                 guard let idToken else {
-                    return Just(nil)
+                    return Just(
+                        .init(
+                            memberID: 0,
+                            isFirstLogin: false,
+                            refreshToken: "",
+                            deviceID: ""
+                        )
+                    )
                         .setFailureType(to: Error.self)
                         .eraseToAnyPublisher()
                 }
@@ -33,15 +40,15 @@ struct DefaultLoginUseCase: LoginUseCase {
                     loginProvider: loginProvider
                 )
             }
-            .map { refreshToken in
-                guard let refreshToken else { return false }
+            .map { response in
+                //TODO: Device ID 처리
                 
                 KeychainManager.save(
                     forAccount: .refreshToken,
-                    value: refreshToken
+                    value: response.refreshToken
                 )
                 
-                return true
+                return response.isFirstLogin
             }
             .eraseToAnyPublisher()
     }
@@ -53,7 +60,7 @@ struct DefaultLoginUseCase: LoginUseCase {
     private func fetchJWTToken(
         idToken: String,
         loginProvider: LoginProvider
-    ) -> AnyPublisher<String?, Error> {
+    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
         return authRepository.fetchJWTToken(
             idToken: idToken,
             loginProvider: loginProvider

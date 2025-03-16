@@ -7,7 +7,8 @@
 
 import Foundation
 
+//TODO: 서버의 오류 DTO와 상의하기
 struct ErrorResponseDTO: Decodable {
     let message: String
-    let status: String
+    let success: Bool
 }

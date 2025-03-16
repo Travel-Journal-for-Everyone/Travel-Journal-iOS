@@ -27,7 +27,7 @@ final class DefaultAuthRepository: AuthRepository {
     func fetchJWTToken(
         idToken: String,
         loginProvider: LoginProvider
-    ) -> AnyPublisher<String?, Error> {
+    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
         let request = FetchJWTTokenRequest(
             idToken: idToken,
             loginProvider: loginProvider.rawValue
@@ -37,10 +37,6 @@ final class DefaultAuthRepository: AuthRepository {
             AuthAPI.fetchJWTToken(request),
             decodingType: FetchJWTTokenResponseDTO.self
         )
-        .map { response in
-            // TODO: Response의 다른 정보들 나중에 처리하기
-            response.refreshToken
-        }
         .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
