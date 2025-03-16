@@ -10,4 +10,5 @@ import Combine
 
 protocol UserRepository {
     func validateNickname(_ nickname: String) -> AnyPublisher<String, Error>
+    func fetchUser(memberID: Int) -> AnyPublisher<User, NetworkError>
 }
