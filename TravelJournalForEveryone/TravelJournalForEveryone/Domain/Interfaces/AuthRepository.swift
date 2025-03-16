@@ -13,5 +13,5 @@ protocol AuthRepository {
     func fetchJWTToken(
         idToken: String,
         loginProvider: LoginProvider
-    ) -> AnyPublisher<String?, Error>
+    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error>
 }

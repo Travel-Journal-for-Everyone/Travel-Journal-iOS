@@ -71,7 +71,7 @@ final class DefaultNetworkService: NetworkService {
                 return decodedData
             default:
                 guard let afError = dataResponse.error else {
-                    throw NetworkError.unknownError
+                    throw NetworkError.unknownError(dataResponse.error ?? NSError())
                 }
                 throw self.handleStatusCode(
                     httpResponse.statusCode,
@@ -80,7 +80,9 @@ final class DefaultNetworkService: NetworkService {
                 )
             }
         }
-        .mapError { .networkError($0) }
+        .mapError { error in
+            return error as? NetworkError ?? .unknownError(error)
+        }
         .eraseToAnyPublisher()
     }
     
@@ -116,7 +118,7 @@ final class DefaultNetworkService: NetworkService {
         case(_, "Failed to decode error response"):
             return .decodingFailed(data)
         default:
-            return .networkError(afError)
+            return .unknownError(afError)
         }
     }
     

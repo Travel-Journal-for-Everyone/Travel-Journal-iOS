@@ -26,6 +26,7 @@ enum AuthenticationIntent {
     case appleLogin
     case googleLogin
     case isPresentedProfileCreationView(Bool)
+    case startButtonTapped
     case logout
 }
 
@@ -53,12 +54,22 @@ final class AuthenticationViewModel: ObservableObject {
             handleGoogleLogin()
         case .isPresentedProfileCreationView(let value):
             state.isPresentedProfileCreationView = value
+        case .startButtonTapped:
+            state.authenticationState = .authenticated
         case .logout:
             handleLogout()
         }
     }
     
     private func handleViewOnAppear() { }
+    
+    private func navigateViewByResult(_ result: Bool) {
+        if result {
+            state.isPresentedProfileCreationView = true
+        } else {
+            state.authenticationState = .authenticated
+        }
+    }
     
     private func handleKakaoLogin() {
         loginUsecase.execute(loginProvider: .kakao)
@@ -70,9 +81,7 @@ final class AuthenticationViewModel: ObservableObject {
                     print("⛔️ Kakao Login Failure: \(error)")
                 }
             } receiveValue: { [unowned self] result in
-                if result {
-                    self.state.isPresentedProfileCreationView = true
-                }
+                navigateViewByResult(result)
             }
             .store(in: &cancellables)
     }
@@ -87,9 +96,7 @@ final class AuthenticationViewModel: ObservableObject {
                     print("⛔️ Apple Login Failure: \(error)")
                 }
             } receiveValue: { [unowned self] result in
-                if result {
-                    self.state.isPresentedProfileCreationView = true
-                }
+                navigateViewByResult(result)
             }
             .store(in: &cancellables)
     }
@@ -104,9 +111,7 @@ final class AuthenticationViewModel: ObservableObject {
                     print("⛔️ Google Login Failure: \(error)")
                 }
             } receiveValue: { [unowned self] result in
-                if result {
-                    self.state.isPresentedProfileCreationView = true
-                }
+                navigateViewByResult(result)
             }
             .store(in: &cancellables)
     }
