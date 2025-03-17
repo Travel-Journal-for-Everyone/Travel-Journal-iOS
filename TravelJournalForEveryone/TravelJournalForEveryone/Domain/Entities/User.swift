@@ -10,6 +10,6 @@ import Foundation
 struct User {
     // let profileImageURLString: String
     let nickname: String
-    let accountScope: ProfileVisibilityScope
+    let accountScope: AccountScope
     let isFirstLogin: Bool
 }

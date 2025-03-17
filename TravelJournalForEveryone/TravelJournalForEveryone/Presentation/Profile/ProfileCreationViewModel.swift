@@ -16,7 +16,7 @@ struct ProfileCreationModelState {
     var tempNickname: String = ""
     var nicknameValidationMessage: String = ""
     var messageColor: Color = .tjRed
-    var profileVisibilityScope: ProfileVisibilityScope = .publicProfile
+    var profileVisibilityScope: AccountScope = .publicProfile
     
     var isDisableNicknameCheckButton: Bool = true
     var isDisableCompletionButton: Bool = true
@@ -33,7 +33,7 @@ enum ProfileCreationIntent {
     case viewOnAppear
     case enterNickname(String)
     case tappedNicknameCheckButton
-    case tappedProfileVisibilityScope(ProfileVisibilityScope)
+    case tappedProfileVisibilityScope(AccountScope)
     case tappedCompletionButton
     case selectedPhoto(PhotosPickerItem?)
     case changeDefaultImage

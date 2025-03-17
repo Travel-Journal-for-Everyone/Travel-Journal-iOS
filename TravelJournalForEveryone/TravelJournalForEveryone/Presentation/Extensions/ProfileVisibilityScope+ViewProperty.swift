@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension ProfileVisibilityScope {
+extension AccountScope {
     var title: String {
         switch self {
         case .publicProfile: "전체 공개"

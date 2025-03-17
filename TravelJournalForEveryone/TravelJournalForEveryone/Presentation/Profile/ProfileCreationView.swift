@@ -177,7 +177,7 @@ struct ProfileCreationView: View {
         ZStack(alignment: .top) {
             VStack(spacing: 14) {
                 ForEach(
-                    Array(ProfileVisibilityScope.allCases.enumerated()),
+                    Array(AccountScope.allCases.enumerated()),
                     id: \.offset
                 ) { index, scope in
                     VStack(alignment: .leading, spacing: 8) {
@@ -207,7 +207,7 @@ struct ProfileCreationView: View {
                     }
                     .padding(.horizontal, 20)
                     
-                    if index < ProfileVisibilityScope.allCases.count - 1 {
+                    if index < AccountScope.allCases.count - 1 {
                         Divider()
                             .background(.tjGray6)
                     }
