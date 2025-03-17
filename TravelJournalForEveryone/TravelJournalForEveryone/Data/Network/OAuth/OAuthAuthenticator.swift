@@ -101,6 +101,10 @@ final class OAuthAuthenticator: Authenticator {
                     print("⛔️ Authenticator refresh Error: Refresh token has expired. Please log in again.")
                     #endif
                     
+                    Task { @MainActor in
+                        DIContainer.shared.authStateManager.unauthenticate()
+                    }
+                    
                     completion(.failure(error))
                 }
             }

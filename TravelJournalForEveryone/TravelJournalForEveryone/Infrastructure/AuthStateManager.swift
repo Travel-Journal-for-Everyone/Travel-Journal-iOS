@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct AuthStateManager {
-    private(set) var authState: AuthenticationState = .unauthenticated
+final class AuthStateManager: ObservableObject {
+    @Published private(set) var authState: AuthenticationState = .unauthenticated
     
-    mutating func authenticate() {
+    func authenticate() {
         authState = .authenticated
     }
     
-    mutating func unauthenticate() {
+    func unauthenticate() {
         authState = .unauthenticated
     }
 }

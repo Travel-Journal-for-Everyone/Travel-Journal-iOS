@@ -30,10 +30,10 @@ enum AuthenticationIntent {
 final class AuthenticationViewModel: ObservableObject {
     @Published private(set) var state = AuthenticationModelState()
     
-    @Published private var authState = DIContainer.shared.authStateManager.authState
-    
     private let loginUsecase: LoginUseCase
     private let authStateCheckUseCase: AuthStateCheckUseCase
+    
+    private let authStateManager = DIContainer.shared.authStateManager
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -48,7 +48,7 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func bind() {
-        $authState
+        authStateManager.$authState
             .sink { [unowned self] authState in
                 self.state.authenticationState = authState
             }
@@ -68,7 +68,7 @@ final class AuthenticationViewModel: ObservableObject {
         case .isPresentedProfileCreationView(let value):
             state.isPresentedProfileCreationView = value
         case .startButtonTapped:
-            state.authenticationState = .authenticated
+            DIContainer.shared.authStateManager.authenticate()
         case .logout:
             handleLogout()
         }
@@ -91,7 +91,7 @@ final class AuthenticationViewModel: ObservableObject {
         if result {
             state.isPresentedProfileCreationView = true
         } else {
-            state.authenticationState = .authenticated
+            DIContainer.shared.authStateManager.authenticate()
         }
     }
     
