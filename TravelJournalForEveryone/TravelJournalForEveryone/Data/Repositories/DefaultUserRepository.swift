@@ -48,7 +48,6 @@ final class DefaultUserRepository: UserRepository {
         )
         .setFailureType(to: NetworkError.self)
         .eraseToAnyPublisher()
-        // return Empty().eraseToAnyPublisher()
     }
 }
 
@@ -78,6 +77,5 @@ final class MockUserRepository: UserRepository {
         )
         .setFailureType(to: NetworkError.self)
         .eraseToAnyPublisher()
-        // return Empty().eraseToAnyPublisher()
     }
 }

@@ -42,17 +42,30 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
     }
     
     private func isValidJWTToken() -> AnyPublisher<Bool, Never> {
-        // TODO: - 백엔드 API 나오면 구현
-        // 유저디폴트에 MemberID 값이 없으면 false 방출
         let memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
         
         guard memberID > 0 else {
             return Just(false).eraseToAnyPublisher()
         }
         
-        // userRepository를 통해 기능 구현해야 함.
-        // userRepository.fetchUser(memberID: memberID)
-
-        return Empty().eraseToAnyPublisher()
+        return userRepository.fetchUser(memberID: memberID)
+            .map { user in
+                saveUserData(user)
+                return true
+            }
+            .catch { error in
+                #if DEBUG
+                print("⛔️ Fetch User Failure: \(error)")
+                #endif
+                
+                return Just(false)
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    private func saveUserData(_ user: User) {
+        // TODO: - 유저 객체에 데이터 저장하기
+        print(user)
+        print(UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value))
     }
 }
