@@ -31,8 +31,8 @@ struct DefaultLoginUseCase: LoginUseCase {
                             deviceID: ""
                         )
                     )
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
                 }
                 
                 return self.fetchJWTToken(
@@ -41,7 +41,8 @@ struct DefaultLoginUseCase: LoginUseCase {
                 )
             }
             .map { response in
-                //TODO: Device ID 처리
+                UserDefaults.standard.set(response.memberID, forKey: UserDefaultsKey.memberID.value)
+                UserDefaults.standard.set(response.deviceID, forKey: UserDefaultsKey.deviceID.value)
                 
                 KeychainManager.save(
                     forAccount: .refreshToken,

@@ -43,11 +43,15 @@ final class OAuthAuthenticator: Authenticator {
     ) {
         do {
             let refreshToken = try KeychainManager.load(forAccount: .refreshToken).get()
+            guard let deviceID = UserDefaults.standard.string(forKey: UserDefaultsKey.deviceID.value)
+            else {
+                completion(.failure(UserDefaultsError.dataNotFound))
+                return
+            }
             
             let refreshTokenRequestDTO: RefreshJWTTokenRequestDTO = .init(
                 refreshToken: refreshToken,
-                // TODO: - DeviceID 불러오기
-                deviceID: ""
+                deviceID: deviceID
             )
             let refreshTokenAPI: EndPoint = TokenAPI.refreshJWTToken(refreshTokenRequestDTO)
             
