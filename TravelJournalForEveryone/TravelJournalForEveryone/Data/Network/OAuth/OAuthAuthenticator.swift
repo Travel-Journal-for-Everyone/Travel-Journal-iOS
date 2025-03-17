@@ -44,6 +44,8 @@ final class OAuthAuthenticator: Authenticator {
             #if DEBUG
             print("⛔️ Authenticator refresh Error: Failed to load refresh token from Keychain.")
             #endif
+            
+            completion(.failure(NSError()))
             return
         }
         
@@ -84,26 +86,21 @@ final class OAuthAuthenticator: Authenticator {
         }
         .responseDecodable(of: RefreshJWTTokenResponseDTO.self) { response in
             switch response.result {
-            case .success(let refreshJWTTokenResponseDTO):
-                guard let accessToken = KeychainManager.load(forAccount: .accessToken) else {
+            case .success:
+                guard let accessToken = KeychainManager.load(forAccount: .accessToken),
+                      let refreshToken = KeychainManager.load(forAccount: .refreshToken)
+                else {
                     #if DEBUG
                     print("⛔️ Authenticator refresh Error: Failed to load access token from Keychain.")
                     #endif
+                    
+                    completion(.failure(NSError()))
                     return
                 }
                 
-                #if DEBUG
-                print("📌 Updated Refresh Token: \(refreshJWTTokenResponseDTO.refreshToken)")
-                #endif
-                
-                KeychainManager.save(
-                    forAccount: .refreshToken,
-                    value: refreshJWTTokenResponseDTO.refreshToken
-                )
-                
                 let newCredential: OAuthCredential = .init(
                     accessToken: accessToken,
-                    refreshToken: refreshJWTTokenResponseDTO.refreshToken
+                    refreshToken: refreshToken
                 )
                 
                 completion(.success(newCredential))
