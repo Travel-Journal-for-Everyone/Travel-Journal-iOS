@@ -35,12 +35,10 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
     }
     
     private func hasJWTTokenInKeychain() -> Bool {
-        guard let _ = KeychainManager.load(forAccount: .accessToken),
-              let _ = KeychainManager.load(forAccount: .refreshToken)
-        else {
-            return false
-        }
-        return true
+        let hasAccessToken = KeychainManager.load(forAccount: .accessToken).isSuccess
+        let hasRefreshToken = KeychainManager.load(forAccount: .refreshToken).isSuccess
+        
+        return hasAccessToken && hasRefreshToken
     }
     
     private func isValidJWTToken() -> AnyPublisher<Bool, Never> {
