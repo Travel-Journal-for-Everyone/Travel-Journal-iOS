@@ -1,5 +1,5 @@
 //
-//  ProfileVisibilityScope+ViewProperty.swift
+//  AccountScope+ViewProperty.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 2/23/25.

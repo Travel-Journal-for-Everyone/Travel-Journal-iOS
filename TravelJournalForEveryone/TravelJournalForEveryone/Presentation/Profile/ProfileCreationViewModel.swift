@@ -16,7 +16,7 @@ struct ProfileCreationModelState {
     var tempNickname: String = ""
     var nicknameValidationMessage: String = ""
     var messageColor: Color = .tjRed
-    var profileVisibilityScope: AccountScope = .publicProfile
+    var accountScope: AccountScope = .publicProfile
     
     var isDisableNicknameCheckButton: Bool = true
     var isDisableCompletionButton: Bool = true
@@ -33,7 +33,7 @@ enum ProfileCreationIntent {
     case viewOnAppear
     case enterNickname(String)
     case tappedNicknameCheckButton
-    case tappedProfileVisibilityScope(AccountScope)
+    case tappedAccountScope(AccountScope)
     case tappedCompletionButton
     case selectedPhoto(PhotosPickerItem?)
     case changeDefaultImage
@@ -91,8 +91,8 @@ final class ProfileCreationViewModel: ObservableObject {
             self.tempNickname = tempNickname
         case .tappedNicknameCheckButton:
             handleTappedNicknameCheckButton()
-        case .tappedProfileVisibilityScope(let profileVisibilityScope):
-            print("Tapped: 계정 범위 설정 - \(profileVisibilityScope)")
+        case .tappedAccountScope(let accountScope):
+            print("Tapped: 계정 범위 설정 - \(accountScope)")
         case .tappedCompletionButton:
             handleTappedCompletionButton()
         case .selectedPhoto(let item):
@@ -145,7 +145,7 @@ final class ProfileCreationViewModel: ObservableObject {
         
         signUpUseCase.excute(
             state.nickname,
-            state.profileVisibilityScope
+            state.accountScope
         )
             .sink { completion in
                 switch completion {
