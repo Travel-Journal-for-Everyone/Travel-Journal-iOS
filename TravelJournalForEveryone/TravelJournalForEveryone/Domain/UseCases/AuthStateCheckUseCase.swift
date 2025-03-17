@@ -42,7 +42,7 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
     }
     
     private func isValidJWTToken() -> AnyPublisher<Bool, Never> {
-        // TODO: - 
+        // TODO: - 백엔드 API 나오면 구현
         // 유저디폴트에 MemberID 값이 없으면 false 방출
         
         // userRepository를 통해 기능 구현해야 함.

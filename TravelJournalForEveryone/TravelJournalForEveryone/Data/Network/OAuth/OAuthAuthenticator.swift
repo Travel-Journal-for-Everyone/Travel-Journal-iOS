@@ -21,6 +21,7 @@ final class OAuthAuthenticator: Authenticator {
         with response: HTTPURLResponse,
         failDueToAuthenticationError error: Error
     ) -> Bool {
+        // TODO: - 401 코드 뿐만 아니라 에러 메시지도 읽어야 할 수 있음!
         return response.statusCode == 401
     }
     
