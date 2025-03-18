@@ -16,14 +16,6 @@ protocol NetworkService {
     ) -> AnyPublisher<T, NetworkError>
 }
 
-final class AFSession {
-    static let session: Session = {
-        let configuration = URLSessionConfiguration.af.default
-        let logger = NetworkEventMonitor()
-        return Session(configuration: configuration, eventMonitors: [logger])
-    }()
-}
-
 final class DefaultNetworkService: NetworkService {
     private let interceptor: RequestInterceptor?
     
