@@ -12,6 +12,7 @@ import Combine
 struct AuthenticationModelState {
     var authenticationState: AuthenticationState = .unauthenticated
     var isPresentedProfileCreationView: Bool = false
+    var isLoggingin: Bool = false
 }
 
 // MARK: - Intent
@@ -96,8 +97,12 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleKakaoLogin() {
+        state.isLoggingin = true
+        
         loginUsecase.execute(loginProvider: .kakao)
-            .sink { completion in
+            .sink { [unowned self] completion in
+                self.state.isLoggingin = false
+                
                 switch completion {
                 case .finished:
                     print("✅ Kakao Login Success")
@@ -111,8 +116,12 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleAppleLogin() {
+        state.isLoggingin = true
+        
         loginUsecase.execute(loginProvider: .apple)
-            .sink { completion in
+            .sink { [unowned self] completion in
+                self.state.isLoggingin = false
+                
                 switch completion {
                 case .finished:
                     print("✅ Apple Login Success")
@@ -126,8 +135,12 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     private func handleGoogleLogin() {
+        state.isLoggingin = true
+        
         loginUsecase.execute(loginProvider: .google)
-            .sink { completion in
+            .sink { [unowned self] completion in
+                self.state.isLoggingin = false
+                
                 switch completion {
                 case .finished:
                     print("✅ Google Login Success")
