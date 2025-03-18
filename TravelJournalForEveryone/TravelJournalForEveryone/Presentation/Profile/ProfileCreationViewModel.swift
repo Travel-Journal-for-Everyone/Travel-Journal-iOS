@@ -26,6 +26,7 @@ struct ProfileCreationModelState {
     var selectedImage: Image? = nil
     
     var isPresentedSignupCompletionView: Bool = false
+    var isFocusedNicknameTextField: Bool = false
 }
 
 // MARK: - Intent
@@ -113,6 +114,7 @@ final class ProfileCreationViewModel: ObservableObject {
     private func handleTappedNicknameCheckButton() {
         state.isCheckingNickname = true
         state.isDisableNicknameCheckButton = true
+        state.isFocusedNicknameTextField = false
         
         nicknameCheckUseCase.validateNicknameByServer(tempNickname)
             .sink { [weak self] completion in
@@ -147,20 +149,20 @@ final class ProfileCreationViewModel: ObservableObject {
             state.nickname,
             state.accountScope
         )
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    print("온보딩 실패 : \(error)")
-                }
-            } receiveValue: { [weak self] result in
-                if result {
-                    self?.state.isPresentedSignupCompletionView = true
-                }
+        .sink { completion in
+            switch completion {
+            case .finished:
+                break
+            case .failure(let error):
+                print("온보딩 실패 : \(error)")
             }
-            .store(in: &cancellables)
-
+        } receiveValue: { [weak self] result in
+            if result {
+                self?.state.isPresentedSignupCompletionView = true
+            }
+        }
+        .store(in: &cancellables)
+        
     }
     
     private func updateStateForNicknameValidationForRegex(_ result: NicknameRegexCheckResult) {
@@ -190,7 +192,7 @@ final class ProfileCreationViewModel: ObservableObject {
         } else {
             state.isDisableCompletionButton = true
             state.messageColor = .tjRed
-            state.tempNickname = ""
+            state.isFocusedNicknameTextField = true
         }
         
         switch result {
