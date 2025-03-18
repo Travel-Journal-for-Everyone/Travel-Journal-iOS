@@ -9,5 +9,5 @@ import Foundation
 
 struct SignUpRequestDTO {
     var nickname: String
-    var accountScope: ProfileVisibilityScope
+    var accountScope: AccountScope
 }

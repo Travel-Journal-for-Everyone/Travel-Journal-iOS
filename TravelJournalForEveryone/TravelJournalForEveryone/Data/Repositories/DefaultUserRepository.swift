@@ -36,6 +36,19 @@ final class DefaultUserRepository: UserRepository {
         }
         .eraseToAnyPublisher()
     }
+    
+    func fetchUser(memberID: Int) -> AnyPublisher<User, NetworkError> {
+        // TODO: - 백엔드 API 나오면 구현
+        return Just(
+            User(
+                nickname: "마루김마루",
+                accountScope: .publicProfile,
+                isFirstLogin: false
+            )
+        )
+        .setFailureType(to: NetworkError.self)
+        .eraseToAnyPublisher()
+    }
 }
 
 final class MockUserRepository: UserRepository {
@@ -51,5 +64,18 @@ final class MockUserRepository: UserRepository {
         return Just(true)
             .setFailureType(to: NetworkError.self)
             .eraseToAnyPublisher()
+    }
+    
+    func fetchUser(memberID: Int) -> AnyPublisher<User, NetworkError> {
+        // TODO: - 백엔드 API 나오면 구현
+        return Just(
+            User(
+                nickname: "마루김마루",
+                accountScope: .publicProfile,
+                isFirstLogin: false
+            )
+        )
+        .setFailureType(to: NetworkError.self)
+        .eraseToAnyPublisher()
     }
 }

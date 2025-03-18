@@ -12,7 +12,7 @@ struct ProfileCreationView: View {
     @StateObject var viewModel: ProfileCreationViewModel
     var isEditingProfile: Bool = false
     
-    @State var isTappedProfileVisibilityScopeButton: Bool = false
+    @State var isTappedAccountScopeButton: Bool = false
     @State private var isShowingDialog: Bool = false
     @State private var isShowingPhotosPicker: Bool = false
     
@@ -32,7 +32,7 @@ struct ProfileCreationView: View {
                     }
                     .onTapGesture {
                         hideKeyboard()
-                        isTappedProfileVisibilityScopeButton = false
+                        isTappedAccountScopeButton = false
                         isShowingDialog = true  
                     }
                     .padding(.top, 30)
@@ -40,7 +40,7 @@ struct ProfileCreationView: View {
                     
                     VStack(spacing: 15) {
                         userInfoInputAreaFor(.nickname)
-                        userInfoInputAreaFor(.profileVisibilityScope)
+                        userInfoInputAreaFor(.accountScope)
                             .padding(.bottom, 45)
                     }
                     
@@ -79,7 +79,7 @@ struct ProfileCreationView: View {
         })
         .onTapGesture {
             hideKeyboard()
-            isTappedProfileVisibilityScopeButton = false
+            isTappedAccountScopeButton = false
         }
         .onAppear {
             viewModel.send(.viewOnAppear)
@@ -119,8 +119,8 @@ struct ProfileCreationView: View {
             switch type {
             case .nickname:
                 nicknameTextView
-            case .profileVisibilityScope:
-                profileVisibilityScopeButton
+            case .accountScope:
+                accountScopeButton
             }
         }
     }
@@ -156,7 +156,7 @@ struct ProfileCreationView: View {
                     size: .short
                 ) {
                     hideKeyboard()
-                    isTappedProfileVisibilityScopeButton = false
+                    isTappedAccountScopeButton = false
                     
                     viewModel.send(.tappedNicknameCheckButton)
                 }
@@ -173,11 +173,11 @@ struct ProfileCreationView: View {
         }
     }
     
-    private var profileVisibilityScopeButton: some View {
+    private var accountScopeButton: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 14) {
                 ForEach(
-                    Array(ProfileVisibilityScope.allCases.enumerated()),
+                    Array(AccountScope.allCases.enumerated()),
                     id: \.offset
                 ) { index, scope in
                     VStack(alignment: .leading, spacing: 8) {
@@ -201,13 +201,13 @@ struct ProfileCreationView: View {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        isTappedProfileVisibilityScopeButton.toggle()
+                        isTappedAccountScopeButton.toggle()
                         
-                        viewModel.send(.tappedProfileVisibilityScope(scope))
+                        viewModel.send(.tappedAccountScope(scope))
                     }
                     .padding(.horizontal, 20)
                     
-                    if index < ProfileVisibilityScope.allCases.count - 1 {
+                    if index < AccountScope.allCases.count - 1 {
                         Divider()
                             .background(.tjGray6)
                     }
@@ -222,11 +222,11 @@ struct ProfileCreationView: View {
                             .stroke(.tjGray5, lineWidth: 1)
                     }
             }
-            .offset(y: isTappedProfileVisibilityScopeButton ? 50 : 0)
-            .opacity(isTappedProfileVisibilityScopeButton ? 1 : 0)
+            .offset(y: isTappedAccountScopeButton ? 50 : 0)
+            .opacity(isTappedAccountScopeButton ? 1 : 0)
             .animation(
                 .easeIn(duration: 0.15),
-                value: isTappedProfileVisibilityScopeButton
+                value: isTappedAccountScopeButton
             )
             
             RoundedRectangle(cornerRadius: 8)
@@ -234,10 +234,10 @@ struct ProfileCreationView: View {
                 .foregroundStyle(.tjGray6)
                 .overlay {
                     HStack(spacing: 5) {
-                        Text("\(viewModel.state.profileVisibilityScope.title)")
+                        Text("\(viewModel.state.accountScope.title)")
                             .font(.pretendardRegular(16))
                         
-                        Image(viewModel.state.profileVisibilityScope.imageResourceString)
+                        Image(viewModel.state.accountScope.imageResourceString)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 16, height: 16)
@@ -249,18 +249,18 @@ struct ProfileCreationView: View {
                             .scaledToFit()
                             .frame(width: 24)
                             .rotationEffect(
-                                .degrees(isTappedProfileVisibilityScopeButton ? 0 : 180)
+                                .degrees(isTappedAccountScopeButton ? 0 : 180)
                             )
                             .animation(
                                 .easeInOut(duration: 0.2),
-                                value: isTappedProfileVisibilityScopeButton
+                                value: isTappedAccountScopeButton
                             )
                     }
                     .padding(.horizontal, 20)
                 }
                 .onTapGesture {
                     hideKeyboard()
-                    isTappedProfileVisibilityScopeButton.toggle()
+                    isTappedAccountScopeButton.toggle()
                 }
         }
     }
@@ -278,13 +278,13 @@ struct ProfileCreationView: View {
 extension ProfileCreationView {
     enum InputType {
         case nickname
-        case profileVisibilityScope
+        case accountScope
         
         var title: String {
             switch self {
             case .nickname:
                 return "닉네임"
-            case .profileVisibilityScope:
+            case .accountScope:
                 return "프로필 공개 범위"
             }
         }

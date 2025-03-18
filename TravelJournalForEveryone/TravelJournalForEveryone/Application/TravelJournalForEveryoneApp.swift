@@ -15,9 +15,11 @@ import GoogleSignIn
 struct TravelJournalForEveryoneApp: App {
     var body: some Scene {
         WindowGroup {
-            AuthenticationView(viewModel: .init(
-                loginUsecase: DIContainer.shared.loginUseCase)
-            )
+            AuthenticationView(
+                viewModel: .init(
+                loginUsecase: DIContainer.shared.loginUseCase,
+                authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase
+            ))
             .onOpenURL { url in
                 // 카카오톡에서 앱으로 돌아올 때 쓰일 URL 핸들러
                 if AuthApi.isKakaoTalkLoginUrl(url) {

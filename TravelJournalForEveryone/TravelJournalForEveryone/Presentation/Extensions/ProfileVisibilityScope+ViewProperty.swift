@@ -1,5 +1,5 @@
 //
-//  ProfileVisibilityScope+ViewProperty.swift
+//  AccountScope+ViewProperty.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 2/23/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension ProfileVisibilityScope {
+extension AccountScope {
     var title: String {
         switch self {
         case .publicProfile: "전체 공개"

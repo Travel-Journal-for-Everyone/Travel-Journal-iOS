@@ -8,18 +8,36 @@
 import Foundation
 import Security
 
+enum KeychainError: Error {
+    case invalidItem(KeychainAccountType)
+    case itemNotFound(KeychainAccountType)
+    
+    case failedToSave(KeychainAccountType)
+    case failedToLoad(KeychainAccountType)
+    case failedToDelete(KeychainAccountType)
+    case failedToConvert(KeychainAccountType)
+}
+
+enum KeychainAccountType: String {
+    case accessToken
+    case refreshToken
+}
+
 struct KeychainManager {
     static private let service = "TJFE"
     
     private init() { }
     
     @discardableResult
-    static func save(forAccount: AccountType, value: String) -> Bool {
+    static func save(
+        forAccount: KeychainAccountType,
+        value: String
+    ) -> Result<Bool, KeychainError> {
         guard let data = value.data(using: .utf8) else {
             #if DEBUG
             print("⛔️ Keychain-Saving Error(\(forAccount)): Failed to convert string to data.")
             #endif
-            return false
+            return .failure(.failedToConvert(forAccount))
         }
         
         let keychainQuery = [
@@ -37,16 +55,15 @@ struct KeychainManager {
             #if DEBUG
             print("⛔️ Keychain-Saving Error(\(forAccount)): Failed to save data.")
             #endif
-            return false
+            return .failure(.failedToSave(forAccount))
         }
         #if DEBUG
         print("✅ Keychain-Saving Success(\(forAccount))")
         #endif
-        return true
+        return .success(true)
     }
     
-    @discardableResult
-    static func load(forAccount: AccountType) -> String? {
+    static func load(forAccount: KeychainAccountType) -> Result<String, KeychainError> {
         let keychainQuery = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: service,
@@ -63,28 +80,28 @@ struct KeychainManager {
                 #if DEBUG
                 print("✅ Keychain-Loading Success(\(forAccount))")
                 #endif
-                return value
+                return .success(value)
             } else {
                 #if DEBUG
                 print("⛔️ Keychain-Loading Error(\(forAccount)): Invalid data.")
                 #endif
-                return nil
+                return .failure(.invalidItem(forAccount))
             }
         } else if status == errSecItemNotFound {
             #if DEBUG
             print("⛔️ Keychain-Loading Error(\(forAccount)): Data was not found.")
             #endif
-            return nil
+            return .failure(.itemNotFound(forAccount))
         } else {
             #if DEBUG
             print("⛔️ Keychain-Loading Error(\(forAccount)): Failed to load data.")
             #endif
-            return nil
+            return .failure(.failedToLoad(forAccount))
         }
     }
     
     @discardableResult
-    static func delete(forAccount: AccountType) -> Bool {
+    static func delete(forAccount: KeychainAccountType) -> Result<Bool, KeychainError> {
         let keychainQuery = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: service,
@@ -97,25 +114,18 @@ struct KeychainManager {
             #if DEBUG
             print("⛔️ Keychain-Delete Error(\(forAccount)): Data was not found.")
             #endif
-            return false
+            return .failure(.itemNotFound(forAccount))
         }
         
         guard status == errSecSuccess else {
             #if DEBUG
             print("⛔️ Keychain-Delete Error(\(forAccount)): Failed to delete data.")
             #endif
-            return false
+            return .failure(.failedToDelete(forAccount))
         }
         #if DEBUG
         print("✅ Keychain-Delete Success(\(forAccount))")
         #endif
-        return true
-    }
-}
-
-extension KeychainManager {
-    enum AccountType: String {
-        case accessToken
-        case refreshToken
+        return .success(true)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  ProfileVisibilityScope.swift
+//  AccountScope.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 2/20/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ProfileVisibilityScope: String, CaseIterable {
+enum AccountScope: String, CaseIterable {
     case publicProfile
     case followersOnly
     case privateProfile

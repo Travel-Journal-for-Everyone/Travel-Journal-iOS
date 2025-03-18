@@ -14,11 +14,6 @@ struct AuthenticationModelState {
     var isPresentedProfileCreationView: Bool = false
 }
 
-enum AuthenticationState {
-    case unauthenticated
-    case authenticated
-}
-
 // MARK: - Intent
 enum AuthenticationIntent {
     case viewOnAppear
@@ -31,15 +26,33 @@ enum AuthenticationIntent {
 }
 
 // MARK: - ViewModel(State + Intent)
+@MainActor
 final class AuthenticationViewModel: ObservableObject {
     @Published private(set) var state = AuthenticationModelState()
     
     private let loginUsecase: LoginUseCase
+    private let authStateCheckUseCase: AuthStateCheckUseCase
+    
+    private let authStateManager = DIContainer.shared.authStateManager
     
     private var cancellables: Set<AnyCancellable> = []
     
-    init(loginUsecase: LoginUseCase) {
+    init(
+        loginUsecase: LoginUseCase,
+        authStateCheckUseCase: AuthStateCheckUseCase
+    ) {
         self.loginUsecase = loginUsecase
+        self.authStateCheckUseCase = authStateCheckUseCase
+        
+        bind()
+    }
+    
+    private func bind() {
+        authStateManager.$authState
+            .sink { [unowned self] authState in
+                self.state.authenticationState = authState
+            }
+            .store(in: &cancellables)
     }
     
     func send(_ intent: AuthenticationIntent) {
@@ -55,19 +68,30 @@ final class AuthenticationViewModel: ObservableObject {
         case .isPresentedProfileCreationView(let value):
             state.isPresentedProfileCreationView = value
         case .startButtonTapped:
-            state.authenticationState = .authenticated
+            DIContainer.shared.authStateManager.authenticate()
         case .logout:
             handleLogout()
         }
     }
     
-    private func handleViewOnAppear() { }
+    private func handleViewOnAppear() {
+        authStateCheckUseCase.execute()
+            .sink { authState in
+                switch authState {
+                case .unauthenticated:
+                    DIContainer.shared.authStateManager.unauthenticate()
+                case .authenticated:
+                    DIContainer.shared.authStateManager.authenticate()
+                }
+            }
+            .store(in: &cancellables)
+    }
     
     private func navigateViewByResult(_ result: Bool) {
         if result {
             state.isPresentedProfileCreationView = true
         } else {
-            state.authenticationState = .authenticated
+            DIContainer.shared.authStateManager.authenticate()
         }
     }
     

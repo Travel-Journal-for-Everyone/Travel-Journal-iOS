@@ -28,9 +28,12 @@ final class DefaultNetworkService: NetworkService {
     private let interceptor: RequestInterceptor?
     
     init() {
+        let accessToken = try? KeychainManager.load(forAccount: .accessToken).get()
+        let refreshToken = try? KeychainManager.load(forAccount: .refreshToken).get()
+        
         let credential = OAuthCredential(
-            accessToken: KeychainManager.load(forAccount: .accessToken) ?? "",
-            refreshToken: KeychainManager.load(forAccount: .refreshToken) ?? ""
+            accessToken: accessToken ?? "",
+            refreshToken: refreshToken ?? ""
         )
         let authenticator = OAuthAuthenticator()
         

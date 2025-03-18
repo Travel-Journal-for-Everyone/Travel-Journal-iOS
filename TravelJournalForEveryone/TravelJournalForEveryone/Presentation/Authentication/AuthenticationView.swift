@@ -30,6 +30,7 @@ struct AuthenticationView: View {
 
 #Preview {
     AuthenticationView(viewModel: .init(
-        loginUsecase: DIContainer.shared.loginUseCase)
-    )
+        loginUsecase: DIContainer.shared.loginUseCase,
+        authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase
+    ))
 }
