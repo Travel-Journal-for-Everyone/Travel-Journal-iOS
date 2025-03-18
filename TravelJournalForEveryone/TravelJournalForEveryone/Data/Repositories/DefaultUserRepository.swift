@@ -39,14 +39,13 @@ final class DefaultUserRepository: UserRepository {
     
     func fetchUser(memberID: Int) -> AnyPublisher<User, NetworkError> {
         // TODO: - 백엔드 API 나오면 구현
-        return Just(
-            User(
-                nickname: "마루김마루",
-                accountScope: .publicProfile,
-                isFirstLogin: false
-            )
+        return networkService.request(
+            MemberAPI.fetchUser(memberID: memberID),
+            decodingType: FetchUserDTO.self
         )
-        .setFailureType(to: NetworkError.self)
+        .map { fetchUserDTO in
+            return fetchUserDTO.toEntity()
+        }
         .eraseToAnyPublisher()
     }
 }
@@ -71,8 +70,7 @@ final class MockUserRepository: UserRepository {
         return Just(
             User(
                 nickname: "마루김마루",
-                accountScope: .publicProfile,
-                isFirstLogin: false
+                accountScope: .publicProfile
             )
         )
         .setFailureType(to: NetworkError.self)
