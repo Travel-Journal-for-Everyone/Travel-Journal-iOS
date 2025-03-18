@@ -8,18 +8,11 @@
 import Foundation
 
 enum AccountScope: String, CaseIterable {
-    case publicProfile
-    case followersOnly
-    case privateProfile
-    
-    var key: String {
-        switch self {
-        case .publicProfile:
-            "PUBLIC"
-        case .followersOnly:
-            "FRIENDS"
-        case .privateProfile:
-            "PRIVATE"
-        }
+    case publicProfile = "PUBLIC"
+    case followersOnly = "FRIENDS"
+    case privateProfile = "PRIVATE"
+
+    static func from(response: String) -> Self {
+        return AccountScope(rawValue: response) ?? .privateProfile
     }
 }
