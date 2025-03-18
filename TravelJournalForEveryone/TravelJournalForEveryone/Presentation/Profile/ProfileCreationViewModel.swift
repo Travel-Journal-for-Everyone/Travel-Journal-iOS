@@ -93,7 +93,7 @@ final class ProfileCreationViewModel: ObservableObject {
         case .tappedNicknameCheckButton:
             handleTappedNicknameCheckButton()
         case .tappedAccountScope(let accountScope):
-            print("Tapped: 계정 범위 설정 - \(accountScope)")
+            state.accountScope = accountScope
         case .tappedCompletionButton:
             handleTappedCompletionButton()
         case .selectedPhoto(let item):
