@@ -143,7 +143,7 @@ final class ProfileCreationViewModel: ObservableObject {
     private func handleTappedCompletionButton() {
         state.nickname = state.tempNickname
         
-        signUpUseCase.excute(
+        signUpUseCase.execute(
             state.nickname,
             state.accountScope
         )
