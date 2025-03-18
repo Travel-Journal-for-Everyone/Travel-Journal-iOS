@@ -13,53 +13,62 @@ struct LoginView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack(spacing: 1) {
-                            Text("모두의 여행 일지")
-                                .font(.pretendardBold(24))
-                                .background {
-                                    Rectangle()
-                                        .frame(height: 34)
-                                        .foregroundStyle(.tjPrimaryLight)
-                                }
-                            Text("와 함께")
+            ZStack {
+                VStack(spacing: 0) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack(spacing: 1) {
+                                Text("모두의 여행 일지")
+                                    .font(.pretendardBold(24))
+                                    .background {
+                                        Rectangle()
+                                            .frame(height: 34)
+                                            .foregroundStyle(.tjPrimaryLight)
+                                    }
+                                Text("와 함께")
+                            }
+                            Text("나만의 여행 일기를")
+                            Text("만들어 보세요!")
                         }
-                        Text("나만의 여행 일기를")
-                        Text("만들어 보세요!")
+                        .font(.pretendardMedium(24))
+                        .padding(.bottom, 282)
+                        
+                        Spacer()
                     }
-                    .font(.pretendardMedium(24))
-                    .padding(.bottom, 282)
                     
-                    Spacer()
+                    VStack(spacing: 10) {
+                        Text("로그인/회원가입")
+                            .font(.pretendardMedium(12))
+                            .padding(.bottom, 8)
+                        
+                        loginButtonFor(.kakao)
+                        
+                        loginButtonFor(.apple)
+                        
+                        loginButtonFor(.google)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .navigationDestination(isPresented: Binding(
+                    get: { authViewModel.state.isPresentedProfileCreationView },
+                    set: { authViewModel.send(.isPresentedProfileCreationView($0)) }
+                )) {
+                    ProfileCreationView(
+                        viewModel: ProfileCreationViewModel(
+                            nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
+                            signUpUseCase: DIContainer.shared.signUpUseCase
+                        )
+                    )
+                    .environmentObject(authViewModel)
                 }
                 
-                VStack(spacing: 10) {
-                    Text("로그인/회원가입")
-                        .font(.pretendardMedium(12))
-                        .padding(.bottom, 8)
+                if authViewModel.state.isLoading {
+                    Color.black.opacity(0.25)
+                        .ignoresSafeArea(.all)
                     
-                    loginButtonFor(.kakao)
-                    
-                    loginButtonFor(.apple)
-                    
-                    loginButtonFor(.google)
+                    ProgressView()
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 16)
-            .navigationDestination(isPresented: Binding(
-                get: { authViewModel.state.isPresentedProfileCreationView },
-                set: { authViewModel.send(.isPresentedProfileCreationView($0)) }
-            )) {
-                ProfileCreationView(
-                    viewModel: ProfileCreationViewModel(
-                        nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
-                        signUpUseCase: DIContainer.shared.signUpUseCase
-                    )
-                )
-                .environmentObject(authViewModel)
             }
         }
     }
