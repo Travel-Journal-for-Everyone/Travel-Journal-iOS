@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol AuthStateCheckUseCase {
-    func execute() -> AnyPublisher<AuthenticationState, Never>
+    @MainActor func execute() -> AnyPublisher<AuthenticationState, Never>
 }
 
 struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
@@ -19,6 +19,7 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
         self.userRepository = userRepository
     }
     
+    @MainActor
     func execute() -> AnyPublisher<AuthenticationState, Never> {
         if hasJWTTokenInKeychain() {
             return isValidJWTToken()
@@ -41,6 +42,7 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
         return hasAccessToken && hasRefreshToken
     }
     
+    @MainActor
     private func isValidJWTToken() -> AnyPublisher<Bool, Never> {
         let memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
         
@@ -63,8 +65,14 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
             .eraseToAnyPublisher()
     }
     
+    @MainActor
     private func saveUserData(_ user: User) {
-        // TODO: - 유저 객체에 데이터 저장하기
+        DIContainer.shared.userInfoManager.updateUser(
+            nickname: user.nickname,
+            accountScope: user.accountScope
+        )
+        
+        // TODO: - 나중에 테스트 완료 후 아래 프린트문 지우기!
         print(user)
         print(UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value))
     }
