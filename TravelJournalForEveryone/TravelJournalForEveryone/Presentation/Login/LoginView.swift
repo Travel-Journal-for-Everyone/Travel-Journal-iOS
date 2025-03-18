@@ -63,7 +63,7 @@ struct LoginView: View {
                     .environmentObject(authViewModel)
                 }
                 
-                if authViewModel.state.isLoggingin {
+                if authViewModel.state.isLoading {
                     Color.black.opacity(0.25)
                         .ignoresSafeArea(.all)
                     
