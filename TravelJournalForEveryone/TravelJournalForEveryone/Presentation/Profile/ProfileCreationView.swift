@@ -16,6 +16,8 @@ struct ProfileCreationView: View {
     @State private var isShowingDialog: Bool = false
     @State private var isShowingPhotosPicker: Bool = false
     
+    @FocusState private var nicknameFocusState: Bool
+    
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
@@ -140,12 +142,15 @@ struct ProfileCreationView: View {
                             get: { viewModel.state.tempNickname },
                             set: { viewModel.send(.enterNickname($0)) }
                         ), 12)
+                        .focused($nicknameFocusState)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
                         .font(.pretendardRegular(16))
                         .padding(.horizontal, 20)
                         .submitLabel(.done)
                         .onSubmit {
+                            guard !viewModel.state.isDisableNicknameCheckButton
+                            else { return }
                             viewModel.send(.tappedNicknameCheckButton)
                         }
                     }
@@ -170,6 +175,11 @@ struct ProfileCreationView: View {
             Text(viewModel.state.nicknameValidationMessage)
                 .font(.pretendardRegular(12))
                 .foregroundStyle(viewModel.state.messageColor)
+        }
+        .onChange(
+            of: viewModel.state.isFocusedNicknameTextField
+        ) { _, newValue in
+            nicknameFocusState = newValue
         }
     }
     
