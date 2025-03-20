@@ -14,4 +14,5 @@ protocol AuthRepository {
         idToken: String,
         loginProvider: LoginProvider
     ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error>
+    func logout(devideID: String) -> AnyPublisher<LogoutResponseDTO, NetworkError>
 }

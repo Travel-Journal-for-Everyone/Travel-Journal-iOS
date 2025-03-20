@@ -40,4 +40,12 @@ final class DefaultAuthRepository: AuthRepository {
         .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
+    
+    func logout(devideID: String) -> AnyPublisher<LogoutResponseDTO, NetworkError> {
+        return networkService.request(
+            AuthAPI.logout(devideID),
+            decodingType: LogoutResponseDTO.self
+        )
+        .eraseToAnyPublisher()
+    }
 }
