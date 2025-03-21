@@ -70,7 +70,8 @@ final class MockUserRepository: UserRepository {
         return Just(
             User(
                 nickname: "마루김마루",
-                accountScope: .publicProfile
+                accountScope: .publicProfile,
+                isFirstLogin: false
             )
         )
         .setFailureType(to: NetworkError.self)
