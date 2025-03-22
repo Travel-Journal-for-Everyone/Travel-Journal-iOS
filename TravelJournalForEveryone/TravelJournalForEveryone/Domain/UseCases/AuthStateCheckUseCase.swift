@@ -22,14 +22,37 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
     @MainActor
     func execute() -> AnyPublisher<AuthenticationState, Never> {
         if hasJWTTokenInKeychain() {
-            return isValidJWTToken()
-                .flatMap { isValid in
-                    isValid ?
-                    Just(AuthenticationState.authenticated) :
-                    Just(AuthenticationState.unauthenticated)
+            return fetchUser()
+                .map { user in
+                    if user.isFirstLogin {
+                        #if DEBUG
+                        print("⚠️ Not Authenticated: Membership registration has not been completed")
+                        #endif
+                        
+                        return AuthenticationState.unauthenticated
+                    } else {
+                        saveUserData(user)
+                        
+                        #if DEBUG
+                        print("✅ Authenticated")
+                        #endif
+                        
+                        return AuthenticationState.authenticated
+                    }
+                }
+                .catch { error in
+                    #if DEBUG
+                    print("⛔️ AuthState check error: \(error)")
+                    #endif
+                    
+                    return Just(AuthenticationState.unauthenticated)
                 }
                 .eraseToAnyPublisher()
         } else {
+            #if DEBUG
+            print("⚠️ Not Authenticated: JWTToken not found in Keychain")
+            #endif
+            
             return Just(AuthenticationState.unauthenticated)
                 .eraseToAnyPublisher()
         }
@@ -42,25 +65,20 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
         return hasAccessToken && hasRefreshToken
     }
     
-    @MainActor
-    private func isValidJWTToken() -> AnyPublisher<Bool, Never> {
+    private func fetchUser() -> AnyPublisher<User, Error> {
         let memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
         
         guard memberID > 0 else {
-            return Just(false).eraseToAnyPublisher()
+            return Fail(error: UserDefaultsError.dataNotFound)
+                .eraseToAnyPublisher()
         }
         
         return userRepository.fetchUser(memberID: memberID)
             .map { user in
-                saveUserData(user)
-                return true
+                return user
             }
-            .catch { error in
-                #if DEBUG
-                print("⛔️ Fetch User Failure: \(error)")
-                #endif
-                
-                return Just(false)
+            .mapError { networkError in
+                return networkError
             }
             .eraseToAnyPublisher()
     }

@@ -11,4 +11,5 @@ struct User {
     // let profileImageURLString: String
     let nickname: String
     let accountScope: AccountScope
+    let isFirstLogin: Bool
 }
