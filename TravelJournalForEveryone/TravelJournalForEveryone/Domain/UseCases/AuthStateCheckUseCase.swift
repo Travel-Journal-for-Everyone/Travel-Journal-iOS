@@ -31,7 +31,7 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
                         
                         return AuthenticationState.unauthenticated
                     } else {
-                        saveUserData(user)
+                        saveUser(user)
                         
                         #if DEBUG
                         print("✅ Authenticated")
@@ -68,23 +68,11 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
     private func fetchUser() -> AnyPublisher<User, Error> {
         let memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
         
-        guard memberID > 0 else {
-            return Fail(error: UserDefaultsError.dataNotFound)
-                .eraseToAnyPublisher()
-        }
-        
         return userRepository.fetchUser(memberID: memberID)
-            .map { user in
-                return user
-            }
-            .mapError { networkError in
-                return networkError
-            }
-            .eraseToAnyPublisher()
     }
     
     @MainActor
-    private func saveUserData(_ user: User) {
+    private func saveUser(_ user: User) {
         DIContainer.shared.userInfoManager.updateUser(
             nickname: user.nickname,
             accountScope: user.accountScope
