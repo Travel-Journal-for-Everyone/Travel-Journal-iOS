@@ -19,20 +19,21 @@ struct DefaultLogoutUseCase: LogoutUseCase {
         self.authRepository = authRepository
     }
     
-    // 소셜 로그아웃 추가하기
     func execute() -> AnyPublisher<Bool, NetworkError> {
-        guard let deviceID = UserDefaults.standard.string(forKey: UserDefaultsKey.deviceID.value) else {
+        guard let deviceID = UserDefaults.standard.string(forKey: UserDefaultsKey.deviceID.value),
+              let socialType = UserDefaults.standard.string(forKey: UserDefaultsKey.socialType.value) else {
             return Just(false)
                 .setFailureType(to: NetworkError.self)
                 .eraseToAnyPublisher()
         }
-        
-        return authRepository.logout(devideID: deviceID)
+
+        return authRepository.requestLogout(devideID: deviceID)
             .map { response in
                 if response.success {
                     deleteInfo()
+                    _ = authRepository.socialLogout(logoutProvider: SocialType.from(response: socialType))
                 }
-                
+        
                 return response.success
             }
             .eraseToAnyPublisher()

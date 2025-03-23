@@ -73,7 +73,7 @@ struct LoginView: View {
         }
     }
     
-    private func loginButtonFor(_ type: LoginProvider) -> some View {
+    private func loginButtonFor(_ type: SocialType) -> some View {
         Button {
             switch type {
             case .kakao:

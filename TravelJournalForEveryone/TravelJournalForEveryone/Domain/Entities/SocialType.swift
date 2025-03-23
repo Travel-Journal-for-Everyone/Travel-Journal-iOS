@@ -7,8 +7,12 @@
 
 import Foundation
 
-enum LoginProvider: String {
+enum SocialType: String {
     case kakao
     case apple
     case google
+    
+    static func from(response: String) -> Self {
+        return SocialType(rawValue: response) ?? .kakao
+    }
 }
