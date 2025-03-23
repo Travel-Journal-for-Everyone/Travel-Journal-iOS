@@ -73,22 +73,23 @@ final class AuthenticationViewModel: ObservableObject {
             state.isPresentedProfileCreationView = value
         case .startButtonTapped:
             DIContainer.shared.authStateManager.authenticate()
+            state.isPresentedProfileCreationView = false
         case .logout:
             handleLogout()
         }
     }
     
     private func handleViewOnAppear() {
-//        authStateCheckUseCase.execute()
-//            .sink { authState in
-//                switch authState {
-//                case .unauthenticated:
-//                    DIContainer.shared.authStateManager.unauthenticate()
-//                case .authenticated:
-//                    DIContainer.shared.authStateManager.authenticate()
-//                }
-//            }
-//            .store(in: &cancellables)
+        authStateCheckUseCase.execute()
+            .sink { authState in
+                switch authState {
+                case .unauthenticated:
+                    DIContainer.shared.authStateManager.unauthenticate()
+                case .authenticated:
+                    DIContainer.shared.authStateManager.authenticate()
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func navigateViewByResult(_ result: Bool) {
