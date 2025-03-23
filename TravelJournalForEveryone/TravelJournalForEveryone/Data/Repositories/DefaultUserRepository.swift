@@ -26,7 +26,15 @@ final class DefaultUserRepository: UserRepository {
         .eraseToAnyPublisher()
     }
     
-    func completeSignUp(_ request: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError> {
+    func completeSignUp(
+        nickname: String,
+        accountScope: AccountScope
+    ) -> AnyPublisher<Bool, NetworkError> {
+        let request = SignUpRequestDTO(
+            nickname: nickname,
+            accountScope: accountScope
+        )
+        
         return networkService.request(
             MemberAPI.signUp(request),
             decodingType: SignUpResponseDTO.self
@@ -67,7 +75,10 @@ final class MockUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    func completeSignUp(_ request: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError> {
+    func completeSignUp(
+        nickname: String,
+        accountScope: AccountScope
+    ) -> AnyPublisher<Bool, NetworkError> {
         return Just(true)
             .setFailureType(to: NetworkError.self)
             .eraseToAnyPublisher()

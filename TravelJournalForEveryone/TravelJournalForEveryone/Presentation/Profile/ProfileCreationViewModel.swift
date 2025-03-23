@@ -162,7 +162,6 @@ final class ProfileCreationViewModel: ObservableObject {
             }
         }
         .store(in: &cancellables)
-        
     }
     
     private func updateStateForNicknameValidationForRegex(_ result: NicknameRegexCheckResult) {
@@ -224,5 +223,4 @@ final class ProfileCreationViewModel: ObservableObject {
             }
         }
     }
-    
 }

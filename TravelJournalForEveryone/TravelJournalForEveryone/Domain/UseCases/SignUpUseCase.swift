@@ -26,10 +26,9 @@ struct DefaultLoginCompleteUseCase: SignUpUseCase {
         nickname: String,
         accountScope: AccountScope
     ) -> AnyPublisher<Bool, NetworkError> {
-        let request = SignUpRequestDTO(
+        return userRepository.completeSignUp(
             nickname: nickname,
             accountScope: accountScope
         )
-        return userRepository.completeSignUp(request)
     }
 }
