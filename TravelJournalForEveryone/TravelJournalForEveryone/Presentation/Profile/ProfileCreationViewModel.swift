@@ -146,8 +146,8 @@ final class ProfileCreationViewModel: ObservableObject {
         state.nickname = state.tempNickname
         
         signUpUseCase.execute(
-            state.nickname,
-            state.accountScope
+            nickname: state.nickname,
+            accountScope: state.accountScope
         )
         .sink { completion in
             switch completion {
