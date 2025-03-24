@@ -20,6 +20,7 @@ struct AuthenticationView: View {
             case .authenticated:
                 MainTabView()
                     .environmentObject(coordinator)
+                    .environmentObject(viewModel)
             }
         }
         .onAppear {
@@ -30,7 +31,8 @@ struct AuthenticationView: View {
 
 #Preview {
     AuthenticationView(viewModel: .init(
-        loginUsecase: DIContainer.shared.loginUseCase,
+        loginUseCase: DIContainer.shared.loginUseCase,
+        logoutUseCase: DIContainer.shared.logoutUseCase,
         authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase
     ))
 }

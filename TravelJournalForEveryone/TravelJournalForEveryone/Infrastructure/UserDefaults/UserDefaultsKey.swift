@@ -14,6 +14,7 @@ enum UserDefaultsError: Error {
 enum UserDefaultsKey {
     case deviceID
     case memberID
+    case socialType
     
     var value: String { "\(self)" }
 }

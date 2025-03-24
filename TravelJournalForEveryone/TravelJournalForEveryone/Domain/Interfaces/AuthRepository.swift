@@ -9,9 +9,11 @@ import Foundation
 import Combine
 
 protocol AuthRepository {
-    func fetchIDToken(loginProvider: LoginProvider) -> AnyPublisher<String?, Error>
+    func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String?, Error>
     func fetchJWTToken(
         idToken: String,
-        loginProvider: LoginProvider
+        loginProvider: SocialType
     ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error>
+    func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error>
+    func requestLogout(devideID: String) -> AnyPublisher<Bool, NetworkError>
 }

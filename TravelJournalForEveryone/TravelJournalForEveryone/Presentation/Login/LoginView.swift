@@ -73,7 +73,7 @@ struct LoginView: View {
         }
     }
     
-    private func loginButtonFor(_ type: LoginProvider) -> some View {
+    private func loginButtonFor(_ type: SocialType) -> some View {
         Button {
             switch type {
             case .kakao:
@@ -114,7 +114,8 @@ struct LoginView: View {
 #Preview {
     LoginView()
         .environmentObject(AuthenticationViewModel(
-            loginUsecase: DIContainer.shared.loginUseCase,
+            loginUseCase: DIContainer.shared.loginUseCase,
+            logoutUseCase: DIContainer.shared.logoutUseCase,
             authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase
         ))
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension LoginProvider {
+extension SocialType {
     var backgroundColor: Color {
         switch self {
         case .kakao: .kakaoYellow

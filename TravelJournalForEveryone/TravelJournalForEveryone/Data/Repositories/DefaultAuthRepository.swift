@@ -10,23 +10,26 @@ import Combine
 
 final class DefaultAuthRepository: AuthRepository {
     private let socialLoginAuthService: SocialLoginAuthService
+    private let socialLogoutService: SocialLogoutService
     private let networkService: NetworkService
     
     init(
         socialLoginAuthService: SocialLoginAuthService,
+        socialLogoutService: SocialLogoutService,
         networkService: NetworkService
     ) {
         self.socialLoginAuthService = socialLoginAuthService
+        self.socialLogoutService = socialLogoutService
         self.networkService = networkService
     }
     
-    func fetchIDToken(loginProvider: LoginProvider) -> AnyPublisher<String?, Error> {
+    func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String?, Error> {
         socialLoginAuthService.loginWith(loginProvider)
     }
     
     func fetchJWTToken(
         idToken: String,
-        loginProvider: LoginProvider
+        loginProvider: SocialType
     ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
         let request = FetchJWTTokenRequest(
             idToken: idToken,
@@ -38,6 +41,22 @@ final class DefaultAuthRepository: AuthRepository {
             decodingType: FetchJWTTokenResponseDTO.self
         )
         .mapError { $0 as Error }
+        .eraseToAnyPublisher()
+    }
+    
+    func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error> {
+        return socialLogoutService.logoutWith(logoutProvider)
+            .eraseToAnyPublisher()
+    }
+    
+    func requestLogout(devideID: String) -> AnyPublisher<Bool, NetworkError> {
+        return networkService.request(
+            AuthAPI.logout(deviceID: devideID),
+            decodingType: LogoutResponseDTO.self
+        )
+        .map({ response in
+            return response.success
+        })
         .eraseToAnyPublisher()
     }
 }

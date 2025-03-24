@@ -31,7 +31,8 @@ enum AuthenticationIntent {
 final class AuthenticationViewModel: ObservableObject {
     @Published private(set) var state = AuthenticationModelState()
     
-    private let loginUsecase: LoginUseCase
+    private let loginUseCase: LoginUseCase
+    private let logoutUseCase: LogoutUseCase
     private let authStateCheckUseCase: AuthStateCheckUseCase
     
     private let authStateManager = DIContainer.shared.authStateManager
@@ -39,10 +40,12 @@ final class AuthenticationViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     
     init(
-        loginUsecase: LoginUseCase,
+        loginUseCase: LoginUseCase,
+        logoutUseCase: LogoutUseCase,
         authStateCheckUseCase: AuthStateCheckUseCase
     ) {
-        self.loginUsecase = loginUsecase
+        self.loginUseCase = loginUseCase
+        self.logoutUseCase = logoutUseCase
         self.authStateCheckUseCase = authStateCheckUseCase
         
         bind()
@@ -70,6 +73,7 @@ final class AuthenticationViewModel: ObservableObject {
             state.isPresentedProfileCreationView = value
         case .startButtonTapped:
             DIContainer.shared.authStateManager.authenticate()
+            state.isPresentedProfileCreationView = false
         case .logout:
             handleLogout()
         }
@@ -99,7 +103,7 @@ final class AuthenticationViewModel: ObservableObject {
     private func handleKakaoLogin() {
         state.isLoading = true
         
-        loginUsecase.execute(loginProvider: .kakao)
+        loginUseCase.execute(loginProvider: .kakao)
             .sink { [unowned self] completion in
                 self.state.isLoading = false
                 
@@ -118,7 +122,7 @@ final class AuthenticationViewModel: ObservableObject {
     private func handleAppleLogin() {
         state.isLoading = true
         
-        loginUsecase.execute(loginProvider: .apple)
+        loginUseCase.execute(loginProvider: .apple)
             .sink { [unowned self] completion in
                 self.state.isLoading = false
                 
@@ -137,7 +141,7 @@ final class AuthenticationViewModel: ObservableObject {
     private func handleGoogleLogin() {
         state.isLoading = true
         
-        loginUsecase.execute(loginProvider: .google)
+        loginUseCase.execute(loginProvider: .google)
             .sink { [unowned self] completion in
                 self.state.isLoading = false
                 
@@ -153,5 +157,24 @@ final class AuthenticationViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func handleLogout() { }
+    private func handleLogout() {
+        state.isLoading = true
+        
+        logoutUseCase.execute()
+            .sink { completion in
+                self.state.isLoading = false
+                
+                switch completion {
+                case .finished:
+                    print("✅ Logout Network Success")
+                case .failure(let error):
+                    print("⛔️ Logout Network Error: \(error)")
+                }
+            } receiveValue: { [weak self] result in
+                if result {
+                    self?.state.authenticationState = .unauthenticated
+                }
+            }
+            .store(in: &cancellables)
+    }
 }
