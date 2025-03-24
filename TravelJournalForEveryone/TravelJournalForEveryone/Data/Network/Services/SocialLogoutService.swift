@@ -32,8 +32,10 @@ struct DefaultSocialLogoutService: SocialLogoutService {
             UserApi.shared.logout { error in
                 if let error = error {
                     print("⛔️ Kakao Logout Failed: \(error)")
+                    promise(.failure(error))
                 } else {
                     print("✅ Kakao Logout Success")
+                    promise(.success(true))
                 }
             }
         }
@@ -47,10 +49,10 @@ struct DefaultSocialLogoutService: SocialLogoutService {
     }
     
     private func logoutWithGoogle() -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            GIDSignIn.sharedInstance.signOut()
-        }
-        .eraseToAnyPublisher()
+        GIDSignIn.sharedInstance.signOut()
+        return Just(true)
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
     }
 }
 

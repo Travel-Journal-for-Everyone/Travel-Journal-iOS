@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol LogoutUseCase {
-    func execute() -> AnyPublisher<Bool, NetworkError>
+    func execute() -> AnyPublisher<Bool, Error>
 }
 
 struct DefaultLogoutUseCase: LogoutUseCase {
@@ -19,29 +19,30 @@ struct DefaultLogoutUseCase: LogoutUseCase {
         self.authRepository = authRepository
     }
     
-    func execute() -> AnyPublisher<Bool, NetworkError> {
+    func execute() -> AnyPublisher<Bool, Error> {
         guard let deviceID = UserDefaults.standard.string(forKey: UserDefaultsKey.deviceID.value),
               let socialType = UserDefaults.standard.string(forKey: UserDefaultsKey.socialType.value) else {
-            return Just(false)
-                .setFailureType(to: NetworkError.self)
+            return Fail(error: UserDefaultsError.dataNotFound)
                 .eraseToAnyPublisher()
         }
 
         return authRepository.requestLogout(devideID: deviceID)
             .map { response in
-                if response.success {
+                if response {
                     deleteInfo()
                     _ = authRepository.socialLogout(logoutProvider: SocialType.from(response: socialType))
                 }
         
-                return response.success
+                return response
             }
+            .mapError{ $0 as Error }
             .eraseToAnyPublisher()
     }
     
     private func deleteInfo() {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKey.deviceID.value)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKey.memberID.value)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKey.socialType.value)
         
         KeychainManager.delete(forAccount: .accessToken)
         KeychainManager.delete(forAccount: .refreshToken)

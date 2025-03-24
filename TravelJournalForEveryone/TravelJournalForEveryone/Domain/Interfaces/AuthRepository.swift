@@ -15,5 +15,5 @@ protocol AuthRepository {
         loginProvider: SocialType
     ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error>
     func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error>
-    func requestLogout(devideID: String) -> AnyPublisher<LogoutResponseDTO, NetworkError>
+    func requestLogout(devideID: String) -> AnyPublisher<Bool, NetworkError>
 }

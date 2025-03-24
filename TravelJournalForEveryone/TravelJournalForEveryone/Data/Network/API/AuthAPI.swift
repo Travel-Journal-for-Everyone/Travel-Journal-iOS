@@ -10,7 +10,7 @@ import Alamofire
 
 enum AuthAPI {
     case fetchJWTToken(FetchJWTTokenRequest)
-    case logout(String)
+    case logout(deviceID: String)
 }
 
 extension AuthAPI: EndPoint {
