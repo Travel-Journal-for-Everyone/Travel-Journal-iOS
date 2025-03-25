@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol LoginUseCase {
-    func execute(loginProvider: LoginProvider) -> AnyPublisher<Bool, Error>
+    func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error>
 }
 
 struct DefaultLoginUseCase: LoginUseCase {
@@ -19,7 +19,7 @@ struct DefaultLoginUseCase: LoginUseCase {
         self.authRepository = authRepository
     }
     
-    func execute(loginProvider: LoginProvider) -> AnyPublisher<Bool, Error> {
+    func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error> {
         return fetchIDToken(loginProvider: loginProvider)
             .flatMap { idToken -> AnyPublisher<FetchJWTTokenResponseDTO, Error> in
                 guard let idToken else {
@@ -43,6 +43,7 @@ struct DefaultLoginUseCase: LoginUseCase {
             .map { response in
                 UserDefaults.standard.set(response.memberID, forKey: UserDefaultsKey.memberID.value)
                 UserDefaults.standard.set(response.deviceID, forKey: UserDefaultsKey.deviceID.value)
+                UserDefaults.standard.set(loginProvider.rawValue, forKey: UserDefaultsKey.socialType.value)
                 
                 KeychainManager.save(
                     forAccount: .refreshToken,
@@ -54,13 +55,13 @@ struct DefaultLoginUseCase: LoginUseCase {
             .eraseToAnyPublisher()
     }
     
-    private func fetchIDToken(loginProvider: LoginProvider) -> AnyPublisher<String?, Error> {
+    private func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String?, Error> {
         return authRepository.fetchIDToken(loginProvider: loginProvider)
     }
     
     private func fetchJWTToken(
         idToken: String,
-        loginProvider: LoginProvider
+        loginProvider: SocialType
     ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
         return authRepository.fetchJWTToken(
             idToken: idToken,

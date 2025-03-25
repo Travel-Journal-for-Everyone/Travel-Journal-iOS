@@ -8,8 +8,17 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @EnvironmentObject var viewModel: AuthenticationViewModel
+    
     var body: some View {
-        Text("MainTabView")
+        VStack {
+            Text("MainTabView")
+            
+            Text("Logout")
+                .onTapGesture {
+                    viewModel.send(.logout)
+                }
+        }
     }
 }
 

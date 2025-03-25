@@ -14,14 +14,14 @@ import AuthenticationServices
 import GoogleSignIn
 
 protocol SocialLoginAuthService {
-    func loginWith(_ loginProvider: LoginProvider) -> AnyPublisher<String?, Error>
+    func loginWith(_ loginProvider: SocialType) -> AnyPublisher<String?, Error>
 }
 
 final class DefaultSocialLoginAuthService: NSObject, @preconcurrency SocialLoginAuthService {
     private var subject = PassthroughSubject<String?, Error>()
     
     @MainActor
-    func loginWith(_ loginProvider: LoginProvider) -> AnyPublisher<String?, Error> {
+    func loginWith(_ loginProvider: SocialType) -> AnyPublisher<String?, Error> {
         switch loginProvider {
         case .kakao:
             return loginWithKakao()
