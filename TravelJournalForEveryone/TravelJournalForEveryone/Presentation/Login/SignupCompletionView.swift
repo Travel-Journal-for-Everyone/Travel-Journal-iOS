@@ -15,13 +15,13 @@ struct SignupCompletionView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 2) {
-                        Text("마루김마루")
+                        Text("\(authViewModel.state.nickname)")
                             .font(.pretendardBold(24))
                         Text("님 가입 완료!")
                     }
                     
                     HStack(spacing: 0) {
-                        Text("모두의 여행일지")
+                        Text("모두의 여행 일지")
                             .font(.pretendardBold(24))
                         Text("와")
                     }
@@ -43,6 +43,9 @@ struct SignupCompletionView: View {
         }
         .padding(.horizontal, 16)
         .navigationBarBackButtonHidden()
+        .onAppear {
+            authViewModel.send(.signUpCompletionViewOnAppear)
+        }
     }
 }
 

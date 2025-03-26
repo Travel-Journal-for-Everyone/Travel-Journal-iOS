@@ -26,7 +26,15 @@ final class DefaultUserRepository: UserRepository {
         .eraseToAnyPublisher()
     }
     
-    func completeSignUp(_ request: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError> {
+    func completeSignUp(
+        nickname: String,
+        accountScope: AccountScope
+    ) -> AnyPublisher<Bool, NetworkError> {
+        let request = SignUpRequestDTO(
+            nickname: nickname,
+            accountScope: accountScope
+        )
+        
         return networkService.request(
             MemberAPI.signUp(request),
             decodingType: SignUpResponseDTO.self
@@ -37,14 +45,22 @@ final class DefaultUserRepository: UserRepository {
         .eraseToAnyPublisher()
     }
     
-    func fetchUser(memberID: Int) -> AnyPublisher<User, NetworkError> {
+    func fetchUser(memberID: Int) -> AnyPublisher<User, Error> {
         // TODO: - 백엔드 API 나오면 구현
+        guard memberID > 0 else {
+            return Fail(error: UserDefaultsError.dataNotFound)
+                .eraseToAnyPublisher()
+        }
+        
         return networkService.request(
             MemberAPI.fetchUser(memberID: memberID),
             decodingType: FetchUserDTO.self
         )
         .map { fetchUserDTO in
             return fetchUserDTO.toEntity()
+        }
+        .mapError { networkError in
+            return networkError
         }
         .eraseToAnyPublisher()
     }
@@ -59,13 +75,16 @@ final class MockUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    func completeSignUp(_ request: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError> {
+    func completeSignUp(
+        nickname: String,
+        accountScope: AccountScope
+    ) -> AnyPublisher<Bool, NetworkError> {
         return Just(true)
             .setFailureType(to: NetworkError.self)
             .eraseToAnyPublisher()
     }
     
-    func fetchUser(memberID: Int) -> AnyPublisher<User, NetworkError> {
+    func fetchUser(memberID: Int) -> AnyPublisher<User, Error> {
         // TODO: - 백엔드 API 나오면 구현
         return Just(
             User(
@@ -74,7 +93,7 @@ final class MockUserRepository: UserRepository {
                 isFirstLogin: false
             )
         )
-        .setFailureType(to: NetworkError.self)
+        .setFailureType(to: Error.self)
         .eraseToAnyPublisher()
     }
 }

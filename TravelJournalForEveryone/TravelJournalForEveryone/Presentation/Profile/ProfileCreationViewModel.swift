@@ -146,8 +146,8 @@ final class ProfileCreationViewModel: ObservableObject {
         state.nickname = state.tempNickname
         
         signUpUseCase.execute(
-            state.nickname,
-            state.accountScope
+            nickname: state.nickname,
+            accountScope: state.accountScope
         )
         .sink { completion in
             switch completion {
@@ -162,7 +162,6 @@ final class ProfileCreationViewModel: ObservableObject {
             }
         }
         .store(in: &cancellables)
-        
     }
     
     private func updateStateForNicknameValidationForRegex(_ result: NicknameRegexCheckResult) {
@@ -224,5 +223,4 @@ final class ProfileCreationViewModel: ObservableObject {
             }
         }
     }
-    
 }
