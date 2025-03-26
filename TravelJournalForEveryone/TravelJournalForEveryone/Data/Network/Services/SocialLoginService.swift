@@ -1,5 +1,5 @@
 //
-//  SocialLoginAuthService.swift
+//  SocialLoginService.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 3/12/25.
@@ -13,7 +13,7 @@ import KakaoSDKUser
 import AuthenticationServices
 import GoogleSignIn
 
-protocol SocialLoginAuthService {
+protocol SocialLoginService {
     @MainActor func loginWith(_ loginProvider: SocialType) -> AnyPublisher<String, Error>
 }
 
@@ -24,7 +24,7 @@ enum SocialLoginError: Error {
     case appleIDTokenEncodingFailed
 }
 
-final class DefaultSocialLoginAuthService: NSObject, SocialLoginAuthService {
+final class DefaultSocialLoginService: NSObject, SocialLoginService {
     private var subject = PassthroughSubject<String, Error>()
     
     @MainActor
@@ -114,7 +114,7 @@ final class DefaultSocialLoginAuthService: NSObject, SocialLoginAuthService {
     }
 }
 
-extension DefaultSocialLoginAuthService: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+extension DefaultSocialLoginService: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first

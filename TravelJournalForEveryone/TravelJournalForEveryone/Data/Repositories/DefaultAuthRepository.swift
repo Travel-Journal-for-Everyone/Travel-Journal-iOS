@@ -9,23 +9,23 @@ import Foundation
 import Combine
 
 final class DefaultAuthRepository: AuthRepository {
-    private let socialLoginAuthService: SocialLoginAuthService
+    private let socialLoginService: SocialLoginService
     private let socialLogoutService: SocialLogoutService
     private let networkService: NetworkService
     
     init(
-        socialLoginAuthService: SocialLoginAuthService,
+        socialLoginService: SocialLoginService,
         socialLogoutService: SocialLogoutService,
         networkService: NetworkService
     ) {
-        self.socialLoginAuthService = socialLoginAuthService
+        self.socialLoginService = socialLoginService
         self.socialLogoutService = socialLogoutService
         self.networkService = networkService
     }
     
     @MainActor
     func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error> {
-        socialLoginAuthService.loginWith(loginProvider)
+        socialLoginService.loginWith(loginProvider)
     }
     
     func fetchJWTToken(
