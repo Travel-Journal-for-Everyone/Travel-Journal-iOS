@@ -14,14 +14,21 @@ import AuthenticationServices
 import GoogleSignIn
 
 protocol SocialLoginAuthService {
-    func loginWith(_ loginProvider: SocialType) -> AnyPublisher<String?, Error>
+    @MainActor func loginWith(_ loginProvider: SocialType) -> AnyPublisher<String, Error>
 }
 
-final class DefaultSocialLoginAuthService: NSObject, @preconcurrency SocialLoginAuthService {
-    private var subject = PassthroughSubject<String?, Error>()
+enum SocialLoginError: Error {
+    case kakaoIDTokenNotFound
+    case googleIDTokenNotFound
+    case appleIDTokenNotFound
+    case appleIDTokenEncodingFailed
+}
+
+final class DefaultSocialLoginAuthService: NSObject, SocialLoginAuthService {
+    private var subject = PassthroughSubject<String, Error>()
     
     @MainActor
-    func loginWith(_ loginProvider: SocialType) -> AnyPublisher<String?, Error> {
+    func loginWith(_ loginProvider: SocialType) -> AnyPublisher<String, Error> {
         switch loginProvider {
         case .kakao:
             return loginWithKakao()
@@ -32,32 +39,44 @@ final class DefaultSocialLoginAuthService: NSObject, @preconcurrency SocialLogin
         }
     }
     
-    private func loginWithKakao() -> AnyPublisher<String?, Error> {
+    private func loginWithKakao() -> AnyPublisher<String, Error> {
         return Future { promise in
             if UserApi.isKakaoTalkLoginAvailable() {
                 // 카카오톡으로 로그인
                 UserApi.shared.loginWithKakaoTalk { oauthToken, error in
-                    if let error {
-                        promise(.failure(error))
-                    } else if let oauthToken {
-                        promise(.success(oauthToken.idToken))
+                    guard error == nil else {
+                        promise(.failure(error!))
+                        return
                     }
+                    
+                    guard let idToken = oauthToken?.idToken else {
+                        promise(.failure(SocialLoginError.kakaoIDTokenNotFound))
+                        return
+                    }
+                    
+                    promise(.success(idToken))
                 }
             } else {
                 // 카카오 계정으로 로그인
                 UserApi.shared.loginWithKakaoAccount { oauthToken, error in
-                    if let error {
-                        promise(.failure(error))
-                    } else if let oauthToken {
-                        promise(.success(oauthToken.idToken))
+                    guard error == nil else {
+                        promise(.failure(error!))
+                        return
                     }
+                    
+                    guard let idToken = oauthToken?.idToken else {
+                        promise(.failure(SocialLoginError.kakaoIDTokenNotFound))
+                        return
+                    }
+                    
+                    promise(.success(idToken))
                 }
             }
         }
         .eraseToAnyPublisher()
     }
     
-    private func loginWithApple() -> AnyPublisher<String?, Error> {
+    private func loginWithApple() -> AnyPublisher<String, Error> {
         let request = ASAuthorizationAppleIDProvider().createRequest()
         
         let controller = ASAuthorizationController(authorizationRequests: [request])
@@ -69,11 +88,11 @@ final class DefaultSocialLoginAuthService: NSObject, @preconcurrency SocialLogin
     }
     
     @MainActor
-    private func loginWithGoogle() -> AnyPublisher<String?, Error> {
+    private func loginWithGoogle() -> AnyPublisher<String, Error> {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootVC = windowScene.windows.first?.rootViewController
         else {
-            fatalError("Not Found windowScene or rootViewController")
+            fatalError("⛔️ Not Found windowScene or rootViewController")
         }
         
         return Future { promise in
@@ -83,9 +102,12 @@ final class DefaultSocialLoginAuthService: NSObject, @preconcurrency SocialLogin
                     return
                 }
                 
-                if let result, let idToken = result.user.idToken {
-                    promise(.success(idToken.tokenString))
+                guard let idToken = result?.user.idToken else {
+                    promise(.failure(SocialLoginError.googleIDTokenNotFound))
+                    return
                 }
+                
+                promise(.success(idToken.tokenString))
             }
         }
         .eraseToAnyPublisher()
@@ -97,7 +119,7 @@ extension DefaultSocialLoginAuthService: ASAuthorizationControllerDelegate, ASAu
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first
         else {
-            fatalError("No window found")
+            fatalError("⛔️ No window found")
         }
         return window
     }
@@ -109,15 +131,21 @@ extension DefaultSocialLoginAuthService: ASAuthorizationControllerDelegate, ASAu
     ) {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
         
-        let code = String(data: appleIDCredential.authorizationCode!, encoding: .utf8)
-        let token = String(data: appleIDCredential.identityToken!, encoding: .utf8)
+        guard let idTokenData = appleIDCredential.identityToken else {
+            subject.send(completion: .failure(SocialLoginError.appleIDTokenNotFound))
+            return
+        }
+        
+        guard let idToken = String(data: idTokenData, encoding: .utf8) else {
+            subject.send(completion: .failure(SocialLoginError.appleIDTokenEncodingFailed))
+            return
+        }
         
         #if DEBUG
-        print("token \(String(describing: token))")
-        print("code \(String(describing: code))")
+        print("✅ Apple ID Token: \(idToken)")
         #endif
         
-        subject.send(token)
+        subject.send(idToken)
     }
     
     // apple id 연동 실패 시
@@ -125,7 +153,7 @@ extension DefaultSocialLoginAuthService: ASAuthorizationControllerDelegate, ASAu
         controller: ASAuthorizationController,
         didCompleteWithError error: Error
     ) {
-        print("Apple Login Failed \(error)")
+        print("⛔️ Apple Login Failed: \(error)")
         subject.send(completion: .failure(error))
     }
 }

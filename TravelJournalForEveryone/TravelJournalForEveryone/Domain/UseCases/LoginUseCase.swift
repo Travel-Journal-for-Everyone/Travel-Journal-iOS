@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol LoginUseCase {
-    func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error>
+    @MainActor func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error>
 }
 
 struct DefaultLoginUseCase: LoginUseCase {
@@ -19,23 +19,11 @@ struct DefaultLoginUseCase: LoginUseCase {
         self.authRepository = authRepository
     }
     
+    @MainActor
     func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error> {
         return fetchIDToken(loginProvider: loginProvider)
-            .flatMap { idToken -> AnyPublisher<FetchJWTTokenResponseDTO, Error> in
-                guard let idToken else {
-                    return Just(
-                        .init(
-                            memberID: 0,
-                            isFirstLogin: false,
-                            refreshToken: "",
-                            deviceID: ""
-                        )
-                    )
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
-                }
-                
-                return self.fetchJWTToken(
+            .flatMap { idToken in
+                return fetchJWTToken(
                     idToken: idToken,
                     loginProvider: loginProvider
                 )
@@ -55,7 +43,8 @@ struct DefaultLoginUseCase: LoginUseCase {
             .eraseToAnyPublisher()
     }
     
-    private func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String?, Error> {
+    @MainActor
+    private func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error> {
         return authRepository.fetchIDToken(loginProvider: loginProvider)
     }
     

@@ -23,7 +23,8 @@ final class DefaultAuthRepository: AuthRepository {
         self.networkService = networkService
     }
     
-    func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String?, Error> {
+    @MainActor
+    func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error> {
         socialLoginAuthService.loginWith(loginProvider)
     }
     
