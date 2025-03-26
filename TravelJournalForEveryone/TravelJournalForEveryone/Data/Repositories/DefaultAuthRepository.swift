@@ -55,9 +55,9 @@ final class DefaultAuthRepository: AuthRepository {
             AuthAPI.logout(deviceID: devideID),
             decodingType: LogoutResponseDTO.self
         )
-        .map({ response in
+        .map { response in
             return response.success
-        })
+        }
         .eraseToAnyPublisher()
     }
 }

@@ -15,7 +15,6 @@ protocol SocialLogoutService {
 }
 
 struct DefaultSocialLogoutService: SocialLogoutService {
-    
     func logoutWith(_ logoutProvider: SocialType) -> AnyPublisher<Bool, Error> {
         switch logoutProvider {
         case .kakao:
