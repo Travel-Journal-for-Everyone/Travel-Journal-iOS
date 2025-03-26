@@ -24,7 +24,7 @@ struct AuthenticationView: View {
             }
         }
         .onAppear {
-            viewModel.send(.viewOnAppear)
+            viewModel.send(.authenticationViewOnAppear)
         }
     }
 }

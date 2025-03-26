@@ -13,11 +13,13 @@ struct AuthenticationModelState {
     var authenticationState: AuthenticationState = .unauthenticated
     var isPresentedProfileCreationView: Bool = false
     var isLoading: Bool = false
+    var nickname: String = ""
 }
 
 // MARK: - Intent
 enum AuthenticationIntent {
-    case viewOnAppear
+    case authenticationViewOnAppear
+    case signUpCompletionViewOnAppear
     case kakaoLogin
     case appleLogin
     case googleLogin
@@ -61,8 +63,10 @@ final class AuthenticationViewModel: ObservableObject {
     
     func send(_ intent: AuthenticationIntent) {
         switch intent {
-        case .viewOnAppear:
-            handleViewOnAppear()
+        case .authenticationViewOnAppear:
+            handleAuthenticationViewOnAppear()
+        case .signUpCompletionViewOnAppear:
+            handleSignUpCompletionViewOnAppear()
         case .kakaoLogin:
             handleKakaoLogin()
         case .appleLogin:
@@ -79,7 +83,7 @@ final class AuthenticationViewModel: ObservableObject {
         }
     }
     
-    private func handleViewOnAppear() {
+    private func handleAuthenticationViewOnAppear() {
         authStateCheckUseCase.execute()
             .sink { authState in
                 switch authState {
@@ -90,6 +94,10 @@ final class AuthenticationViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func handleSignUpCompletionViewOnAppear() {
+        self.state.nickname = DIContainer.shared.userInfoManager.nickname
     }
     
     private func navigateViewByResult(_ result: Bool) {
