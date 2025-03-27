@@ -13,7 +13,7 @@ protocol AuthRepository {
     func fetchJWTToken(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error>
+    ) -> AnyPublisher<LoginInfo, Error>
     func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error>
     func requestLogout(devideID: String) -> AnyPublisher<Bool, NetworkError>
 }

@@ -31,7 +31,7 @@ final class DefaultAuthRepository: AuthRepository {
     func fetchJWTToken(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
+    ) -> AnyPublisher<LoginInfo, Error> {
         let request = FetchJWTTokenRequest(
             idToken: idToken,
             loginProvider: loginProvider.rawValue
@@ -41,6 +41,9 @@ final class DefaultAuthRepository: AuthRepository {
             AuthAPI.fetchJWTToken(request),
             decodingType: FetchJWTTokenResponseDTO.self
         )
+        .map { responseDTO in
+            responseDTO.toEntity()
+        }
         .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }

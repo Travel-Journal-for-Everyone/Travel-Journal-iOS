@@ -28,17 +28,17 @@ struct DefaultLoginUseCase: LoginUseCase {
                     loginProvider: loginProvider
                 )
             }
-            .map { response in
-                UserDefaults.standard.set(response.memberID, forKey: UserDefaultsKey.memberID.value)
-                UserDefaults.standard.set(response.deviceID, forKey: UserDefaultsKey.deviceID.value)
+            .map { loginInfo in
+                UserDefaults.standard.set(loginInfo.memberID, forKey: UserDefaultsKey.memberID.value)
+                UserDefaults.standard.set(loginInfo.deviceID, forKey: UserDefaultsKey.deviceID.value)
                 UserDefaults.standard.set(loginProvider.rawValue, forKey: UserDefaultsKey.socialType.value)
                 
                 KeychainManager.save(
                     forAccount: .refreshToken,
-                    value: response.refreshToken
+                    value: loginInfo.refreshToken
                 )
                 
-                return response.isFirstLogin
+                return loginInfo.isFirstLogin
             }
             .eraseToAnyPublisher()
     }
@@ -51,7 +51,7 @@ struct DefaultLoginUseCase: LoginUseCase {
     private func fetchJWTToken(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
+    ) -> AnyPublisher<LoginInfo, Error> {
         return authRepository.fetchJWTToken(
             idToken: idToken,
             loginProvider: loginProvider
