@@ -13,7 +13,7 @@ protocol AuthRepository {
     func requestLogin(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<LoginInfo, Error>
+    ) -> AnyPublisher<LoginInfo, NetworkError>
     func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error>
     func requestLogout(devideID: String) -> AnyPublisher<Bool, NetworkError>
 }

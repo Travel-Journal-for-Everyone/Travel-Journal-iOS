@@ -31,7 +31,7 @@ final class DefaultAuthRepository: AuthRepository {
     func requestLogin(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<LoginInfo, Error> {
+    ) -> AnyPublisher<LoginInfo, NetworkError> {
         let request = LoginRequest(
             idToken: idToken,
             loginProvider: loginProvider.rawValue
@@ -44,7 +44,6 @@ final class DefaultAuthRepository: AuthRepository {
         .map { responseDTO in
             responseDTO.toEntity()
         }
-        .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
     

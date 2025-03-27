@@ -27,6 +27,9 @@ struct DefaultLoginUseCase: LoginUseCase {
                     idToken: idToken,
                     loginProvider: loginProvider
                 )
+                .mapError { networkError in
+                    return networkError
+                }
             }
             .map { loginInfo in
                 UserDefaults.standard.set(loginInfo.memberID, forKey: UserDefaultsKey.memberID.value)
@@ -51,7 +54,7 @@ struct DefaultLoginUseCase: LoginUseCase {
     private func requestLogin(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<LoginInfo, Error> {
+    ) -> AnyPublisher<LoginInfo, NetworkError> {
         return authRepository.requestLogin(
             idToken: idToken,
             loginProvider: loginProvider
