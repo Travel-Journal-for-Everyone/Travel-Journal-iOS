@@ -28,18 +28,18 @@ final class DefaultAuthRepository: AuthRepository {
         socialLoginService.loginWith(loginProvider)
     }
     
-    func fetchJWTToken(
+    func requestLogin(
         idToken: String,
         loginProvider: SocialType
     ) -> AnyPublisher<LoginInfo, Error> {
-        let request = FetchJWTTokenRequest(
+        let request = LoginRequest(
             idToken: idToken,
             loginProvider: loginProvider.rawValue
         )
         
         return networkService.request(
-            AuthAPI.fetchJWTToken(request),
-            decodingType: FetchJWTTokenResponseDTO.self
+            AuthAPI.login(request),
+            decodingType: LoginResponseDTO.self
         )
         .map { responseDTO in
             responseDTO.toEntity()

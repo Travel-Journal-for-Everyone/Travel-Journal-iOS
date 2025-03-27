@@ -10,7 +10,7 @@ import Combine
 
 protocol AuthRepository {
     @MainActor func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error>
-    func fetchJWTToken(
+    func requestLogin(
         idToken: String,
         loginProvider: SocialType
     ) -> AnyPublisher<LoginInfo, Error>

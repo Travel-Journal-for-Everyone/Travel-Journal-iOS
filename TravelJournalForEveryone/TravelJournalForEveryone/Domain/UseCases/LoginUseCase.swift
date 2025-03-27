@@ -23,7 +23,7 @@ struct DefaultLoginUseCase: LoginUseCase {
     func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error> {
         return fetchIDToken(loginProvider: loginProvider)
             .flatMap { idToken in
-                return fetchJWTToken(
+                return requestLogin(
                     idToken: idToken,
                     loginProvider: loginProvider
                 )
@@ -48,11 +48,11 @@ struct DefaultLoginUseCase: LoginUseCase {
         return authRepository.fetchIDToken(loginProvider: loginProvider)
     }
     
-    private func fetchJWTToken(
+    private func requestLogin(
         idToken: String,
         loginProvider: SocialType
     ) -> AnyPublisher<LoginInfo, Error> {
-        return authRepository.fetchJWTToken(
+        return authRepository.requestLogin(
             idToken: idToken,
             loginProvider: loginProvider
         )
