@@ -57,4 +57,8 @@ extension TokenAPI: EndPoint {
         case .refreshJWTToken: false
         }
     }
+
+    var multipartFormImage: (String, String, Data?)? {
+        return nil
+    }
 }

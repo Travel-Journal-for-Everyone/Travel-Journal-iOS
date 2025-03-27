@@ -19,6 +19,8 @@ protocol EndPoint {
     var parameterEncoding: ParameterEncoding { get }
     var bodyParameters: Parameters? { get }
     var requiresAuth: Bool { get }
+    // 멀티파트폼으로 데이터를 보낼 때 서버 명세와 맞는 이름이 필요해서 튜플로 관리하는 방법을 택했는데 더 좋은 방법이 있다면 이야기해주세요 ~!! -> 코드리뷰 후 삭제할 주석
+    var multipartFormImage: (String, String, Data?)? { get }
 }
 
 extension EndPoint {
@@ -42,6 +44,7 @@ extension EndPoint {
 enum HeaderType {
     case basic
     case bearer(String)
+    case multipartForm
     
     var value: HTTPHeaders {
         switch self {
@@ -53,6 +56,8 @@ enum HeaderType {
                 "Authorization": "Bearer \(string)",
                 "X-Platform": "ios"
             ]
+        case .multipartForm:
+            ["Content-Type": "multipart/form-data"]
         }
     }
 }

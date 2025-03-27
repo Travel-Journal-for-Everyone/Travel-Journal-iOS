@@ -18,17 +18,15 @@ final class DefaultUserRepository: UserRepository {
     func validateNickname(_ nickname: String) -> AnyPublisher<String, NetworkError> {
         return networkService.request(
             MemberAPI.checkNickname(nickname),
-            decodingType: CheckNicknameResponseDTO.self
+            decodingType: String.self
         )
-        .map { response in
-            return response.message
-        }
         .eraseToAnyPublisher()
     }
     
     func completeSignUp(
         nickname: String,
-        accountScope: AccountScope
+        accountScope: AccountScope,
+        image: Data?
     ) -> AnyPublisher<Bool, NetworkError> {
         let request = SignUpRequestDTO(
             nickname: nickname,
@@ -36,11 +34,11 @@ final class DefaultUserRepository: UserRepository {
         )
         
         return networkService.request(
-            MemberAPI.signUp(request),
-            decodingType: SignUpResponseDTO.self
+            MemberAPI.signUp(request, image),
+            decodingType: String.self
         )
-        .map { response in
-            return response.success
+        .map { _ in
+            return true
         }
         .eraseToAnyPublisher()
     }
@@ -77,7 +75,8 @@ final class MockUserRepository: UserRepository {
     
     func completeSignUp(
         nickname: String,
-        accountScope: AccountScope
+        accountScope: AccountScope,
+        image: Data?
     ) -> AnyPublisher<Bool, NetworkError> {
         return Just(true)
             .setFailureType(to: NetworkError.self)

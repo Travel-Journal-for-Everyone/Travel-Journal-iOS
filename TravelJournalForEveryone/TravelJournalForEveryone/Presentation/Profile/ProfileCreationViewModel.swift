@@ -22,8 +22,9 @@ struct ProfileCreationModelState {
     var isDisableCompletionButton: Bool = true
     var isCheckingNickname: Bool = false
     
-    var selectedItem: PhotosPickerItem? = nil
-    var selectedImage: Image? = nil
+    var selectedItem: PhotosPickerItem?
+    var selectedImage: Image?
+    var selectedImageData: Data?
     
     var isPresentedSignupCompletionView: Bool = false
     var isFocusedNicknameTextField: Bool = false
@@ -147,7 +148,8 @@ final class ProfileCreationViewModel: ObservableObject {
         
         signUpUseCase.execute(
             nickname: state.nickname,
-            accountScope: state.accountScope
+            accountScope: state.accountScope,
+            image: state.selectedImageData
         )
         .sink { completion in
             switch completion {
@@ -214,8 +216,10 @@ final class ProfileCreationViewModel: ObservableObject {
                 switch result {
                 case .success(let data):
                     guard let data,
-                          let uiImage = UIImage(data: data) else { return }
+                          let jpegData = UIImage(data: data)?.jpegData(compressionQuality: 0.1),
+                          let uiImage = UIImage(data: jpegData) else { return }
                     let image = Image(uiImage: uiImage)
+                    self?.state.selectedImageData = jpegData
                     self?.state.selectedImage = image
                 case .failure(let failure):
                     print(failure)

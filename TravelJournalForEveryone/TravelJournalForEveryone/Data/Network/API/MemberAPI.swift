@@ -10,7 +10,7 @@ import Alamofire
 
 enum MemberAPI: EndPoint {
     case checkNickname(String)
-    case signUp(SignUpRequestDTO)
+    case signUp(SignUpRequestDTO, Data?)
     // TODO: 백엔드 API 작업 완료 후 전체적으로 맞는지 확인하기!!!
     case fetchUser(memberID: Int)
 }
@@ -49,8 +49,10 @@ extension MemberAPI {
     
     var headers: HTTPHeaders? {
         switch self {
-        case .checkNickname, .signUp, .fetchUser:
+        case .checkNickname, .fetchUser:
             return nil
+        case .signUp:
+            return HeaderType.multipartForm.value
         }
     }
     
@@ -67,7 +69,7 @@ extension MemberAPI {
         switch self {
         case .checkNickname, .fetchUser:
             return nil
-        case .signUp(let request):
+        case .signUp(let request, _):
             return [
                 "nickname": request.nickname,
                 "accountScope": request.accountScope.rawValue
@@ -77,8 +79,14 @@ extension MemberAPI {
     
     var requiresAuth: Bool {
         switch self {
-        case .checkNickname, .signUp, .fetchUser:
-            return true
+        default: true
+        }
+    }
+    
+    var multipartFormImage: (String, String, Data?)? {
+        switch self {
+        case .signUp(_, let image): ("firstLoginRequest", "profileImage", image)
+        default: nil
         }
     }
 }
