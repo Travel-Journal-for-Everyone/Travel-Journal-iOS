@@ -53,7 +53,7 @@ final class DefaultUserRepository: UserRepository {
         }
         
         return networkService.request(
-            MemberAPI.fetchUser(memberID: memberID),
+            MembersAPI.fetchUser(memberID: memberID),
             decodingType: FetchUserDTO.self
         )
         .map { fetchUserDTO in
