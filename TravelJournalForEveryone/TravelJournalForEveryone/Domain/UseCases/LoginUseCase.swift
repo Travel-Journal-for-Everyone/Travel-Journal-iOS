@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol LoginUseCase {
-    func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error>
+    @MainActor func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error>
 }
 
 struct DefaultLoginUseCase: LoginUseCase {
@@ -19,51 +19,43 @@ struct DefaultLoginUseCase: LoginUseCase {
         self.authRepository = authRepository
     }
     
+    @MainActor
     func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error> {
         return fetchIDToken(loginProvider: loginProvider)
-            .flatMap { idToken -> AnyPublisher<FetchJWTTokenResponseDTO, Error> in
-                guard let idToken else {
-                    return Just(
-                        .init(
-                            memberID: 0,
-                            isFirstLogin: false,
-                            refreshToken: "",
-                            deviceID: ""
-                        )
-                    )
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
-                }
-                
-                return self.fetchJWTToken(
+            .flatMap { idToken in
+                return requestLogin(
                     idToken: idToken,
                     loginProvider: loginProvider
                 )
+                .mapError { networkError in
+                    return networkError
+                }
             }
-            .map { response in
-                UserDefaults.standard.set(response.memberID, forKey: UserDefaultsKey.memberID.value)
-                UserDefaults.standard.set(response.deviceID, forKey: UserDefaultsKey.deviceID.value)
+            .map { loginInfo in
+                UserDefaults.standard.set(loginInfo.memberID, forKey: UserDefaultsKey.memberID.value)
+                UserDefaults.standard.set(loginInfo.deviceID, forKey: UserDefaultsKey.deviceID.value)
                 UserDefaults.standard.set(loginProvider.rawValue, forKey: UserDefaultsKey.socialType.value)
                 
                 KeychainManager.save(
                     forAccount: .refreshToken,
-                    value: response.refreshToken
+                    value: loginInfo.refreshToken
                 )
                 
-                return response.isFirstLogin
+                return loginInfo.isFirstLogin
             }
             .eraseToAnyPublisher()
     }
     
-    private func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String?, Error> {
+    @MainActor
+    private func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error> {
         return authRepository.fetchIDToken(loginProvider: loginProvider)
     }
     
-    private func fetchJWTToken(
+    private func requestLogin(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
-        return authRepository.fetchJWTToken(
+    ) -> AnyPublisher<LoginInfo, NetworkError> {
+        return authRepository.requestLogin(
             idToken: idToken,
             loginProvider: loginProvider
         )

@@ -11,14 +11,14 @@ final class DIContainer {
     @MainActor static let shared = DIContainer()
     
     // MARK: - Services
-    lazy var socialLoginAuthService = DefaultSocialLoginAuthService()
+    lazy var socialLoginService = DefaultSocialLoginService()
     lazy var socialLogoutService = DefaultSocialLogoutService()
     lazy var networkService = DefaultNetworkService()
     
     
     // MARK: - Repositories
     lazy var authRepository = DefaultAuthRepository(
-        socialLoginAuthService: socialLoginAuthService,
+        socialLoginService: socialLoginService,
         socialLogoutService: socialLogoutService,
         networkService: networkService
     )

@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 enum AuthAPI {
-    case fetchJWTToken(FetchJWTTokenRequest)
+    case login(LoginRequest)
     case logout(deviceID: String)
 }
 
@@ -18,14 +18,14 @@ extension AuthAPI: EndPoint {
     
     var path: String {
         switch self {
-        case .fetchJWTToken(let request): "/login/\(request.loginProvider)/id-token"
+        case .login(let request): "/login/\(request.loginProvider)/id-token"
         case .logout: "/logout"
         }
     }
     
     var queryParameters: [String : String]? {
         switch self {
-        case .fetchJWTToken: nil
+        case .login: nil
         case .logout(let deviceID):
             ["deviceId": deviceID]
         }
@@ -33,32 +33,32 @@ extension AuthAPI: EndPoint {
     
     var method: HTTPMethod {
         switch self {
-        case .fetchJWTToken, .logout: .post
+        case .login, .logout: .post
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .fetchJWTToken(let request): HeaderType.bearer(request.idToken).value
+        case .login(let request): HeaderType.bearer(request.idToken).value
         case .logout: HeaderType.basic.value
         }
     }
     
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .fetchJWTToken, .logout: URLEncoding.default
+        case .login, .logout: URLEncoding.default
         }
     }
     
     var bodyParameters: Parameters? {
         switch self {
-        case .fetchJWTToken, .logout: nil
+        case .login, .logout: nil
         }
     }
     
     var requiresAuth: Bool {
         switch self {
-        case .fetchJWTToken: false
+        case .login: false
         case .logout: true
         }
     }

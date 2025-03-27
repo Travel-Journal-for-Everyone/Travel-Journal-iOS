@@ -9,38 +9,41 @@ import Foundation
 import Combine
 
 final class DefaultAuthRepository: AuthRepository {
-    private let socialLoginAuthService: SocialLoginAuthService
+    private let socialLoginService: SocialLoginService
     private let socialLogoutService: SocialLogoutService
     private let networkService: NetworkService
     
     init(
-        socialLoginAuthService: SocialLoginAuthService,
+        socialLoginService: SocialLoginService,
         socialLogoutService: SocialLogoutService,
         networkService: NetworkService
     ) {
-        self.socialLoginAuthService = socialLoginAuthService
+        self.socialLoginService = socialLoginService
         self.socialLogoutService = socialLogoutService
         self.networkService = networkService
     }
     
-    func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String?, Error> {
-        socialLoginAuthService.loginWith(loginProvider)
+    @MainActor
+    func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error> {
+        socialLoginService.loginWith(loginProvider)
     }
     
-    func fetchJWTToken(
+    func requestLogin(
         idToken: String,
         loginProvider: SocialType
-    ) -> AnyPublisher<FetchJWTTokenResponseDTO, Error> {
-        let request = FetchJWTTokenRequest(
+    ) -> AnyPublisher<LoginInfo, NetworkError> {
+        let request = LoginRequest(
             idToken: idToken,
             loginProvider: loginProvider.rawValue
         )
         
         return networkService.request(
-            AuthAPI.fetchJWTToken(request),
-            decodingType: FetchJWTTokenResponseDTO.self
+            AuthAPI.login(request),
+            decodingType: LoginResponseDTO.self
         )
-        .mapError { $0 as Error }
+        .map { responseDTO in
+            responseDTO.toEntity()
+        }
         .eraseToAnyPublisher()
     }
     
@@ -54,9 +57,9 @@ final class DefaultAuthRepository: AuthRepository {
             AuthAPI.logout(deviceID: devideID),
             decodingType: LogoutResponseDTO.self
         )
-        .map({ response in
+        .map { response in
             return response.success
-        })
+        }
         .eraseToAnyPublisher()
     }
 }
