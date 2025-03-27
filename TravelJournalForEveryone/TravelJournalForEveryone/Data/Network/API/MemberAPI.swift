@@ -8,12 +8,12 @@
 import Foundation
 import Alamofire
 
-enum MemberAPI: EndPoint {
+enum MemberAPI {
     case checkNickname(String)
     case signUp(SignUpRequestDTO)
 }
 
-extension MemberAPI {
+extension MemberAPI: EndPoint {
     var basePath: String {
         return "/v1/member"
     }
