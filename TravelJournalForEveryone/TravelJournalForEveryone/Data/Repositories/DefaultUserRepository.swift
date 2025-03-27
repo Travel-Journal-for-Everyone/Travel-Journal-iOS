@@ -54,10 +54,10 @@ final class DefaultUserRepository: UserRepository {
         
         return networkService.request(
             MembersAPI.fetchUser(memberID: memberID),
-            decodingType: FetchUserDTO.self
+            decodingType: FetchUserResponseDTO.self
         )
-        .map { fetchUserDTO in
-            return fetchUserDTO.toEntity()
+        .map { responseDTO in
+            return responseDTO.toEntity()
         }
         .mapError { networkError in
             return networkError
@@ -87,11 +87,7 @@ final class MockUserRepository: UserRepository {
     func fetchUser(memberID: Int) -> AnyPublisher<User, Error> {
         // TODO: - 백엔드 API 나오면 구현
         return Just(
-            User(
-                nickname: "마루김마루",
-                accountScope: .publicProfile,
-                isFirstLogin: false
-            )
+            User.mock()
         )
         .setFailureType(to: Error.self)
         .eraseToAnyPublisher()
