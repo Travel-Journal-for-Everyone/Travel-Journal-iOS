@@ -26,6 +26,7 @@ enum AuthenticationIntent {
     case isPresentedProfileCreationView(Bool)
     case startButtonTapped
     case logout
+    case unlink
 }
 
 // MARK: - ViewModel(State + Intent)
@@ -36,6 +37,7 @@ final class AuthenticationViewModel: ObservableObject {
     private let loginUseCase: LoginUseCase
     private let logoutUseCase: LogoutUseCase
     private let authStateCheckUseCase: AuthStateCheckUseCase
+    private let unlinkUseCase: UnlinkUseCase
     
     private let authStateManager = DIContainer.shared.authStateManager
     
@@ -44,11 +46,13 @@ final class AuthenticationViewModel: ObservableObject {
     init(
         loginUseCase: LoginUseCase,
         logoutUseCase: LogoutUseCase,
-        authStateCheckUseCase: AuthStateCheckUseCase
+        authStateCheckUseCase: AuthStateCheckUseCase,
+        unlinkUseCase: UnlinkUseCase
     ) {
         self.loginUseCase = loginUseCase
         self.logoutUseCase = logoutUseCase
         self.authStateCheckUseCase = authStateCheckUseCase
+        self.unlinkUseCase = unlinkUseCase
         
         bind()
     }
@@ -80,6 +84,8 @@ final class AuthenticationViewModel: ObservableObject {
             state.isPresentedProfileCreationView = false
         case .logout:
             handleLogout()
+        case .unlink:
+            handleUnlink()
         }
     }
     
@@ -184,5 +190,27 @@ final class AuthenticationViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func handleUnlink() {
+        state.isLoading = true
+        
+        unlinkUseCase.execute()
+            .sink { completion in
+                self.state.isLoading = false
+                
+                switch completion {
+                case .finished:
+                    print("✅ Unlink Success")
+                case .failure(let error):
+                    print("⛔️ Unlink Error: \(error)")
+                }
+            } receiveValue: { [weak self] result in
+                if result {
+                    self?.state.authenticationState = .unauthenticated
+                }
+            }
+            .store(in: &cancellables)
+
     }
 }

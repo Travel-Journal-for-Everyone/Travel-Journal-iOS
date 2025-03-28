@@ -16,4 +16,5 @@ protocol AuthRepository {
     ) -> AnyPublisher<LoginInfo, NetworkError>
     func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error>
     func requestLogout(devideID: String) -> AnyPublisher<Bool, NetworkError>
+    func unlink(socialProvider: SocialType) -> AnyPublisher<Bool, NetworkError>
 }

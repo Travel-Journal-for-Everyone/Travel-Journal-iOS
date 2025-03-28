@@ -116,6 +116,7 @@ struct LoginView: View {
         .environmentObject(AuthenticationViewModel(
             loginUseCase: DIContainer.shared.loginUseCase,
             logoutUseCase: DIContainer.shared.logoutUseCase,
-            authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase
+            authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase,
+            unlinkUseCase: DIContainer.shared.unlinkUseCase
         ))
 }

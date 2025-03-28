@@ -19,7 +19,8 @@ struct TravelJournalForEveryoneApp: App {
                 viewModel: .init(
                 loginUseCase: DIContainer.shared.loginUseCase,
                 logoutUseCase: DIContainer.shared.logoutUseCase,
-                authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase
+                authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase,
+                unlinkUseCase: DIContainer.shared.unlinkUseCase
             ))
             .onOpenURL { url in
                 // 카카오톡에서 앱으로 돌아올 때 쓰일 URL 핸들러
