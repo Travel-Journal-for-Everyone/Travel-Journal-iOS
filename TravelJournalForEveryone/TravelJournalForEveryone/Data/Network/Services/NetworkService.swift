@@ -47,9 +47,15 @@ final class DefaultNetworkService: NetworkService {
                     // object
                     if let parameters = endPoint.bodyParameters {
                         do {
-                            let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+                            let jsonData = try JSONSerialization.data(
+                                withJSONObject: parameters,
+                                options: []
+                            )
                             if let jsonString = String(data: jsonData, encoding: .utf8) {
-                                multipartFormData.append(jsonString.data(using: .utf8)!, withName: imageData.0)
+                                multipartFormData.append(
+                                    jsonString.data(using: .utf8)!,
+                                    withName: imageData.0
+                                )
                             }
                         } catch {
                             print("⛔️ Image Upload Failed")
