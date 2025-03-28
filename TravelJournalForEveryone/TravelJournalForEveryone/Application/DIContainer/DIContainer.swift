@@ -33,8 +33,7 @@ final class DIContainer {
     lazy var logoutUseCase = DefaultLogoutUseCase(authRepository: authRepository)
     lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase(userRepository: userRepository)
     lazy var signUpUseCase = DefaultLoginCompleteUseCase(userRepository: userRepository)
-    // TODO: - Mock 레포지토리 주입 상태!!!
-    lazy var authStateCheckUseCase = DefaultAuthStateCheckUseCase(userRepository: mockUserRepository)
+    lazy var authStateCheckUseCase = DefaultAuthStateCheckUseCase(userRepository: userRepository)
     
     
     // MARK: - Manager

@@ -10,6 +10,11 @@ import Foundation
 struct FetchUserResponseDTO: Decodable {
     let profileInfo: ProfileInfoDTO
     let regionDatas: [RegionDataDTO]
+    
+    enum CodingKeys: String, CodingKey {
+        case profileInfo
+        case regionDatas = "regions"
+    }
 }
 
 extension FetchUserResponseDTO {
