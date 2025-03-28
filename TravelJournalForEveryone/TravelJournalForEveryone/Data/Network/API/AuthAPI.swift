@@ -62,4 +62,11 @@ extension AuthAPI: EndPoint {
         case .logout: true
         }
     }
+
+    var multipartFormImage: (
+        textTitle: String,
+        imageTitle: String,
+        imageData: Data?)? {
+        return nil
+    }
 }

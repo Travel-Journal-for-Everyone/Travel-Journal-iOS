@@ -22,11 +22,14 @@ struct ProfileCreationModelState {
     var isDisableCompletionButton: Bool = true
     var isCheckingNickname: Bool = false
     
-    var selectedItem: PhotosPickerItem? = nil
-    var selectedImage: Image? = nil
+    var selectedItem: PhotosPickerItem?
+    var selectedImage: Image?
+    var selectedImageData: Data?
     
     var isPresentedSignupCompletionView: Bool = false
     var isFocusedNicknameTextField: Bool = false
+    
+    var isLoading: Bool = false
 }
 
 // MARK: - Intent
@@ -144,18 +147,22 @@ final class ProfileCreationViewModel: ObservableObject {
     
     private func handleTappedCompletionButton() {
         state.nickname = state.tempNickname
+        state.isLoading = true
         
         signUpUseCase.execute(
             nickname: state.nickname,
-            accountScope: state.accountScope
+            accountScope: state.accountScope,
+            image: state.selectedImageData
         )
-        .sink { completion in
+        .sink { [weak self] completion in
             switch completion {
             case .finished:
                 break
             case .failure(let error):
                 print("온보딩 실패 : \(error)")
             }
+            
+            self?.state.isLoading = false
         } receiveValue: { [weak self] result in
             if result {
                 self?.state.isPresentedSignupCompletionView = true
@@ -214,8 +221,10 @@ final class ProfileCreationViewModel: ObservableObject {
                 switch result {
                 case .success(let data):
                     guard let data,
-                          let uiImage = UIImage(data: data) else { return }
+                          let jpegData = UIImage(data: data)?.jpegData(compressionQuality: 0.1),
+                          let uiImage = UIImage(data: jpegData) else { return }
                     let image = Image(uiImage: uiImage)
+                    self?.state.selectedImageData = jpegData
                     self?.state.selectedImage = image
                 case .failure(let failure):
                     print(failure)
