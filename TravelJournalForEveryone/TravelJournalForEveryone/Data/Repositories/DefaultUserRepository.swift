@@ -30,11 +30,12 @@ final class DefaultUserRepository: UserRepository {
     ) -> AnyPublisher<Bool, NetworkError> {
         let request = SignUpRequestDTO(
             nickname: nickname,
-            accountScope: accountScope
+            accountScope: accountScope,
+            imageData: image
         )
         
         return networkService.request(
-            MemberAPI.signUp(request, image),
+            MemberAPI.signUp(request),
             decodingType: String.self
         )
         .map { _ in
