@@ -54,7 +54,7 @@ final class DefaultNetworkService: NetworkService {
                             if let jsonString = String(data: jsonData, encoding: .utf8) {
                                 multipartFormData.append(
                                     jsonString.data(using: .utf8)!,
-                                    withName: imageData.0
+                                    withName: imageData.textTitle
                                 )
                             }
                         } catch {
@@ -64,10 +64,10 @@ final class DefaultNetworkService: NetworkService {
                     
                     // image
                     //TODO: 이미지 여러개 올리는 건 추후 구현해야 함
-                    if let image = imageData.2 {
+                    if let image = imageData.imageData {
                         multipartFormData.append(
                             image,
-                            withName: imageData.1,
+                            withName: imageData.imageTitle,
                             fileName: "image.jpg",
                             mimeType: "image/jpeg"
                         )

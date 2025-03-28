@@ -83,9 +83,16 @@ extension MemberAPI {
         }
     }
     
-    var multipartFormImage: (String, String, Data?)? {
+    var multipartFormImage: (
+        textTitle: String,
+        imageTitle: String,
+        imageData: Data?
+    )? {
         switch self {
-        case .signUp(let request): ("firstLoginRequest", "profileImage", request.imageData)
+        case .signUp(let request):
+            (textTitle: "firstLoginRequest",
+             imageTitle: "profileImage",
+             imageData: request.imageData)
         default: nil
         }
     }

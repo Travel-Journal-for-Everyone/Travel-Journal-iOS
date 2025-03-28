@@ -59,6 +59,13 @@ struct ProfileCreationView: View {
                 .padding(.horizontal, 16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            
+            if viewModel.state.isLoading {
+                Color.black.opacity(0.25)
+                    .ignoresSafeArea(.all)
+                
+                ProgressView()
+            }
         }
         .customNavigationBar {
             Text(isEditingProfile ? "프로필 수정" : "프로필 작성")

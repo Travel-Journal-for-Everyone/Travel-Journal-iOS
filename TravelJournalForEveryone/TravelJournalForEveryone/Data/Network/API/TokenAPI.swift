@@ -58,7 +58,11 @@ extension TokenAPI: EndPoint {
         }
     }
 
-    var multipartFormImage: (String, String, Data?)? {
+    var multipartFormImage: (
+        textTitle: String,
+        imageTitle: String,
+        imageData: Data?
+    )? {
         return nil
     }
 }

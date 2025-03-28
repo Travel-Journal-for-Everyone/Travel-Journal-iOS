@@ -28,6 +28,8 @@ struct ProfileCreationModelState {
     
     var isPresentedSignupCompletionView: Bool = false
     var isFocusedNicknameTextField: Bool = false
+    
+    var isLoading: Bool = false
 }
 
 // MARK: - Intent
@@ -145,19 +147,22 @@ final class ProfileCreationViewModel: ObservableObject {
     
     private func handleTappedCompletionButton() {
         state.nickname = state.tempNickname
+        state.isLoading = true
         
         signUpUseCase.execute(
             nickname: state.nickname,
             accountScope: state.accountScope,
             image: state.selectedImageData
         )
-        .sink { completion in
+        .sink { [weak self] completion in
             switch completion {
             case .finished:
                 break
             case .failure(let error):
                 print("온보딩 실패 : \(error)")
             }
+            
+            self?.state.isLoading = false
         } receiveValue: { [weak self] result in
             if result {
                 self?.state.isPresentedSignupCompletionView = true
