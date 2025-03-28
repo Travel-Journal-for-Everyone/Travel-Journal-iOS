@@ -10,4 +10,5 @@ import Foundation
 struct SignUpRequestDTO {
     var nickname: String
     var accountScope: AccountScope
+    var imageData: Data?
 }

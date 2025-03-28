@@ -45,8 +45,10 @@ extension MemberAPI: EndPoint {
     
     var headers: HTTPHeaders? {
         switch self {
-        case .checkNickname, .signUp:
+        case .checkNickname:
             return nil
+        case .signUp:
+            return HeaderType.multipartForm.value
         }
     }
     
@@ -75,6 +77,20 @@ extension MemberAPI: EndPoint {
         switch self {
         case .checkNickname, .signUp:
             return true
+        }
+    }
+    
+    var multipartFormImage: (
+        textTitle: String,
+        imageTitle: String,
+        imageData: Data?
+    )? {
+        switch self {
+        case .signUp(let request):
+            (textTitle: "firstLoginRequest",
+             imageTitle: "profileImage",
+             imageData: request.imageData)
+        default: nil
         }
     }
 }

@@ -19,6 +19,11 @@ protocol EndPoint {
     var parameterEncoding: ParameterEncoding { get }
     var bodyParameters: Parameters? { get }
     var requiresAuth: Bool { get }
+    var multipartFormImage: (
+        textTitle: String,
+        imageTitle: String,
+        imageData: Data?
+    )? { get }
 }
 
 extension EndPoint {
@@ -42,6 +47,7 @@ extension EndPoint {
 enum HeaderType {
     case basic
     case bearer(String)
+    case multipartForm
     
     var value: HTTPHeaders {
         switch self {
@@ -53,6 +59,8 @@ enum HeaderType {
                 "Authorization": "Bearer \(string)",
                 "X-Platform": "ios"
             ]
+        case .multipartForm:
+            ["Content-Type": "multipart/form-data"]
         }
     }
 }

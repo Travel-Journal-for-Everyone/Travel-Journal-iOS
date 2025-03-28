@@ -12,7 +12,8 @@ protocol UserRepository {
     func validateNickname(_ nickname: String) -> AnyPublisher<String, NetworkError>
     func completeSignUp(
         nickname: String,
-        accountScope: AccountScope
+        accountScope: AccountScope,
+        image: Data?
     ) -> AnyPublisher<Bool, NetworkError>
     func fetchUser(memberID: Int) -> AnyPublisher<User, Error>
 }

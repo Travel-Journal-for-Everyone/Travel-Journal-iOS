@@ -65,4 +65,12 @@ extension MembersAPI: EndPoint {
             return true
         }
     }
+    
+    var multipartFormImage: (
+        textTitle: String,
+        imageTitle: String,
+        imageData: Data?
+    )? {
+        return nil
+    }
 }

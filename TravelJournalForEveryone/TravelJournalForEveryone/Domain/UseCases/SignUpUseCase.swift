@@ -11,7 +11,8 @@ import Combine
 protocol SignUpUseCase {
     @MainActor func execute(
         nickname: String,
-        accountScope: AccountScope
+        accountScope: AccountScope,
+        image: Data?
     ) -> AnyPublisher<Bool, Error>
 }
 
@@ -25,11 +26,13 @@ struct DefaultLoginCompleteUseCase: SignUpUseCase {
     @MainActor
     func execute(
         nickname: String,
-        accountScope: AccountScope
+        accountScope: AccountScope,
+        image: Data?
     ) -> AnyPublisher<Bool, Error> {
         return userRepository.completeSignUp(
             nickname: nickname,
-            accountScope: accountScope
+            accountScope: accountScope,
+            image: image
         )
         .mapError { $0 as Error }
         .flatMap { isSuccess in
