@@ -1,18 +1,18 @@
 //
-//  LogoutUseCase.swift
+//  UnlinkUseCase.swift
 //  TravelJournalForEveryone
 //
-//  Created by 최주리 on 3/20/25.
+//  Created by 최주리 on 3/29/25.
 //
 
 import Foundation
 import Combine
-
-protocol LogoutUseCase {
+ 
+protocol UnlinkUseCase {
     func execute() -> AnyPublisher<Bool, Error>
 }
 
-struct DefaultLogoutUseCase: LogoutUseCase {
+struct DefaultUnlinkUseCase: UnlinkUseCase {
     private let authRepository: AuthRepository
     
     init(authRepository: AuthRepository) {
@@ -20,18 +20,14 @@ struct DefaultLogoutUseCase: LogoutUseCase {
     }
     
     func execute() -> AnyPublisher<Bool, Error> {
-        guard let deviceID = UserDefaults.standard.string(forKey: UserDefaultsKey.deviceID.value),
-              let socialType = UserDefaults.standard.string(forKey: UserDefaultsKey.socialType.value) else {
+        guard let socialType = UserDefaults.standard.string(forKey: UserDefaultsKey.socialType.value) else {
             return Fail(error: UserDefaultsError.dataNotFound)
                 .eraseToAnyPublisher()
         }
-
-        return authRepository.requestLogout(devideID: deviceID)
+        
+        return authRepository.unlink(socialProvider: SocialType.from(response: socialType))
             .map { isSuccess in
-                if isSuccess {
-                    deleteInfo()
-                    _ = authRepository.socialLogout(logoutProvider: SocialType.from(response: socialType))
-                }
+                if isSuccess { deleteInfo() }
         
                 return isSuccess
             }
@@ -48,3 +44,4 @@ struct DefaultLogoutUseCase: LogoutUseCase {
         KeychainManager.delete(forAccount: .refreshToken)
     }
 }
+

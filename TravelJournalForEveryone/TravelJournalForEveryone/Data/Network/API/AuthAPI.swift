@@ -11,6 +11,7 @@ import Alamofire
 enum AuthAPI {
     case login(LoginRequest)
     case logout(deviceID: String)
+    case unlink(socialProvider: String)
 }
 
 extension AuthAPI: EndPoint {
@@ -20,12 +21,13 @@ extension AuthAPI: EndPoint {
         switch self {
         case .login(let request): "/login/\(request.loginProvider)/id-token"
         case .logout: "/logout"
+        case .unlink(let provider): "/\(provider)/unlink"
         }
     }
     
     var queryParameters: [String : String]? {
         switch self {
-        case .login: nil
+        case .login, .unlink: nil
         case .logout(let deviceID):
             ["deviceId": deviceID]
         }
@@ -34,32 +36,34 @@ extension AuthAPI: EndPoint {
     var method: HTTPMethod {
         switch self {
         case .login, .logout: .post
+        case .unlink: .delete
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
         case .login(let request): HeaderType.bearer(request.idToken).value
-        case .logout: HeaderType.basic.value
+        case .logout, .unlink: HeaderType.basic.value
         }
     }
     
     var parameterEncoding: ParameterEncoding {
         switch self {
         case .login, .logout: URLEncoding.default
+        case .unlink: JSONEncoding.default
         }
     }
     
     var bodyParameters: Parameters? {
         switch self {
-        case .login, .logout: nil
+        case .login, .logout, .unlink: nil
         }
     }
     
     var requiresAuth: Bool {
         switch self {
         case .login: false
-        case .logout: true
+        case .logout, .unlink: true
         }
     }
 

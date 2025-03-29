@@ -11,12 +11,17 @@ struct MainTabView: View {
     @EnvironmentObject var viewModel: AuthenticationViewModel
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             Text("MainTabView")
             
             Text("Logout")
                 .onTapGesture {
                     viewModel.send(.logout)
+                }
+            
+            Text("Unlink")
+                .onTapGesture {
+                    viewModel.send(.unlink)
                 }
         }
     }
