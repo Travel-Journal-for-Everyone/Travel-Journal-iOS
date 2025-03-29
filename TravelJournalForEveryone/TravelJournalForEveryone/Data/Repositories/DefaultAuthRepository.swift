@@ -62,4 +62,15 @@ final class DefaultAuthRepository: AuthRepository {
         }
         .eraseToAnyPublisher()
     }
+    
+    func unlink(socialProvider: SocialType) -> AnyPublisher<Bool, NetworkError> {
+        return networkService.request(
+            AuthAPI.unlink(socialProvider: socialProvider.rawValue),
+            decodingType: String.self
+        )
+        .map { _ in
+            return true
+        }
+        .eraseToAnyPublisher()
+    }
 }
