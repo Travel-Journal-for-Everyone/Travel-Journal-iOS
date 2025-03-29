@@ -27,13 +27,13 @@ struct DefaultLogoutUseCase: LogoutUseCase {
         }
 
         return authRepository.requestLogout(devideID: deviceID)
-            .map { response in
-                if response {
+            .map { isSuccess in
+                if isSuccess {
                     deleteInfo()
                     _ = authRepository.socialLogout(logoutProvider: SocialType.from(response: socialType))
                 }
         
-                return response
+                return isSuccess
             }
             .mapError{ $0 as Error }
             .eraseToAnyPublisher()

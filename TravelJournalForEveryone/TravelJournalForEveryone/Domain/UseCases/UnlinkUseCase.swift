@@ -26,10 +26,10 @@ struct DefaultUnlinkUseCase: UnlinkUseCase {
         }
         
         return authRepository.unlink(socialProvider: SocialType.from(response: socialType))
-            .map { response in
-                if response { deleteInfo() }
+            .map { isSuccess in
+                if isSuccess { deleteInfo() }
         
-                return response
+                return isSuccess
             }
             .mapError{ $0 as Error }
             .eraseToAnyPublisher()
