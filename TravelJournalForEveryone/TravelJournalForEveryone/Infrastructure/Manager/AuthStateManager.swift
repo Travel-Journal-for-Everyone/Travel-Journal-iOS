@@ -8,7 +8,7 @@
 import Foundation
 
 final class AuthStateManager: ObservableObject {
-    @Published private(set) var authState: AuthenticationState = .unauthenticated
+    @Published private(set) var authState: AuthenticationState = .authenticating
     
     func authenticate() {
         authState = .authenticated
@@ -16,5 +16,9 @@ final class AuthStateManager: ObservableObject {
     
     func unauthenticate() {
         authState = .unauthenticated
+    }
+    
+    func authenticating() {
+        authState = .authenticating
     }
 }

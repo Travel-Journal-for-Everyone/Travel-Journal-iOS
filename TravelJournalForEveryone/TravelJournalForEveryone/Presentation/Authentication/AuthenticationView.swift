@@ -21,6 +21,9 @@ struct AuthenticationView: View {
                 MainTabView()
                     .environmentObject(coordinator)
                     .environmentObject(viewModel)
+            case .authenticating:
+                Color.clear
+                    .ignoresSafeArea(edges: .all)
             }
         }
         .onAppear {
