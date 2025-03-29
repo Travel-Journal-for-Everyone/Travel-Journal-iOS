@@ -22,7 +22,7 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
     @MainActor
     func execute() -> AnyPublisher<AuthenticationState, Never> {
         if hasJWTTokenInKeychain() {
-            return fetchUser()
+            return fetchCurrentUser()
                 .map { user in
                     if user.isFirstLogin {
                         #if DEBUG
@@ -31,7 +31,7 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
                         
                         return AuthenticationState.unauthenticated
                     } else {
-                        saveUser(user)
+                        DIContainer.shared.userInfoManager.saveUser(user)
                         
                         #if DEBUG
                         print("✅ Authenticated")
@@ -65,21 +65,9 @@ struct DefaultAuthStateCheckUseCase: AuthStateCheckUseCase {
         return hasAccessToken && hasRefreshToken
     }
     
-    private func fetchUser() -> AnyPublisher<User, Error> {
+    private func fetchCurrentUser() -> AnyPublisher<User, Error> {
         let memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
         
         return userRepository.fetchUser(memberID: memberID)
-    }
-    
-    @MainActor
-    private func saveUser(_ user: User) {
-        DIContainer.shared.userInfoManager.updateUser(
-            nickname: user.nickname,
-            accountScope: user.accountScope
-        )
-        
-        // TODO: - 나중에 테스트 완료 후 아래 프린트문 지우기!
-        print(user)
-        print(UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value))
     }
 }

@@ -70,7 +70,8 @@ extension AuthAPI: EndPoint {
     var multipartFormImage: (
         textTitle: String,
         imageTitle: String,
-        imageData: Data?)? {
+        imageData: Data?
+    )? {
         return nil
     }
 }

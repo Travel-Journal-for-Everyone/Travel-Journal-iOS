@@ -14,34 +14,41 @@ protocol LoginUseCase {
 
 struct DefaultLoginUseCase: LoginUseCase {
     private let authRepository: AuthRepository
+    private let userRepository: UserRepository
     
-    init(authRepository: AuthRepository) {
+    init(
+        authRepository: AuthRepository,
+        userRepository: UserRepository
+    ) {
         self.authRepository = authRepository
+        self.userRepository = userRepository
     }
     
     @MainActor
     func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error> {
         return fetchIDToken(loginProvider: loginProvider)
             .flatMap { idToken in
-                return requestLogin(
+                requestLogin(
                     idToken: idToken,
                     loginProvider: loginProvider
                 )
-                .mapError { networkError in
-                    return networkError
-                }
+                .mapError { $0 as Error }
             }
-            .map { loginInfo in
-                UserDefaults.standard.set(loginInfo.memberID, forKey: UserDefaultsKey.memberID.value)
-                UserDefaults.standard.set(loginInfo.deviceID, forKey: UserDefaultsKey.deviceID.value)
-                UserDefaults.standard.set(loginProvider.rawValue, forKey: UserDefaultsKey.socialType.value)
+            .flatMap { loginInfo in
+                saveLoginInfo(loginInfo, loginProvider: loginProvider)
                 
-                KeychainManager.save(
-                    forAccount: .refreshToken,
-                    value: loginInfo.refreshToken
-                )
-                
-                return loginInfo.isFirstLogin
+                if loginInfo.isFirstLogin {
+                    return Just(true)
+                        .setFailureType(to: Error.self)
+                        .eraseToAnyPublisher()
+                } else {
+                    return fetchCurrentUser()
+                        .handleEvents(receiveOutput: { user in
+                            DIContainer.shared.userInfoManager.saveUser(user)
+                        })
+                        .map { _ in false }
+                        .eraseToAnyPublisher()
+                }
             }
             .eraseToAnyPublisher()
     }
@@ -59,5 +66,22 @@ struct DefaultLoginUseCase: LoginUseCase {
             idToken: idToken,
             loginProvider: loginProvider
         )
+    }
+    
+    private func saveLoginInfo(_ loginInfo: LoginInfo, loginProvider: SocialType) {
+        UserDefaults.standard.set(loginInfo.memberID, forKey: UserDefaultsKey.memberID.value)
+        UserDefaults.standard.set(loginInfo.deviceID, forKey: UserDefaultsKey.deviceID.value)
+        UserDefaults.standard.set(loginProvider.rawValue, forKey: UserDefaultsKey.socialType.value)
+        
+        KeychainManager.save(
+            forAccount: .refreshToken,
+            value: loginInfo.refreshToken
+        )
+    }
+    
+    private func fetchCurrentUser() -> AnyPublisher<User, Error> {
+        let memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
+        
+        return userRepository.fetchUser(memberID: memberID)
     }
 }

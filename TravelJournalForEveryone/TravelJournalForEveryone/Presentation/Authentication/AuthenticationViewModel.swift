@@ -97,6 +97,8 @@ final class AuthenticationViewModel: ObservableObject {
                     DIContainer.shared.authStateManager.unauthenticate()
                 case .authenticated:
                     DIContainer.shared.authStateManager.authenticate()
+                case .authenticating:
+                    DIContainer.shared.authStateManager.authenticating()
                 }
             }
             .store(in: &cancellables)

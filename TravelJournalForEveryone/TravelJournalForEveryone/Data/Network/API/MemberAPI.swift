@@ -8,14 +8,12 @@
 import Foundation
 import Alamofire
 
-enum MemberAPI: EndPoint {
+enum MemberAPI {
     case checkNickname(String)
     case signUp(SignUpRequestDTO)
-    // TODO: 백엔드 API 작업 완료 후 전체적으로 맞는지 확인하기!!!
-    case fetchUser(memberID: Int)
 }
 
-extension MemberAPI {
+extension MemberAPI: EndPoint {
     var basePath: String {
         return "/v1/member"
     }
@@ -26,21 +24,19 @@ extension MemberAPI {
             return "/check-nickname/\(nickname)"
         case .signUp:
             return "/complete-first-login"
-        case .fetchUser(let memberID):
-            return "/\(memberID)"
         }
     }
     
     var queryParameters: [String : String]? {
         switch self {
-        case .checkNickname, .signUp, .fetchUser:
+        case .checkNickname, .signUp:
             return nil
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .checkNickname, .fetchUser:
+        case .checkNickname:
             return .get
         case .signUp:
             return .post
@@ -49,7 +45,7 @@ extension MemberAPI {
     
     var headers: HTTPHeaders? {
         switch self {
-        case .checkNickname, .fetchUser:
+        case .checkNickname:
             return nil
         case .signUp:
             return HeaderType.multipartForm.value
@@ -58,7 +54,7 @@ extension MemberAPI {
     
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .checkNickname, .fetchUser:
+        case .checkNickname:
             return URLEncoding.default
         case .signUp:
             return JSONEncoding.default
@@ -67,7 +63,7 @@ extension MemberAPI {
     
     var bodyParameters: Parameters? {
         switch self {
-        case .checkNickname, .fetchUser:
+        case .checkNickname:
             return nil
         case .signUp(let request):
             return [
@@ -79,7 +75,8 @@ extension MemberAPI {
     
     var requiresAuth: Bool {
         switch self {
-        default: true
+        case .checkNickname, .signUp:
+            return true
         }
     }
     

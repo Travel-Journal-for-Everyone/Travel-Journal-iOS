@@ -37,9 +37,9 @@ struct DefaultLoginCompleteUseCase: SignUpUseCase {
         .mapError { $0 as Error }
         .flatMap { isSuccess in
             if isSuccess {
-                return fetchUser()
+                return fetchCurrentUser()
                     .map { user in
-                        saveUser(user)
+                        DIContainer.shared.userInfoManager.saveUser(user)
                         return true
                     }
                     .catch { error in
@@ -55,17 +55,9 @@ struct DefaultLoginCompleteUseCase: SignUpUseCase {
         .eraseToAnyPublisher()
     }
     
-    private func fetchUser() -> AnyPublisher<User, Error> {
+    private func fetchCurrentUser() -> AnyPublisher<User, Error> {
         let memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
         
         return userRepository.fetchUser(memberID: memberID)
-    }
-    
-    @MainActor
-    private func saveUser(_ user: User) {
-        DIContainer.shared.userInfoManager.updateUser(
-            nickname: user.nickname,
-            accountScope: user.accountScope
-        )
     }
 }

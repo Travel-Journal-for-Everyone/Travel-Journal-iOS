@@ -10,4 +10,5 @@ import Foundation
 enum AuthenticationState {
     case unauthenticated
     case authenticated
+    case authenticating
 }

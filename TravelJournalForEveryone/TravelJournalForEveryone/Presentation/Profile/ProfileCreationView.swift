@@ -35,7 +35,7 @@ struct ProfileCreationView: View {
                     .onTapGesture {
                         hideKeyboard()
                         isTappedAccountScopeButton = false
-                        isShowingDialog = true  
+                        isShowingDialog = true
                     }
                     .padding(.top, 30)
                     .padding(.bottom, 40)
@@ -59,6 +59,10 @@ struct ProfileCreationView: View {
                 .padding(.horizontal, 16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .customNavigationBar {
+                Text(isEditingProfile ? "프로필 수정" : "프로필 작성")
+                    .font(.pretendardMedium(17))
+            }
             
             if viewModel.state.isLoading {
                 Color.black.opacity(0.25)
@@ -66,10 +70,6 @@ struct ProfileCreationView: View {
                 
                 ProgressView()
             }
-        }
-        .customNavigationBar {
-            Text(isEditingProfile ? "프로필 수정" : "프로필 작성")
-                .font(.pretendardMedium(17))
         }
         .photosPicker(
             isPresented: $isShowingPhotosPicker,
