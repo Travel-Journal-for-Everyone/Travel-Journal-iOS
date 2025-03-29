@@ -29,7 +29,10 @@ final class DIContainer {
     
     
     // MARK: - Usecases
-    lazy var loginUseCase = DefaultLoginUseCase(authRepository: authRepository)
+    lazy var loginUseCase = DefaultLoginUseCase(
+        authRepository: authRepository,
+        userRepository: userRepository
+    )
     lazy var logoutUseCase = DefaultLogoutUseCase(authRepository: authRepository)
     lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase(userRepository: userRepository)
     lazy var signUpUseCase = DefaultLoginCompleteUseCase(userRepository: userRepository)

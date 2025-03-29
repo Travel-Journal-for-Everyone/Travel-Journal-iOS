@@ -45,7 +45,6 @@ final class DefaultUserRepository: UserRepository {
     }
     
     func fetchUser(memberID: Int) -> AnyPublisher<User, Error> {
-        // TODO: - 백엔드 API 나오면 구현
         guard memberID > 0 else {
             return Fail(error: UserDefaultsError.dataNotFound)
                 .eraseToAnyPublisher()
@@ -85,7 +84,6 @@ final class MockUserRepository: UserRepository {
     }
     
     func fetchUser(memberID: Int) -> AnyPublisher<User, Error> {
-        // TODO: - 백엔드 API 나오면 구현
         return Just(
             User.mock()
         )
