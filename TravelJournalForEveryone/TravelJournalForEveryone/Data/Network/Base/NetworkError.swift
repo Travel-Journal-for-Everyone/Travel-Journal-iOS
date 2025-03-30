@@ -11,5 +11,6 @@ enum NetworkError: Error {
     case invalidResponse
     case decodingFailed(Data)
     case invalidNickname(reason: String)
+    case imageUploadFailed
     case unknownError(Error)
 }
