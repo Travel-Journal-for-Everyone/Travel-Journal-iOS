@@ -80,7 +80,7 @@ final class DefaultNetworkService: NetworkService {
                 }
                 .eraseToAnyPublisher()
         } catch {
-            return Fail(error: NetworkError.imageUploadFailed)
+           return Fail(error: error as? NetworkError ?? .unknownError(error))
                 .eraseToAnyPublisher()
         }
     }
