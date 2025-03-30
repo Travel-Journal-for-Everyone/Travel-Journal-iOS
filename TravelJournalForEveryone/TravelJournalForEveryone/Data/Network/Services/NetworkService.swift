@@ -88,8 +88,7 @@ final class DefaultNetworkService: NetworkService {
     private func makeRequest(_ endPoint: EndPoint) throws -> DataRequest {
         if let imageData = endPoint.multipartFormImage {
             guard let bodyParameters = endPoint.bodyParameters,
-                  let jsonData = try? JSONSerialization.data(withJSONObject: bodyParameters),
-                  let jsonString = String(data: jsonData, encoding: .utf8)
+                  let jsonData = try? JSONSerialization.data(withJSONObject: bodyParameters)
             else {
                 throw NetworkError.imageUploadFailed
             }
@@ -98,7 +97,7 @@ final class DefaultNetworkService: NetworkService {
                 multipartFormData: { multipartFormData in
                     // object
                     multipartFormData.append(
-                        jsonString.data(using: .utf8)!,
+                        jsonData,
                         withName: imageData.textTitle
                     )
                     
