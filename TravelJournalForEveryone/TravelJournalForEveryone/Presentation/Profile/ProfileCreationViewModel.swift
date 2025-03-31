@@ -127,13 +127,7 @@ final class ProfileCreationViewModel: ObservableObject {
                 case .finished:
                     break
                 case .failure(let error):
-                    switch error {
-                    case .invalidNickname(let reason):
-                        let errorReason = NicknameServerCheckResult.from(response: reason)
-                        self.updateStateForNicknameValidationForServer(errorReason)
-                    default:
-                        print("error: \(error)")
-                    }
+                    print("⛔️ Nickname check error: \(error)")
                 }
                 
                 self.state.isCheckingNickname = false
@@ -159,7 +153,7 @@ final class ProfileCreationViewModel: ObservableObject {
             case .finished:
                 break
             case .failure(let error):
-                print("온보딩 실패 : \(error)")
+                print("⛔️ Sign-Up error: \(error)")
             }
             
             self?.state.isLoading = false
