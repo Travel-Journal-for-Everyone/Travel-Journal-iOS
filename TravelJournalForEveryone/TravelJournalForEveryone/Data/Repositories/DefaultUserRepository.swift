@@ -17,8 +17,7 @@ final class DefaultUserRepository: UserRepository {
     
     func validateNickname(_ nickname: String) -> AnyPublisher<String, NetworkError> {
         return networkService.request(
-            MemberAPI.checkNickname(nickname),
-            decodingType: String.self
+            MemberAPI.checkNickname(nickname)
         )
         .eraseToAnyPublisher()
     }
@@ -35,11 +34,14 @@ final class DefaultUserRepository: UserRepository {
         )
         
         return networkService.request(
-            MemberAPI.signUp(request),
-            decodingType: String.self
+            MemberAPI.signUp(request)
         )
-        .map { _ in
-            return true
+        .map { stringResponse in
+            if stringResponse == "요청이 성공적으로 처리되었습니다." {
+                return true
+            } else {
+                return false
+            }
         }
         .eraseToAnyPublisher()
     }

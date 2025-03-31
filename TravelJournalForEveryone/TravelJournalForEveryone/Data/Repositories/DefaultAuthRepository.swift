@@ -54,22 +54,28 @@ final class DefaultAuthRepository: AuthRepository {
     
     func requestLogout(devideID: String) -> AnyPublisher<Bool, NetworkError> {
         return networkService.request(
-            AuthAPI.logout(deviceID: devideID),
-            decodingType: String.self
+            AuthAPI.logout(deviceID: devideID)
         )
-        .map { _ in
-            return true
+        .map { stringResponse in
+            if stringResponse == "로그아웃 성공" {
+                return true
+            } else {
+                return false
+            }
         }
         .eraseToAnyPublisher()
     }
     
     func unlink(socialProvider: SocialType) -> AnyPublisher<Bool, NetworkError> {
         return networkService.request(
-            AuthAPI.unlink(socialProvider: socialProvider.rawValue),
-            decodingType: String.self
+            AuthAPI.unlink(socialProvider: socialProvider.rawValue)
         )
-        .map { _ in
-            return true
+        .map { stringResponse in
+            if stringResponse == "연결끊기 성공" {
+                return true
+            } else {
+                return false
+            }
         }
         .eraseToAnyPublisher()
     }

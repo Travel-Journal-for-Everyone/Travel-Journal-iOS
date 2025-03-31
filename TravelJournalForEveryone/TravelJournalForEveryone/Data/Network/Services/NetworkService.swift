@@ -10,6 +10,7 @@ import Combine
 import Alamofire
 
 protocol NetworkService {
+    func request(_ endPoint: EndPoint) -> AnyPublisher<String, NetworkError>
     func request<T: Decodable & Sendable>(
         _ endPoint: EndPoint,
         decodingType: T.Type
@@ -35,6 +36,32 @@ final class DefaultNetworkService: NetworkService {
         )
     }
     
+    func request(_ endPoint: EndPoint) -> AnyPublisher<String, NetworkError> {
+        do {
+            return try makeRequest(endPoint)
+                .validate()
+                .publishString()
+                .tryMap { dataResponse in
+                    switch dataResponse.result {
+                    case .success(let stringResponse):
+                        return stringResponse
+                    case .failure:
+                        guard let stringData = dataResponse.data else {
+                            throw NetworkError.invalidData
+                        }
+                        return String(decoding: stringData, as: UTF8.self)
+                    }
+                }
+                .mapError { error in
+                    return error as? NetworkError ?? .unknownError(error)
+                }
+                .eraseToAnyPublisher()
+        } catch {
+            return Fail(error: error as? NetworkError ?? .unknownError(error))
+                .eraseToAnyPublisher()
+        }
+    }
+    
     func request<T: Decodable & Sendable>(
         _ endPoint: EndPoint,
         decodingType: T.Type
@@ -52,12 +79,6 @@ final class DefaultNetworkService: NetworkService {
                     
                     self.extractAccessToken(from: httpResponse)
                     
-                    //TODO: 임시로 String 디코딩 처리함. 추후 수정
-                    if decodingType == String.self,
-                       let stringResponse = String(data: data, encoding: .utf8) {
-                        return stringResponse as! T
-                    }
-                    
                     switch httpResponse.statusCode {
                     case 200...299:
                         guard let decodedData = dataResponse.value else {
@@ -65,14 +86,7 @@ final class DefaultNetworkService: NetworkService {
                         }
                         return decodedData
                     default:
-                        guard let afError = dataResponse.error else {
-                            throw NetworkError.unknownError(dataResponse.error ?? NSError())
-                        }
-                        throw self.handleStatusCode(
-                            httpResponse.statusCode,
-                            data: data,
-                            afError: afError
-                        )
+                        throw NetworkError.unknownError(dataResponse.error ?? NSError())
                     }
                 }
                 .mapError { error in
@@ -80,7 +94,7 @@ final class DefaultNetworkService: NetworkService {
                 }
                 .eraseToAnyPublisher()
         } catch {
-           return Fail(error: error as? NetworkError ?? .unknownError(error))
+            return Fail(error: error as? NetworkError ?? .unknownError(error))
                 .eraseToAnyPublisher()
         }
     }
@@ -144,35 +158,5 @@ final class DefaultNetworkService: NetworkService {
             forAccount: .accessToken,
             value: accessToken
         )
-    }
-    
-    private func handleStatusCode(
-        _ statusCode: Int,
-        data: Data,
-        afError: AFError
-    ) -> NetworkError {
-        let errorMessage = extractErrorMessage(from: data)
-        
-        switch (statusCode, errorMessage) {
-        case (409, "duplicate"):
-            return .invalidNickname(reason: errorMessage)
-        case (409, "containsBadWord"):
-            return .invalidNickname(reason: errorMessage)
-        case(_, "Failed to decode error response"):
-            return .decodingFailed(data)
-        default:
-            return .unknownError(afError)
-        }
-    }
-    
-    private func extractErrorMessage(from data: Data) -> String {
-        guard let errorResponse = try? JSONDecoder().decode(
-            ErrorResponseDTO.self,
-            from: data
-        ) else {
-            return "Failed to decode error response"
-        }
-        
-        return errorResponse.message
     }
 }
