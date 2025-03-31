@@ -22,7 +22,7 @@ struct RegionDataDTO: Decodable {
 extension RegionDataDTO {
     func toEntity() -> RegionData {
         return RegionData(
-            regionName: regionName,
+            regionName: Region.from(response: regionName),
             travelJournalCount: travelJournalCount,
             placesCount: placesCount
         )
