@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "gangwon.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

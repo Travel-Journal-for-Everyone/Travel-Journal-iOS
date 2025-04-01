@@ -30,7 +30,14 @@ extension User {
             travelJournalCount: 15,
             placesCount: 25,
             isFirstLogin: false,
-            regionDatas: [.mock()]
+            regionDatas: [
+                .mock(.metropolitan),
+                .mock(.gangwon),
+                .mock(.chungcheong),
+                .mock(.gyeongsang),
+                .mock(.jeolla),
+                .mock(.jeju)
+            ]
         )
     }
 }

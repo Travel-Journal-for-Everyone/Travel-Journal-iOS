@@ -8,15 +8,15 @@
 import Foundation
 
 struct RegionData {
-    let regionName: String
+    let regionName: Region
     let travelJournalCount: Int
     let placesCount: Int
 }
 
 extension RegionData {
-    static func mock() -> RegionData {
+    static func mock(_ region: Region) -> RegionData {
         return RegionData(
-            regionName: "제주도",
+            regionName: region,
             travelJournalCount: 2,
             placesCount: 5
         )
