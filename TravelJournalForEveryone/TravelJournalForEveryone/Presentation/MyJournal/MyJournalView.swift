@@ -65,15 +65,15 @@ struct MyJournalView: View {
                 VStack(spacing: 6) {
                     Text("\(regionData.regionName.mapTitle)")
                         .font(.pretendardSemiBold(16))
-                    HStack(spacing: 2) {
-                        HStack(spacing: 5) {
+                    HStack(spacing: 5) {
+                        HStack(spacing: 2) {
                             Image("TJJournal")
                                 .frame(width: 16, height: 16)
                             Text("\(regionData.travelJournalCount)")
                                 .font(.pretendardRegular(12))
                         }
                         
-                        HStack(spacing: 5) {
+                        HStack(spacing: 2) {
                             Image("TJPlace")
                                 .frame(width: 16, height: 16)
                             Text("\(regionData.placesCount)")
