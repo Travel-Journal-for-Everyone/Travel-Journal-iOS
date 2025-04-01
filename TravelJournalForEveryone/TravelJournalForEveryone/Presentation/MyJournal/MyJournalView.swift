@@ -11,7 +11,20 @@ struct MyJournalView: View {
     private let mockUser = User.mock()
     
     var body: some View {
-        journalMap(regionDatas: mockUser.regionDatas)
+        ZStack {
+            LinearGradient(
+                stops: [
+                    .init(color: .tjWhite, location: 0),
+                    .init(color: .tjGradient1, location: 0.25),
+                    .init(color: .tjGradient2, location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            journalMap(regionDatas: mockUser.regionDatas)
+        }
     }
     
     private func journalMap(regionDatas: [RegionData]) -> some View {
