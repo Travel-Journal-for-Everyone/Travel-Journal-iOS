@@ -14,9 +14,9 @@ struct RegionData {
 }
 
 extension RegionData {
-    static func mock() -> RegionData {
+    static func mock(_ region: Region) -> RegionData {
         return RegionData(
-            regionName: .jeju,
+            regionName: region,
             travelJournalCount: 2,
             placesCount: 5
         )
