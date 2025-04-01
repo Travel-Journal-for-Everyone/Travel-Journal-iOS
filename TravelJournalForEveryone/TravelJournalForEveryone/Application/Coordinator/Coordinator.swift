@@ -13,7 +13,7 @@ protocol CoordinatorProtocol: ObservableObject {
     var explorePath: NavigationPath { get set }
     var profilePath: NavigationPath { get set }
     
-    var selectedTab: Tab { get set }
+    var selectedTab: TJTab { get set }
     
     func push(_ screen: Screen)
     func pop()
@@ -26,7 +26,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
     @Published var explorePath =  NavigationPath()
     @Published var profilePath =  NavigationPath()
     
-    var selectedTab: Tab = .myJournal
+    var selectedTab: TJTab = .myJournal
     
     func push(_ screen: Screen) {
         switch selectedTab {
