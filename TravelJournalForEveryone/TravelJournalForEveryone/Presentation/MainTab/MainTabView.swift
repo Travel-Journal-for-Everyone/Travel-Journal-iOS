@@ -8,36 +8,72 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @EnvironmentObject var viewModel: AuthenticationViewModel
-    private let userInfoManager = DIContainer.shared.userInfoManager
+    @EnvironmentObject private var coordinator: DefaultCoordinator
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("MainTabView")
-            
-            AsyncImage(url: URL(string: userInfoManager.profileImageURLString)) { image in
-                image.resizable()
-            } placeholder: {
-                ProgressView()
+        ZStack(alignment: .bottom) {
+            TabView(selection: $coordinator.selectedTab) {
+                MyJournalView()
+                    .tag(TJTab.myJournal)
+                
+                SearchView()
+                    .tag(TJTab.search)
+                
+                ExploreView()
+                    .tag(TJTab.explore)
+                
+                Text("프로필")
+                    .tag(TJTab.profile)
             }
-            .frame(width: 150, height: 150)
             
-            Text("\(userInfoManager.nickname)")
-            Text("\(userInfoManager.accounScope)")
+            customTabBar
+        }
+    }
+    
+    private var customTabBar: some View {
+        VStack {
+            Rectangle()
+                .foregroundStyle(.tjGray4)
+                .frame(height: 0.33)
             
-            Text("Logout")
-                .onTapGesture {
-                    viewModel.send(.logout)
+            HStack {
+                Spacer()
+                
+                ForEach(TJTab.allCases, id: \.title) { tab in
+                    Spacer()
+                    
+                    Button {
+                        coordinator.selectedTab = tab
+                    } label: {
+                        tabButtonView(
+                            tab,
+                            isSelected: coordinator.selectedTab == tab
+                        )
+                    }
+                    
+                    Spacer()
                 }
+                
+                Spacer()
+            }
+        }
+        .background(.tjWhite.opacity(0.8))
+    }
+    
+    private func tabButtonView(_ tab: TJTab, isSelected: Bool) -> some View {
+        VStack(spacing: 6) {
+            Image(isSelected ? tab.imageString.selected : tab.imageString.unselected)
+                .resizable()
+                .frame(width: 30, height: 30)
             
-            Text("Unlink")
-                .onTapGesture {
-                    viewModel.send(.unlink)
-                }
+            Text(tab.title)
+                .font(.pretendardSemiBold(10))
+                .foregroundStyle(isSelected ? .tjBlack : .tjGray3)
         }
     }
 }
 
 #Preview {
     MainTabView()
+        .environmentObject(DefaultCoordinator())
 }
