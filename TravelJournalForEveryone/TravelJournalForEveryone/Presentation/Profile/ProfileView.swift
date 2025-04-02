@@ -34,7 +34,9 @@ struct ProfileView: View {
             Image(.tjSetting)
         }
     }
-    
+}
+
+extension ProfileView {
     private var profileInfoView: some View {
         HStack(spacing: 15) {
             AsyncImage(url: URL(string: user.profileImageURLString)) { image in
