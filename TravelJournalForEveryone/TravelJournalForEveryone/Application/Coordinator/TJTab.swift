@@ -20,12 +20,16 @@ enum TJTab: CaseIterable {
         }
     }
     
-    var imageString: String {
+    var imageString: (selected: String, unselected: String) {
         switch self {
-        case .myJournal: "TJMyJournal"
-        case .search: "TJSearch"
-        case .explore: "TJExplore"
-        case .profile: "TJProfile"
+        case .myJournal:
+            ("TJMyJournal.selected", "TJMyJournal")
+        case .search:
+            ("TJSearch.selected", "TJSearch")
+        case .explore:
+            ("TJExplore.selected", "TJExplore")
+        case .profile:
+            ("TJProfile.selected", "TJProfile")
         }
     }
 }

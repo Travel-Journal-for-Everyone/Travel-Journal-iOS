@@ -26,7 +26,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
     @Published var explorePath =  NavigationPath()
     @Published var profilePath =  NavigationPath()
     
-    var selectedTab: TJTab = .myJournal
+    @Published var selectedTab: TJTab = .myJournal
     
     func push(_ screen: Screen) {
         switch selectedTab {
