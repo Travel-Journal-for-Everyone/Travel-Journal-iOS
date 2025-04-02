@@ -1,0 +1,44 @@
+//
+//  MenuHorizontalView.swift
+//  TravelJournalForEveryone
+//
+//  Created by 최주리 on 4/2/25.
+//
+import SwiftUI
+
+struct MenuHorizontalView<RightView: View>: View {
+    private let isProfile: Bool
+    private let text: String
+    private let rightView: () -> RightView
+    private let action: () -> Void
+    
+    init(
+        isProfile: Bool = false,
+        text: String,
+        rightView: @escaping () -> RightView = { EmptyView() },
+        action: @escaping () -> Void
+    ) {
+        self.isProfile = isProfile
+        self.text = text
+        self.rightView = rightView
+        self.action = action
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("\(text)")
+                    .font(isProfile ? .pretendardMedium(16) : .pretendardRegular(16))
+                Spacer()
+                rightView()
+            }
+            .padding(15)
+            Divider()
+                .foregroundStyle(.tjGray6)
+        }
+        .frame(height: 50)
+        .onTapGesture {
+            action()
+        }
+    }
+}
