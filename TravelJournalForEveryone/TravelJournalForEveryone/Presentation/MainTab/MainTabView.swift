@@ -70,7 +70,7 @@ struct MainTabView: View {
     
     private func tabButtonView(_ tab: TJTab, isSelected: Bool) -> some View {
         VStack(spacing: 6) {
-            Image(isSelected ? tab.imageString.selected : tab.imageString.unselected)
+            Image(isSelected ? tab.symbolImage.selected : tab.symbolImage.unselected)
                 .resizable()
                 .frame(width: 30, height: 30)
             

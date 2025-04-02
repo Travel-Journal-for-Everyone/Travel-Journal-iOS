@@ -5,6 +5,8 @@
 //  Created by 김성민 on 2/25/25.
 //
 
+import SwiftUI
+
 enum TJTab: CaseIterable {
     case myJournal
     case search
@@ -20,16 +22,16 @@ enum TJTab: CaseIterable {
         }
     }
     
-    var imageString: (selected: String, unselected: String) {
+    var symbolImage: (selected: ImageResource, unselected: ImageResource) {
         switch self {
         case .myJournal:
-            ("TJMyJournal.selected", "TJMyJournal")
+            (.tjMyJournalSelected, .tjMyJournal)
         case .search:
-            ("TJSearch.selected", "TJSearch")
+            (.tjSearchSelected, .tjSearch)
         case .explore:
-            ("TJExplore.selected", "TJExplore")
+            (.tjExploreSelected, .tjExplore)
         case .profile:
-            ("TJProfile.selected", "TJProfile")
+            (.tjProfileSelected, .tjProfile)
         }
     }
 }
