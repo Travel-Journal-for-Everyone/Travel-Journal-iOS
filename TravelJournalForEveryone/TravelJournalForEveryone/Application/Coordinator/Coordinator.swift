@@ -13,7 +13,7 @@ protocol CoordinatorProtocol: ObservableObject {
     var explorePath: NavigationPath { get set }
     var profilePath: NavigationPath { get set }
     
-    var selectedTab: Tab { get set }
+    var selectedTab: TJTab { get set }
     
     func push(_ screen: Screen)
     func pop()
@@ -21,12 +21,28 @@ protocol CoordinatorProtocol: ObservableObject {
 }
 
 final class DefaultCoordinator: CoordinatorProtocol {
-    @Published var myJournalPath =  NavigationPath()
-    @Published var searchPath =  NavigationPath()
-    @Published var explorePath =  NavigationPath()
-    @Published var profilePath =  NavigationPath()
-    
-    var selectedTab: Tab = .myJournal
+    @Published var myJournalPath =  NavigationPath() {
+        didSet {
+            updateTabBarVisibility(self.myJournalPath)
+        }
+    }
+    @Published var searchPath =  NavigationPath() {
+        didSet {
+            updateTabBarVisibility(self.myJournalPath)
+        }
+    }
+    @Published var explorePath =  NavigationPath() {
+        didSet {
+            updateTabBarVisibility(self.myJournalPath)
+        }
+    }
+    @Published var profilePath =  NavigationPath() {
+        didSet {
+            updateTabBarVisibility(self.myJournalPath)
+        }
+    }
+    @Published var selectedTab: TJTab = .myJournal
+    @Published var isPresentingTabBar: Bool = true
     
     func push(_ screen: Screen) {
         switch selectedTab {
@@ -73,6 +89,14 @@ final class DefaultCoordinator: CoordinatorProtocol {
         switch screen {
         case .myJournal:
             MyJournalView()
+        case .followList:
+            FollowListView()
+        }
+    }
+    
+    private func updateTabBarVisibility(_ path: NavigationPath) {
+        withAnimation {
+            isPresentingTabBar = path.count == 0
         }
     }
 }

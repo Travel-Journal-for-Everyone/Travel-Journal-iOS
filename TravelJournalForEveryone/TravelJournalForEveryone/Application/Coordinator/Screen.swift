@@ -10,6 +10,7 @@ import Foundation
 enum Screen {
     // MyJournal Tab
     case myJournal
+    case followList
     
     // Search Tab
     // Explore Tab
