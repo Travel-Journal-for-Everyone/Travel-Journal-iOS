@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct MyJournalView: View {
+    @EnvironmentObject private var coordinator: DefaultCoordinator
+    
     private let mockUser = User.mock()
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             LinearGradient(
                 stops: [
                     .init(color: .tjWhite, location: 0),
@@ -24,6 +26,13 @@ struct MyJournalView: View {
             .ignoresSafeArea()
             
             journalMap(regionDatas: mockUser.regionDatas)
+                .offset(y: 65)
+            
+            Button {
+                coordinator.push(.followList)
+            } label: {
+                Text("TEST")
+            }
         }
     }
     
@@ -105,4 +114,5 @@ struct MyJournalView: View {
 
 #Preview {
     MyJournalView()
+        .environmentObject(DefaultCoordinator())
 }

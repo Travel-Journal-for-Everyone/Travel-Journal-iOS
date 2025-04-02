@@ -13,8 +13,13 @@ struct MainTabView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $coordinator.selectedTab) {
-                MyJournalView()
-                    .tag(TJTab.myJournal)
+                NavigationStack(path: $coordinator.myJournalPath) {
+                    MyJournalView()
+                        .tag(TJTab.myJournal)
+                        .navigationDestination(for: Screen.self) { screen in
+                            coordinator.build(screen)
+                        }
+                }
                 
                 SearchView()
                     .tag(TJTab.search)
@@ -26,7 +31,10 @@ struct MainTabView: View {
                     .tag(TJTab.profile)
             }
             
-            customTabBar
+            if coordinator.isPresentingTabBar {
+                customTabBar
+                    .transition(.offset(y: 150))
+            }
         }
     }
     
