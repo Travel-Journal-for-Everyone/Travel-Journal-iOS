@@ -15,20 +15,33 @@ struct MainTabView: View {
             TabView(selection: $coordinator.selectedTab) {
                 NavigationStack(path: $coordinator.myJournalPath) {
                     MyJournalView()
-                        .tag(TJTab.myJournal)
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
                         }
                 }
+                .tag(TJTab.myJournal)
                 
-                SearchView()
-                    .tag(TJTab.search)
+                NavigationStack(path: $coordinator.searchPath) {
+                    SearchView()
+                }
+                .tag(TJTab.search)
                 
-                ExploreView()
-                    .tag(TJTab.explore)
+                NavigationStack(path: $coordinator.explorePath) {
+                    ExploreView()
+                        .navigationDestination(for: Screen.self) { screen in
+                            coordinator.build(screen)
+                        }
+                }
+                .tag(TJTab.explore)
                 
-                Text("프로필")
-                    .tag(TJTab.profile)
+                
+                NavigationStack(path: $coordinator.profilePath) {
+                    ProfileView(user: .mock())
+                        .navigationDestination(for: Screen.self) { screen in
+                            coordinator.build(screen)
+                        }
+                }
+                .tag(TJTab.profile)
             }
             
             if coordinator.isPresentingTabBar {
