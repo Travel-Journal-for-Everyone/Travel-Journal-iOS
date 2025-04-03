@@ -10,7 +10,11 @@ import SwiftUI
 struct MyJournalView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
     
+    // TEST
     private let mockUser = User.mock()
+    private var isCurrentUser = false
+    @State private var isPresentingMenu = false
+    @State private var isFollowing = false
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -28,12 +32,144 @@ struct MyJournalView: View {
             journalMap(regionDatas: mockUser.regionDatas)
                 .offset(y: 65)
             
-            Button {
-                coordinator.push(.followList)
-            } label: {
-                Text("TEST")
+            userInfoView
+                .padding(.horizontal, 16)
+            
+            if isPresentingMenu {
+                Color.clear
+                    .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.smooth(duration: 0.25)) {
+                            isPresentingMenu.toggle()
+                        }
+                    }
+                
+                menuView
             }
         }
+    }
+    
+    private var userInfoView: some View {
+        ZStack(alignment: .top) {
+            VStack(spacing: 10) {
+                HStack(spacing: 0) {
+                    if !isCurrentUser {
+                        Button {
+                            print("뒤로 가기")
+                        } label: {
+                            Image(.tjLeftArrow)
+                        }
+                        .padding(.trailing, 5)
+                    }
+                    
+                    Text("마루김마루")
+                        .font(.pretendardBold(20))
+                        .padding(.trailing, 5)
+                    
+                    Image(.tjGlobe)
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                    
+                    Spacer()
+                    
+                    if isCurrentUser {
+                        Button {
+                            print("알림 목록")
+                        } label: {
+                            Image(.tjBell)
+                        }
+                    } else {
+                        FollowButton(isFollowing: $isFollowing) {
+                            isFollowing.toggle()
+                        }
+                        
+                        Button {
+                            print("메뉴")
+                            withAnimation(.smooth(duration: 0.25)) {
+                                isPresentingMenu.toggle()
+                            }
+                        } label: {
+                            Image(.tjMenu)
+                                .renderingMode(.template)
+                                .foregroundStyle(isPresentingMenu ? .tjGray3 : .tjBlack)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                
+                HStack(spacing: 0) {
+                    ProfileImageView(viewType: .home, image: nil)
+                        .padding(.trailing, 16)
+                        .onTapGesture {
+                            coordinator.push(.followList)
+                        }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 8)
+            }
+        }
+    }
+    
+    private var menuView: some View {
+        HStack {
+            Spacer()
+            
+            VStack(alignment: .leading, spacing: 0) {
+                Button {
+                    withAnimation(.smooth(duration: 0.25)) {
+                        isPresentingMenu.toggle()
+                    }
+                    
+                    // TODO: - 차단하기
+                } label: {
+                    HStack {
+                        Text("차단하기")
+                            .foregroundStyle(.tjBlack)
+                            .font(.pretendardMedium(16))
+                            .frame(height: 44)
+                            .padding(.leading, 21)
+                        
+                        Spacer()
+                    }
+                }
+                
+                Rectangle()
+                    .foregroundStyle(.tjGray5)
+                    .frame(height: 1)
+                
+                Button(role: .destructive) {
+                    withAnimation(.smooth(duration: 0.25)) {
+                        isPresentingMenu.toggle()
+                    }
+                    
+                    // TODO: - 신고하기
+                } label: {
+                    HStack {
+                        Text("신고하기")
+                            .font(.pretendardMedium(16))
+                            .frame(height: 44)
+                            .padding(.leading, 21)
+                        
+                        Spacer()
+                    }
+                }
+            }
+            .frame(width: 194)
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .foregroundStyle(.white)
+                    .shadow(color: .gray.opacity(0.2), radius: 10)
+            }
+            .offset(y: 28)
+            .padding(.trailing)
+        }
+        .zIndex(1)
+        .transition(.scale(
+            scale: 0,
+            anchor: UnitPoint(x: 0.9, y: 0.3)
+        ))
     }
     
     private func journalMap(regionDatas: [RegionData]) -> some View {
@@ -89,14 +225,14 @@ struct MyJournalView: View {
                         .font(.pretendardSemiBold(16))
                     HStack(spacing: 5) {
                         HStack(spacing: 2) {
-                            Image("TJJournal")
+                            Image(.tjJournal)
                                 .frame(width: 16, height: 16)
                             Text("\(regionData.travelJournalCount)")
                                 .font(.pretendardRegular(12))
                         }
                         
                         HStack(spacing: 2) {
-                            Image("TJPlace")
+                            Image(.tjPlace)
                                 .frame(width: 16, height: 16)
                             Text("\(regionData.placesCount)")
                                 .font(.pretendardRegular(12))
