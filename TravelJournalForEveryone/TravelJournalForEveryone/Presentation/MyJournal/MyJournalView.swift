@@ -48,15 +48,17 @@ struct MyJournalView: View {
                 menuView
             }
             
-            VStack {
-                Spacer()
-                
-                HStack {
+            if isCurrentUser {
+                VStack {
                     Spacer()
                     
-                    journalCreateButton
-                        .padding(.trailing, 31)
-                        .padding(.bottom, 50)
+                    HStack {
+                        Spacer()
+                        
+                        journalCreateButton
+                            .padding(.trailing, 31)
+                            .padding(.bottom, 50)
+                    }
                 }
             }
         }
@@ -71,15 +73,17 @@ struct MyJournalView: View {
                             print("뒤로 가기")
                         } label: {
                             Image(.tjLeftArrow)
+                                .resizable()
+                                .frame(width: 24, height: 24)
                         }
                         .padding(.trailing, 5)
                     }
                     
-                    Text("마루김마루")
+                    Text("\(mockUser.nickname)")
                         .font(.pretendardBold(20))
                         .padding(.trailing, 5)
                     
-                    Image(.tjGlobe)
+                    Image("\(mockUser.accountScope.imageResourceString)")
                         .resizable()
                         .frame(width: 16, height: 16)
                     
@@ -90,6 +94,8 @@ struct MyJournalView: View {
                             print("알림 목록")
                         } label: {
                             Image(.tjBell)
+                                .resizable()
+                                .frame(width: 24, height: 24)
                         }
                     } else {
                         FollowButton(isFollowing: $isFollowing) {
@@ -97,13 +103,14 @@ struct MyJournalView: View {
                         }
                         
                         Button {
-                            print("메뉴")
                             withAnimation(.smooth(duration: 0.25)) {
                                 isPresentingMenu.toggle()
                             }
                         } label: {
                             Image(.tjMenu)
                                 .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 24, height: 24)
                                 .foregroundStyle(isPresentingMenu ? .tjGray3 : .tjBlack)
                         }
                         .buttonStyle(.plain)
@@ -244,6 +251,22 @@ struct MyJournalView: View {
                 .offset(x: -67, y: 62)
             }
         }
+        .blur(radius: !isCurrentUser && mockUser.accountScope == .privateProfile ? 6 : 0)
+        .allowsHitTesting(!(!isCurrentUser && mockUser.accountScope == .privateProfile))
+        .overlay {
+            if !isCurrentUser && mockUser.accountScope == .privateProfile {
+                HStack(spacing: 5) {
+                    Image(.tjLock)
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                    
+                    Text("나만 보기 계정입니다")
+                        .foregroundStyle(.tjBlack)
+                        .font(.pretendardMedium(16))
+                }
+                .offset(y: 50)
+            }
+        }
     }
     
     private func regionMap(_ regionData: RegionData) -> some View {
@@ -291,6 +314,4 @@ struct MyJournalView: View {
 #Preview {
     MainTabView()
         .environmentObject(DefaultCoordinator())
-//    MyJournalView()
-//        .environmentObject(DefaultCoordinator())
 }
