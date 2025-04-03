@@ -39,13 +39,10 @@ struct ProfileView: View {
 extension ProfileView {
     private var profileInfoView: some View {
         HStack(spacing: 15) {
-            AsyncImage(url: URL(string: user.profileImageURLString)) { image in
-                image.resizable()
-            } placeholder: {
-                Image(.defaultProfile)
-                    .resizable()
-            }
-            .frame(width: 80, height: 80)
+            ProfileImageView(
+                viewType: .profileInfo,
+                image: Image("\(user.profileImageURLString)")
+            )
             
             VStack(alignment: .leading) {
                 HStack(spacing: 6) {
@@ -64,10 +61,10 @@ extension ProfileView {
         VStack(spacing: 0) {
             Divider()
                 .foregroundStyle(.tjGray6)
-            MenuHorizontalView(isProfile: true, text: "프로필 수정") { }
-            MenuHorizontalView(isProfile: true, text: "좋아요한 여행 일지") { }
-            MenuHorizontalView(isProfile: true, text: "저장한 여행 일지") { }
-            MenuHorizontalView(isProfile: true, text: "차단 회원 관리") { }
+            MenuHorizontalView(text: "프로필 수정") { }
+            MenuHorizontalView(text: "좋아요한 여행 일지") { }
+            MenuHorizontalView(text: "저장한 여행 일지") { }
+            MenuHorizontalView(text: "차단 회원 관리") { }
         }
     }
 }

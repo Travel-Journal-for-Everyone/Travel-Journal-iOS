@@ -7,18 +7,15 @@
 import SwiftUI
 
 struct MenuHorizontalView<RightView: View>: View {
-    private let isProfile: Bool
     private let text: String
     private let rightView: () -> RightView
     private let action: () -> Void
     
     init(
-        isProfile: Bool = false,
         text: String,
         rightView: @escaping () -> RightView = { EmptyView() },
         action: @escaping () -> Void
     ) {
-        self.isProfile = isProfile
         self.text = text
         self.rightView = rightView
         self.action = action
@@ -28,7 +25,7 @@ struct MenuHorizontalView<RightView: View>: View {
         VStack(spacing: 0) {
             HStack {
                 Text("\(text)")
-                    .font(isProfile ? .pretendardMedium(16) : .pretendardRegular(16))
+                    .font(.pretendardMedium(16))
                 Spacer()
                 rightView()
             }
