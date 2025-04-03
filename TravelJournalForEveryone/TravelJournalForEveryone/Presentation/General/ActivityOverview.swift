@@ -45,7 +45,7 @@ struct ActivityOverview: View {
                 }
             Spacer()
             
-            textNumberVerticalView(title: "여행일지", number: user.travelJournalCount)
+            textNumberVerticalView(title: "여행 일지", number: user.travelJournalCount)
                 .onTapGesture {
                     if user.accountScope != .privateProfile || isCurrentUser {
                         travelJournalAction()

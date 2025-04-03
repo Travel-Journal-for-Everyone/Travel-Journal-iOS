@@ -12,7 +12,7 @@ struct MyJournalView: View {
     
     // TEST
     private let mockUser = User.mock()
-    private var isCurrentUser = false
+    private var isCurrentUser = true
     @State private var isPresentingMenu = false
     @State private var isFollowing = false
     
@@ -30,7 +30,7 @@ struct MyJournalView: View {
             .ignoresSafeArea()
             
             journalMap(regionDatas: mockUser.regionDatas)
-                .offset(y: 65)
+                .offset(y: 110)
             
             userInfoView
                 .padding(.horizontal, 16)
@@ -46,6 +46,18 @@ struct MyJournalView: View {
                     }
                 
                 menuView
+            }
+            
+            VStack {
+                Spacer()
+                
+                HStack {
+                    Spacer()
+                    
+                    journalCreateButton
+                        .padding(.trailing, 31)
+                        .padding(.bottom, 50)
+                }
             }
         }
     }
@@ -183,6 +195,23 @@ struct MyJournalView: View {
         ))
     }
     
+    private var journalCreateButton: some View {
+        Circle()
+            .foregroundStyle(.tjPrimaryLight)
+            .frame(width: 50, height: 50)
+            .overlay {
+                Image(.tjPencil)
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(.tjPrimaryMain)
+            }
+            .shadow(color: .tjGray1.opacity(0.1), radius: 10, y: 2)
+            .onTapGesture {
+                print("일지 작성하기")
+            }
+    }
+    
     private func journalMap(regionDatas: [RegionData]) -> some View {
         VStack(spacing: 0) {
             ZStack {
@@ -260,6 +289,8 @@ struct MyJournalView: View {
 }
 
 #Preview {
-    MyJournalView()
+    MainTabView()
         .environmentObject(DefaultCoordinator())
+//    MyJournalView()
+//        .environmentObject(DefaultCoordinator())
 }
