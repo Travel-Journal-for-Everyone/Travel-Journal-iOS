@@ -44,11 +44,13 @@ extension ProfileView {
                 image: Image("\(user.profileImageURLString)")
             )
             
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 7) {
                 HStack(spacing: 6) {
                     Text("\(user.nickname)")
                         .font(.pretendardSemiBold(16))
                     Image(user.accountScope.imageResourceString)
+                        .renderingMode(.template)
+                        .foregroundStyle(.tjGray2)
                         .frame(width: 16, height: 16)
                 }
                 
@@ -77,15 +79,5 @@ extension ProfileView {
 }
 
 #Preview {
-    ProfileView(user: .init(
-        nickname: "닉네임",
-        profileImageURLString: "",
-        accountScope: .followersOnly,
-        followingCount: 70,
-        followerCount: 99,
-        travelJournalCount: 3,
-        placesCount: 33,
-        isFirstLogin: false,
-        regionDatas: []
-    ))
+    ProfileView(user: .mock())
 }
