@@ -58,8 +58,6 @@ struct MainTabView: View {
                 .frame(height: 0.33)
             
             HStack {
-                Spacer()
-                
                 ForEach(TJTab.allCases, id: \.title) { tab in
                     Spacer()
                     
@@ -74,11 +72,11 @@ struct MainTabView: View {
                     
                     Spacer()
                 }
-                
-                Spacer()
             }
         }
-        .background(.tjWhite.opacity(0.8))
+        .frame(height: 55)
+        .background(.tjWhite.opacity(0.85))
+        .background(.ultraThinMaterial)
     }
     
     private func tabButtonView(_ tab: TJTab, isSelected: Bool) -> some View {
