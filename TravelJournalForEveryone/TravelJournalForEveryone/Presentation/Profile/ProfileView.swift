@@ -52,7 +52,14 @@ extension ProfileView {
                         .frame(width: 16, height: 16)
                 }
                 
-                ActivityOverview(user: user)
+                ActivityOverview(
+                    user: user,
+                    isCurrentUser: true
+                ) {
+                    print("일지 리스트")
+                } placeAction: {
+                    print("플레이스 리스트")
+                }
             }
         }
     }

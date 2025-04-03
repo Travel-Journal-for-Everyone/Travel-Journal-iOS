@@ -97,6 +97,7 @@ struct MyJournalView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                .frame(height: 30)
                 
                 HStack(spacing: 0) {
                     ProfileImageView(viewType: .home, image: nil)
@@ -106,6 +107,16 @@ struct MyJournalView: View {
                         }
                     
                     Spacer()
+                    
+                    ActivityOverview(
+                        user: mockUser,
+                        isCurrentUser: isCurrentUser
+                    ) {
+                        print("일지 리스트")
+                    } placeAction: {
+                        print("플레이스 리스트")
+                    }
+
                 }
                 .padding(.horizontal, 8)
             }
