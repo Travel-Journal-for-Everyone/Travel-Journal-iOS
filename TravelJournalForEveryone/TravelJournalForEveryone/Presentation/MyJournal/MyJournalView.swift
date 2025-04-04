@@ -30,7 +30,7 @@ struct MyJournalView: View {
             .ignoresSafeArea()
             
             journalMap(regionDatas: mockUser.regionDatas)
-                .offset(y: 110)
+                .offset(x: 76.adjustedW, y: 90.adjustedH)
             
             userInfoView
                 .padding(.horizontal, 16)
@@ -121,6 +121,7 @@ struct MyJournalView: View {
                 HStack(spacing: 0) {
                     ProfileImageView(viewType: .home, image: nil)
                         .padding(.trailing, 16)
+                        // TEST
                         .onTapGesture {
                             coordinator.push(.followList)
                         }
@@ -190,7 +191,7 @@ struct MyJournalView: View {
                     .foregroundStyle(.white)
                     .shadow(color: .gray.opacity(0.2), radius: 10)
             }
-            .offset(y: 28)
+            .offset(y: 28.adjustedH)
             .padding(.trailing)
         }
         .zIndex(1)
@@ -226,9 +227,8 @@ struct MyJournalView: View {
                     
                     // 경상도
                     regionMap(regionDatas[3])
-                        .offset(x: -4, y: -2)
+                        .offset(x: -4.adjustedW, y: -2.adjustedH)
                 }
-                .offset(x: 78, y: 0)
                 
                 VStack(spacing: 0) {
                     // 수도권
@@ -236,17 +236,17 @@ struct MyJournalView: View {
                     
                     // 충청도
                     regionMap(regionDatas[2])
-                        .offset(x: 0, y: -2)
+                        .offset(y: -2.adjustedH)
                     
                     // 전라도
                     regionMap(regionDatas[4])
-                        .offset(x: -15.8, y: -4)
+                        .offset(x: -15.4.adjustedW, y: -4.adjustedH)
                     
                     // 제주도
                     regionMap(regionDatas[5])
-                        .offset(x: -32, y: 8)
+                        .offset(x: -32.adjustedW, y: 8.adjustedH)
                 }
-                .offset(x: -67, y: 62)
+                .offset(x: -143.8.adjustedW, y: 62.adjustedH)
             }
         }
         .blur(radius: !isCurrentUser && mockUser.accountScope == .privateProfile ? 6 : 0)
@@ -262,24 +262,40 @@ struct MyJournalView: View {
                         .foregroundStyle(.tjBlack)
                         .font(.pretendardMedium(16))
                 }
-                .offset(y: 50)
+                .offset(x: -80.adjustedW, y: 70.adjustedH)
             }
         }
     }
     
     private func regionMap(_ regionData: RegionData) -> some View {
         let labelYOffset: CGFloat
+        let regionWidth: CGFloat
         
         switch regionData.regionName {
-        case .metropolitan, .gangwon, .chungcheong, .jeolla:
+        case .metropolitan:
             labelYOffset = 0
+            regionWidth = 183
+        case .gangwon:
+            labelYOffset = 0
+            regionWidth = 108
+        case .chungcheong:
+            labelYOffset = 0
+            regionWidth = 183
         case .gyeongsang:
             labelYOffset = 15
+            regionWidth = 165.09
+        case .jeolla:
+            labelYOffset = 0
+            regionWidth = 148
         case .jeju:
             labelYOffset = 6
+            regionWidth = 109
         }
         
         return Image(regionData.regionName.imageResourceString)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: regionWidth.adjustedW)
             .overlay {
                 VStack(spacing: 6) {
                     Text("\(regionData.regionName.mapTitle)")
@@ -301,7 +317,7 @@ struct MyJournalView: View {
                     }
                     .foregroundStyle(.tjGray1)
                 }
-                .offset(x: 0, y:labelYOffset)
+                .offset(y:labelYOffset)
             }
             .onTapGesture {
                 print("\(regionData.regionName.mapTitle)")
