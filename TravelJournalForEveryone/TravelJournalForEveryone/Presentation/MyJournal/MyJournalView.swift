@@ -125,8 +125,6 @@ struct MyJournalView: View {
                             coordinator.push(.followList)
                         }
                     
-                    Spacer()
-                    
                     ActivityOverview(
                         user: mockUser,
                         isCurrentUser: isCurrentUser

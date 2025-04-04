@@ -49,8 +49,6 @@ extension ProfileView {
                     Text("\(user.nickname)")
                         .font(.pretendardSemiBold(16))
                     Image(user.accountScope.imageResourceString)
-                        .renderingMode(.template)
-                        .foregroundStyle(.tjGray2)
                         .frame(width: 16, height: 16)
                 }
                 
