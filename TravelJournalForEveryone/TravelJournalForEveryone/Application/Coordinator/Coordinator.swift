@@ -28,17 +28,17 @@ final class DefaultCoordinator: CoordinatorProtocol {
     }
     @Published var searchPath =  NavigationPath() {
         didSet {
-            updateTabBarVisibility(self.myJournalPath)
+            updateTabBarVisibility(self.searchPath)
         }
     }
     @Published var explorePath =  NavigationPath() {
         didSet {
-            updateTabBarVisibility(self.myJournalPath)
+            updateTabBarVisibility(self.explorePath)
         }
     }
     @Published var profilePath =  NavigationPath() {
         didSet {
-            updateTabBarVisibility(self.myJournalPath)
+            updateTabBarVisibility(self.profilePath)
         }
     }
     @Published var selectedTab: TJTab = .myJournal
@@ -91,6 +91,8 @@ final class DefaultCoordinator: CoordinatorProtocol {
             MyJournalView()
         case .followList:
             FollowListView()
+        case .profile:
+            ProfileView(user: .mock())
         }
     }
     

@@ -15,4 +15,5 @@ enum Screen {
     // Search Tab
     // Explore Tab
     // Profile Tab
+    case profile
 }

@@ -8,21 +8,57 @@
 import SwiftUI
 
 struct ActivityOverview: View {
-    private let user: User
+    @EnvironmentObject private var coordinator: DefaultCoordinator
     
-    init(user: User) {
+    private let user: User
+    private let isCurrentUser: Bool
+    private let travelJournalAction: () -> Void
+    private let placeAction: () -> Void
+    
+    init(
+        user: User,
+        isCurrentUser: Bool,
+        travelJournalAction: @escaping () -> Void,
+        placeAction: @escaping () -> Void
+    ) {
         self.user = user
+        self.isCurrentUser = isCurrentUser
+        self.travelJournalAction = travelJournalAction
+        self.placeAction = placeAction
     }
     
     var body: some View {
         HStack {
             textNumberVerticalView(title: "팔로워", number: user.followerCount)
+                .onTapGesture {
+                    if user.accountScope != .privateProfile || isCurrentUser {
+                        coordinator.push(.followList)
+                    }
+                }
             Spacer()
+            
             textNumberVerticalView(title: "팔로잉", number: user.followingCount)
+                .onTapGesture {
+                    if user.accountScope != .privateProfile || isCurrentUser {
+                        coordinator.push(.followList)
+                    }
+                }
             Spacer()
-            textNumberVerticalView(title: "여행일지", number: user.travelJournalCount)
+            
+            textNumberVerticalView(title: "여행 일지", number: user.travelJournalCount)
+                .onTapGesture {
+                    if user.accountScope != .privateProfile || isCurrentUser {
+                        travelJournalAction()
+                    }
+                }
             Spacer()
+            
             textNumberVerticalView(title: "플레이스", number: user.placesCount)
+                .onTapGesture {
+                    if user.accountScope != .privateProfile || isCurrentUser {
+                        placeAction()
+                    }
+                }
         }
     }
     
@@ -33,24 +69,25 @@ struct ActivityOverview: View {
         VStack(spacing: 10) {
             Text("\(title)")
                 .font(.pretendardRegular(12))
-            Text("\(number)")
-                .font(.pretendardSemiBold(16))
+            
+            if user.accountScope == .privateProfile && !isCurrentUser {
+                Image(.tjLock)
+                    .resizable()
+                    .frame(width: 16, height: 16)
+            } else {
+                Text("\(number)")
+                    .font(.pretendardSemiBold(16))
+            }
         }
     }
 }
 
 #Preview {
     ActivityOverview(
-        user: .init(
-            nickname: "",
-            profileImageURLString: "",
-            accountScope: .followersOnly,
-            followingCount: 0,
-            followerCount: 0,
-            travelJournalCount: 0,
-            placesCount: 0,
-            isFirstLogin: false,
-            regionDatas: []
-        )
+        user: .mock(),
+        isCurrentUser: true,
+        travelJournalAction: { },
+        placeAction: { }
     )
+    .environmentObject(DefaultCoordinator())
 }

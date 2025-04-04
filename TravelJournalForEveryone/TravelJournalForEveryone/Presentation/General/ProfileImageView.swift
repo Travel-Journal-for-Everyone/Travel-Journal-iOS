@@ -14,10 +14,6 @@ struct ProfileImageView: View {
     var body: some View {
         profileImageView
             .clipShape(Circle())
-            .frame(
-                width: viewType.size,
-                height: viewType.size
-            )
     }
     
     private var profileImageView: some View {
@@ -25,17 +21,24 @@ struct ProfileImageView: View {
             if let image {
                 image
                     .resizable()
-                    .scaledToFill()
             } else {
                 Image(.defaultProfile)
-                    .foregroundStyle(.tjGray4)
+                    .resizable()
             }
         }
+        .frame(
+            width: viewType.size,
+            height: viewType.size
+        )
+        .scaledToFill()
     }
 }
 
 #Preview {
-    ProfileImageView(viewType: .listCell, image: nil)
+    VStack {
+        ProfileImageView(viewType: .listCell, image: nil)
+        ProfileImageView(viewType: .home, image: nil)
+    }
 }
 
 extension ProfileImageView {
