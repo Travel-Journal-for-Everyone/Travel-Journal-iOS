@@ -30,7 +30,7 @@ struct MyJournalView: View {
             .ignoresSafeArea()
             
             journalMap(regionDatas: mockUser.regionDatas)
-                .offset(x: 76.adjustedW, y: 90.adjustedH)
+                .offset(x: 76.adjustedW, y: isCurrentUser ? 90.adjustedH : 115.adjustedH)
             
             userInfoView
                 .padding(.horizontal, 16)
@@ -57,7 +57,7 @@ struct MyJournalView: View {
                         
                         journalCreateButton
                             .padding(.trailing, 31)
-                            .padding(.bottom, 50)
+                            .padding(.bottom, 40.adjustedH)
                     }
                 }
             }
