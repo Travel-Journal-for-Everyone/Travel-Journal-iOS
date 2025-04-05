@@ -7,9 +7,9 @@
 
 import Foundation
 
-enum Screen {
+enum Screen: Hashable {
     // MyJournal Tab
-    case myJournal
+    case myJournal(memberID: Int?)
     case followList
     
     // Search Tab

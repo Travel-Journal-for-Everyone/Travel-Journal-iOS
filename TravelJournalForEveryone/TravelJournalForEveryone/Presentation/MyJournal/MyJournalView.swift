@@ -62,15 +62,19 @@ struct MyJournalView: View {
                 }
             }
         }
+        .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            viewModel.send(.viewOnAppear)
+        }
     }
     
     private var userInfoView: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 10) {
                 HStack(spacing: 0) {
-                    if !viewModel.state.isCurrentUser {
+                    if !viewModel.state.isInitialView {
                         Button {
-                            print("뒤로 가기")
+                            coordinator.pop()
                         } label: {
                             Image(.tjLeftArrow)
                                 .resizable()
@@ -122,6 +126,10 @@ struct MyJournalView: View {
                 HStack(spacing: 0) {
                     ProfileImageView(viewType: .home, image: nil)
                         .padding(.trailing, 16)
+                        // MARK: - TEST
+                        .onTapGesture {
+                            coordinator.push(.myJournal(memberID: 1))
+                        }
                     
                     ActivityOverview(
                         user: viewModel.state.user,

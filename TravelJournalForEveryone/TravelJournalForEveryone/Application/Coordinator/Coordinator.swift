@@ -87,8 +87,8 @@ final class DefaultCoordinator: CoordinatorProtocol {
     @ViewBuilder
     func build(_ screen: Screen) -> some View {
         switch screen {
-        case .myJournal:
-            MyJournalView(viewModel: .init())
+        case .myJournal(let memberID):
+            MyJournalView(viewModel: .init(memberID: memberID))
         case .followList:
             FollowListView()
         case .profile:
