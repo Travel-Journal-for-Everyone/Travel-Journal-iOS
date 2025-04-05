@@ -14,7 +14,7 @@ struct MainTabView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $coordinator.selectedTab) {
                 NavigationStack(path: $coordinator.myJournalPath) {
-                    MyJournalView()
+                    MyJournalView(viewModel: .init())
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
                         }
