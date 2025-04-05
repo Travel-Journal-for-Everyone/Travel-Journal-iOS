@@ -50,6 +50,7 @@ final class MyJournalViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func send(_ intent: MyJournalIntent) {
         switch intent {
         case .viewOnAppear:
@@ -63,10 +64,11 @@ final class MyJournalViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     private func handleViewOnAppear() {
         if self.state.isCurrentUser {
             // TODO: - user 객체에서 user 할당하기
-            // self.state.user = DIContainer.shared.userInfoManager.user
+            self.state.user = DIContainer.shared.userInfoManager.user
         } else {
             // TODO: - MemeberID와 UseCase를 통해 User 정보 Fetch 하기
         }
