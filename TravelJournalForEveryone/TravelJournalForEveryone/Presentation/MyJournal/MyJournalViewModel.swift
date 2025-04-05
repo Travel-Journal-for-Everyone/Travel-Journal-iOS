@@ -27,13 +27,21 @@ enum MyJournalIntent {
 // MARK: - ViewModel(State + Intent)
 final class MyJournalViewModel: ObservableObject {
     @Published private(set) var state = MyJournalState()
+    
     private let memberID: Int?
+    private let fetchUserUseCase: FetchUserUseCase
+    
+    private var cancellables: Set<AnyCancellable> = []
     
     /// - Parameters:
     ///     - memberID: 입력하지 않을 경우(=nil), 현재 사용자의 정보를 보는 ViewModel로 활용합니다.
     ///     입력할 경우, 다른 사용자의 정보를 보는 ViewModel로 활용합니다.
-    init(memberID: Int? = nil) {
+    init(
+        memberID: Int? = nil,
+        fetchUserUseCase: FetchUserUseCase
+    ) {
         self.memberID = memberID
+        self.fetchUserUseCase = fetchUserUseCase
         
         guard let memberID else {
             self.state.isInitialView = true
@@ -67,10 +75,20 @@ final class MyJournalViewModel: ObservableObject {
     @MainActor
     private func handleViewOnAppear() {
         if self.state.isCurrentUser {
-            // TODO: - user 객체에서 user 할당하기
             self.state.user = DIContainer.shared.userInfoManager.user
         } else {
-            // TODO: - MemeberID와 UseCase를 통해 User 정보 Fetch 하기
+            fetchUserUseCase.execute(memberID: self.memberID ?? 0)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("⛔️ Fetch User Error: \(error)")
+                    }
+                } receiveValue: { [weak self] fetchedUser in
+                    self?.state.user = fetchedUser
+                }
+                .store(in: &cancellables)
         }
     }
     

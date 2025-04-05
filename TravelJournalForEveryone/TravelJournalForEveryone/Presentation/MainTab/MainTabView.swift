@@ -14,10 +14,12 @@ struct MainTabView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $coordinator.selectedTab) {
                 NavigationStack(path: $coordinator.myJournalPath) {
-                    MyJournalView(viewModel: .init())
-                        .navigationDestination(for: Screen.self) { screen in
-                            coordinator.build(screen)
-                        }
+                    MyJournalView(viewModel: .init(
+                        fetchUserUseCase: DIContainer.shared.fetchUserUseCase
+                    ))
+                    .navigationDestination(for: Screen.self) { screen in
+                        coordinator.build(screen)
+                    }
                 }
                 .tag(TJTab.myJournal)
                 

@@ -29,7 +29,9 @@ struct MyJournalView: View {
             journalMap(regionDatas: viewModel.state.user.regionDatas)
                 .offset(
                     x: 76.adjustedW,
-                    y: viewModel.state.isCurrentUser ? 90.adjustedH : 115.adjustedH
+                    y: viewModel.state.isCurrentUser && viewModel.state.isInitialView
+                        ? 90.adjustedH
+                        : 115.adjustedH
                 )
             
             userInfoView
@@ -48,7 +50,7 @@ struct MyJournalView: View {
                 menuView
             }
             
-            if viewModel.state.isCurrentUser {
+            if viewModel.state.isCurrentUser && viewModel.state.isInitialView {
                 VStack {
                     Spacer()
                     
@@ -93,7 +95,9 @@ struct MyJournalView: View {
                     
                     Spacer()
                     
-                    if viewModel.state.isCurrentUser {
+                    if viewModel.state.isCurrentUser && !viewModel.state.isInitialView {
+                        EmptyView()
+                    } else if viewModel.state.isCurrentUser {
                         Button {
                             print("알림 목록")
                         } label: {
@@ -128,7 +132,7 @@ struct MyJournalView: View {
                         .padding(.trailing, 16)
                         // MARK: - TEST
                         .onTapGesture {
-                            coordinator.push(.myJournal(memberID: 1))
+                            coordinator.push(.myJournal(memberID: 3))
                         }
                     
                     ActivityOverview(
@@ -244,7 +248,7 @@ struct MyJournalView: View {
                     
                     // 전라도
                     regionMap(regionDatas[4])
-                        .offset(x: -15.4.adjustedW, y: -4.adjustedH)
+                        .offset(x: -15.35.adjustedW, y: -4.03.adjustedH)
                     
                     // 제주도
                     regionMap(regionDatas[5])
@@ -290,7 +294,7 @@ struct MyJournalView: View {
             regionWidth = 165.09
         case .jeolla:
             labelYOffset = 0
-            regionWidth = 148
+            regionWidth = 148.3
         case .jeju:
             labelYOffset = 6
             regionWidth = 109
