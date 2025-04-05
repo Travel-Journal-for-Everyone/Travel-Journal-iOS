@@ -132,7 +132,7 @@ struct MyJournalView: View {
                         .padding(.trailing, 16)
                         // MARK: - TEST
                         .onTapGesture {
-                            coordinator.push(.myJournal(memberID: 3))
+                            coordinator.push(.myJournal(memberID: 2))
                         }
                     
                     ActivityOverview(
