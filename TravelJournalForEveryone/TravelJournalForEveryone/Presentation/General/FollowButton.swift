@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct FollowButton: View {
-    var isFollowing: Bool
-    let action: () -> Void
+    private let isFollowing: Bool
+    private let action: () -> Void
+    
+    init(
+        isFollowing: Bool,
+        action: @escaping () -> Void
+    ) {
+        self.isFollowing = isFollowing
+        self.action = action
+    }
     
     var body: some View {
         Button {
