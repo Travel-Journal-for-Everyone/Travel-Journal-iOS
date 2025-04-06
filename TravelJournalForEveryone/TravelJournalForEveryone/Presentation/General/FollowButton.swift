@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct FollowButton: View {
-    @Binding var isFollowing: Bool
-    let action: () -> Void
+    private let isFollowing: Bool
+    private let action: () -> Void
+    
+    init(
+        isFollowing: Bool,
+        action: @escaping () -> Void
+    ) {
+        self.isFollowing = isFollowing
+        self.action = action
+    }
     
     var body: some View {
         Button {
@@ -27,7 +35,6 @@ struct FollowButton: View {
                             .foregroundStyle(.white)
                         
                     }
-                    .padding(.trailing, 5)
             } else {
                 Text("팔로우")
                     .foregroundStyle(.tjWhite)
@@ -38,7 +45,6 @@ struct FollowButton: View {
                         RoundedRectangle(cornerRadius: 8)
                             .foregroundStyle(.tjPrimaryMain)
                     }
-                    .padding(.trailing, 5)
             }
         }
     }
@@ -46,7 +52,7 @@ struct FollowButton: View {
 
 #Preview {
     VStack {
-        FollowButton(isFollowing: .constant(true)) { }
-        FollowButton(isFollowing: .constant(false)) { }
+        FollowButton(isFollowing: true) { }
+        FollowButton(isFollowing: false) { }
     }
 }

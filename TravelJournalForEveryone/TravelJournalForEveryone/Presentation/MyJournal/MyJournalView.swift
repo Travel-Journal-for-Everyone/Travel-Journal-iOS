@@ -8,13 +8,10 @@
 import SwiftUI
 
 struct MyJournalView: View {
+    @StateObject var viewModel: MyJournalViewModel
     @EnvironmentObject private var coordinator: DefaultCoordinator
     
-    // TEST
-    private let mockUser = User.mock()
-    private var isCurrentUser = true
     @State private var isPresentingMenu = false
-    @State private var isFollowing = false
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -29,8 +26,13 @@ struct MyJournalView: View {
             )
             .ignoresSafeArea()
             
-            journalMap(regionDatas: mockUser.regionDatas)
-                .offset(x: 76.adjustedW, y: isCurrentUser ? 90.adjustedH : 115.adjustedH)
+            journalMap(regionDatas: viewModel.state.user.regionDatas)
+                .offset(
+                    x: 76.adjustedW,
+                    y: viewModel.state.isCurrentUser && viewModel.state.isInitialView
+                        ? 90.adjustedH
+                        : 115.adjustedH
+                )
             
             userInfoView
                 .padding(.horizontal, 16)
@@ -48,7 +50,7 @@ struct MyJournalView: View {
                 menuView
             }
             
-            if isCurrentUser {
+            if viewModel.state.isCurrentUser && viewModel.state.isInitialView {
                 VStack {
                     Spacer()
                     
@@ -62,15 +64,19 @@ struct MyJournalView: View {
                 }
             }
         }
+        .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            viewModel.send(.viewOnAppear)
+        }
     }
     
     private var userInfoView: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 10) {
                 HStack(spacing: 0) {
-                    if !isCurrentUser {
+                    if !viewModel.state.isInitialView {
                         Button {
-                            print("뒤로 가기")
+                            coordinator.pop()
                         } label: {
                             Image(.tjLeftArrow)
                                 .resizable()
@@ -79,17 +85,19 @@ struct MyJournalView: View {
                         .padding(.trailing, 5)
                     }
                     
-                    Text("\(mockUser.nickname)")
+                    Text("\(viewModel.state.user.nickname)")
                         .font(.pretendardBold(20))
                         .padding(.trailing, 5)
                     
-                    Image("\(mockUser.accountScope.imageResourceString)")
+                    Image("\(viewModel.state.user.accountScope.imageResourceString)")
                         .resizable()
                         .frame(width: 16, height: 16)
                     
                     Spacer()
                     
-                    if isCurrentUser {
+                    if viewModel.state.isCurrentUser && !viewModel.state.isInitialView {
+                        EmptyView()
+                    } else if viewModel.state.isCurrentUser {
                         Button {
                             print("알림 목록")
                         } label: {
@@ -98,9 +106,10 @@ struct MyJournalView: View {
                                 .frame(width: 24, height: 24)
                         }
                     } else {
-                        FollowButton(isFollowing: $isFollowing) {
-                            isFollowing.toggle()
+                        FollowButton(isFollowing: viewModel.state.isFollowing) {
+                            viewModel.send(.tappedFollowButton)
                         }
+                        .padding(.trailing, 5)
                         
                         Button {
                             withAnimation(.smooth(duration: 0.25)) {
@@ -121,20 +130,19 @@ struct MyJournalView: View {
                 HStack(spacing: 0) {
                     ProfileImageView(viewType: .home, image: nil)
                         .padding(.trailing, 16)
-                        // TEST
+                        // MARK: - TEST
                         .onTapGesture {
-                            coordinator.push(.followList)
+                            coordinator.push(.myJournal(memberID: 2))
                         }
                     
                     ActivityOverview(
-                        user: mockUser,
-                        isCurrentUser: isCurrentUser
+                        user: viewModel.state.user,
+                        isCurrentUser: viewModel.state.isCurrentUser
                     ) {
                         print("일지 리스트")
                     } placeAction: {
                         print("플레이스 리스트")
                     }
-
                 }
                 .padding(.horizontal, 8)
             }
@@ -147,11 +155,11 @@ struct MyJournalView: View {
             
             VStack(alignment: .leading, spacing: 0) {
                 Button {
+                    viewModel.send(.tappedBlockButton)
+                    
                     withAnimation(.smooth(duration: 0.25)) {
                         isPresentingMenu.toggle()
                     }
-                    
-                    // TODO: - 차단하기
                 } label: {
                     HStack {
                         Text("차단하기")
@@ -169,11 +177,11 @@ struct MyJournalView: View {
                     .frame(height: 1)
                 
                 Button(role: .destructive) {
+                    viewModel.send(.tappedReportButton)
+                    
                     withAnimation(.smooth(duration: 0.25)) {
                         isPresentingMenu.toggle()
                     }
-                    
-                    // TODO: - 신고하기
                 } label: {
                     HStack {
                         Text("신고하기")
@@ -240,7 +248,7 @@ struct MyJournalView: View {
                     
                     // 전라도
                     regionMap(regionDatas[4])
-                        .offset(x: -15.4.adjustedW, y: -4.adjustedH)
+                        .offset(x: -15.35.adjustedW, y: -4.03.adjustedH)
                     
                     // 제주도
                     regionMap(regionDatas[5])
@@ -249,10 +257,10 @@ struct MyJournalView: View {
                 .offset(x: -143.8.adjustedW, y: 62.adjustedH)
             }
         }
-        .blur(radius: !isCurrentUser && mockUser.accountScope == .privateProfile ? 6 : 0)
-        .allowsHitTesting(!(!isCurrentUser && mockUser.accountScope == .privateProfile))
+        .blur(radius: !viewModel.state.isCurrentUser && viewModel.state.user.accountScope == .privateProfile ? 6 : 0)
+        .allowsHitTesting(!(!viewModel.state.isCurrentUser && viewModel.state.user.accountScope == .privateProfile))
         .overlay {
-            if !isCurrentUser && mockUser.accountScope == .privateProfile {
+            if !viewModel.state.isCurrentUser && viewModel.state.user.accountScope == .privateProfile {
                 HStack(spacing: 5) {
                     Image(.tjLock)
                         .resizable()
@@ -286,7 +294,7 @@ struct MyJournalView: View {
             regionWidth = 165.09
         case .jeolla:
             labelYOffset = 0
-            regionWidth = 148
+            regionWidth = 148.3
         case .jeju:
             labelYOffset = 6
             regionWidth = 109
