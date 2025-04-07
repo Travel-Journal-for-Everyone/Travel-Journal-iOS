@@ -22,12 +22,12 @@ extension View {
     
     func customNavigationBar<C, L>(
         centerView: @escaping () -> C,
-        leaddingView: @escaping () -> L
+        leadingView: @escaping () -> L
     ) -> some View where C: View, L: View {
         modifier(
             CustomNavigationBarModifier(
                 centerView: centerView,
-                leadingView: leaddingView,
+                leadingView: leadingView,
                 trailingView: { EmptyView() }
             )
         )
@@ -35,13 +35,13 @@ extension View {
     
     func customNavigationBar<C, L, T>(
         centerView: @escaping () -> C,
-        leaddingView: @escaping () -> L,
+        leadingView: @escaping () -> L,
         trailingView: @escaping () -> T
     ) -> some View where C: View, L: View, T: View {
         modifier(
             CustomNavigationBarModifier(
                 centerView: centerView,
-                leadingView: leaddingView,
+                leadingView: leadingView,
                 trailingView: trailingView
             )
         )
