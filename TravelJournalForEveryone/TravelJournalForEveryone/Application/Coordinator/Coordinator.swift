@@ -98,7 +98,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
             ProfileCreationView(
                 viewModel: ProfileCreationViewModel(
                     nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
-                    signUpUseCase: DIContainer.shared.signUpUseCase,
+                    updateProfileUseCase: DIContainer.shared.updateProfileUseCase,
                     isEditing: true
                 )
             )

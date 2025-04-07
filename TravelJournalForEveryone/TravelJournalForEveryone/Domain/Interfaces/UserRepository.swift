@@ -10,10 +10,10 @@ import Combine
 
 protocol UserRepository {
     func validateNickname(_ nickname: String) -> AnyPublisher<String, NetworkError>
-    func completeSignUp(
+    func fetchUser(memberID: Int) -> AnyPublisher<User, Error>
+    func updateProfile(
         nickname: String,
         accountScope: AccountScope,
         image: Data?
     ) -> AnyPublisher<Bool, NetworkError>
-    func fetchUser(memberID: Int) -> AnyPublisher<User, Error>
 }

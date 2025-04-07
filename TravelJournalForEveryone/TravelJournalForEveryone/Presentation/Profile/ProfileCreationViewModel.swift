@@ -56,7 +56,7 @@ final class ProfileCreationViewModel: ObservableObject {
     private let userInfoManager: UserInfoManager = DIContainer.shared.userInfoManager
     
     private let nicknameCheckUseCase: NicknameCheckUseCase
-    private let signUpUseCase: SignUpUseCase
+    private let updateProfileUseCase: UpdateProfileUseCase
     private var cancellables: Set<AnyCancellable> = []
     
     private(set) var isEditing: Bool
@@ -66,11 +66,11 @@ final class ProfileCreationViewModel: ObservableObject {
     
     init(
         nicknameCheckUseCase: NicknameCheckUseCase,
-        signUpUseCase: SignUpUseCase,
+        updateProfileUseCase: UpdateProfileUseCase,
         isEditing: Bool = false
     ) {
         self.nicknameCheckUseCase = nicknameCheckUseCase
-        self.signUpUseCase = signUpUseCase
+        self.updateProfileUseCase = updateProfileUseCase
         self.isEditing = isEditing
         bind()
     }
@@ -171,23 +171,9 @@ final class ProfileCreationViewModel: ObservableObject {
     
     private func handleTappedCompletionButton() {
         state.nickname = state.tempNickname
-//        state.isLoading = true
+        state.isLoading = true
         
-        if isEditing {
-            profileUpdate()
-        } else {
-            profileCreate()
-        }
-    }
-    
-    private func profileUpdate() {
-        print("네비 \(coordinator.selectedTab) : \(coordinator.profilePath.count)")
-        coordinator.pop()
-        print("네비 \(coordinator.selectedTab) : \(coordinator.profilePath.count)")
-    }
-    
-    private func profileCreate() {
-        signUpUseCase.execute(
+        updateProfileUseCase.execute(
             nickname: state.nickname,
             accountScope: state.accountScope,
             image: state.selectedImageData
@@ -197,13 +183,18 @@ final class ProfileCreationViewModel: ObservableObject {
             case .finished:
                 break
             case .failure(let error):
-                print("⛔️ Sign-Up error: \(error)")
+                print("⛔️ Profile-Update error: \(error)")
             }
             
             self?.state.isLoading = false
         } receiveValue: { [weak self] result in
             if result {
-                self?.state.isPresentedSignupCompletionView = true
+                if let isEditing = self?.isEditing,
+                   isEditing {
+                    self?.coordinator.pop()
+                } else {
+                    self?.state.isPresentedSignupCompletionView = true
+                }
             }
         }
         .store(in: &cancellables)

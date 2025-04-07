@@ -22,19 +22,19 @@ final class DefaultUserRepository: UserRepository {
         .eraseToAnyPublisher()
     }
     
-    func completeSignUp(
+    func updateProfile(
         nickname: String,
         accountScope: AccountScope,
         image: Data?
     ) -> AnyPublisher<Bool, NetworkError> {
-        let request = SignUpRequestDTO(
+        let request = ProfileInfoRequestDTO(
             nickname: nickname,
             accountScope: accountScope,
             imageData: image
         )
         
         return networkService.request(
-            MemberAPI.signUp(request)
+            MemberAPI.updateProfile(request)
         )
         .map { stringResponse in
             if stringResponse == "요청이 성공적으로 처리되었습니다." {
@@ -75,7 +75,7 @@ final class MockUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    func completeSignUp(
+    func updateProfile(
         nickname: String,
         accountScope: AccountScope,
         image: Data?
