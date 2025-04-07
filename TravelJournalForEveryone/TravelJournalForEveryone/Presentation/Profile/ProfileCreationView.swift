@@ -10,7 +10,7 @@ import PhotosUI
 
 struct ProfileCreationView: View {
     @StateObject var viewModel: ProfileCreationViewModel
-    var isEditingProfile: Bool = false
+    @EnvironmentObject private var coordinator: DefaultCoordinator
     
     @State var isTappedAccountScopeButton: Bool = false
     @State private var isShowingDialog: Bool = false
@@ -26,8 +26,9 @@ struct ProfileCreationView: View {
                 VStack(spacing: 0) {
                     
                     ProfileImageView(
-                        viewType: .profileCreation,
-                        image: viewModel.state.selectedImage
+                        viewType: viewModel.isEditing ? .profileEditing : .profileCreation,
+                        image: viewModel.state.selectedImage,
+                        imageString: viewModel.state.profileImageString
                     )
                     .overlay(alignment: .bottomTrailing) {
                         cameraIconView
@@ -49,7 +50,7 @@ struct ProfileCreationView: View {
                     Spacer()
                     
                     TJButton(
-                        title: isEditingProfile ? "수정 완료" : "작성 완료",
+                        title: viewModel.isEditing ? "수정 완료" : "작성 완료",
                         isDisabled: viewModel.state.isDisableCompletionButton)
                     {
                         viewModel.send(.tappedCompletionButton)
@@ -60,8 +61,15 @@ struct ProfileCreationView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .customNavigationBar {
-                Text(isEditingProfile ? "프로필 수정" : "프로필 작성")
+                Text(viewModel.isEditing ? "프로필 수정" : "프로필 작성")
                     .font(.pretendardMedium(17))
+            } leadingView: {
+                Image(.tjLeftArrow)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .onTapGesture {
+                        coordinator.pop()
+                    }
             }
             
             if viewModel.state.isLoading {
@@ -91,7 +99,7 @@ struct ProfileCreationView: View {
             isTappedAccountScopeButton = false
         }
         .onAppear {
-            viewModel.send(.viewOnAppear)
+            viewModel.send(.viewOnAppear(coordinator))
         }
         .navigationDestination(
             isPresented: Binding(

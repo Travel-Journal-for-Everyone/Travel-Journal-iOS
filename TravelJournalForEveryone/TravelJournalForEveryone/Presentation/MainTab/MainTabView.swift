@@ -41,6 +41,7 @@ struct MainTabView: View {
                     ProfileView(user: .mock())
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
+                                .environmentObject(coordinator)
                         }
                 }
                 .tag(TJTab.profile)

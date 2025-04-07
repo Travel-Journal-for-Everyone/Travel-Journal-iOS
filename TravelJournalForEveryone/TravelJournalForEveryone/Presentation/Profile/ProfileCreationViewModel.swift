@@ -34,7 +34,7 @@ struct ProfileCreationModelState {
 
 // MARK: - Intent
 enum ProfileCreationIntent {
-    case viewOnAppear
+    case viewOnAppear(DefaultCoordinator)
     case enterNickname(String)
     case tappedNicknameCheckButton
     case tappedAccountScope(AccountScope)
@@ -51,17 +51,27 @@ final class ProfileCreationViewModel: ObservableObject {
     
     @Published private var tempNickname: String = ""
     @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
+    @Published private var tempImage: Image?
+    
+    private let userInfoManager: UserInfoManager = DIContainer.shared.userInfoManager
     
     private let nicknameCheckUseCase: NicknameCheckUseCase
     private let signUpUseCase: SignUpUseCase
     private var cancellables: Set<AnyCancellable> = []
     
+    private(set) var isEditing: Bool
+    
+    // 여기.. 어떻게 하면 좋을까요?
+    private var coordinator: DefaultCoordinator = .init()
+    
     init(
         nicknameCheckUseCase: NicknameCheckUseCase,
-        signUpUseCase: SignUpUseCase
+        signUpUseCase: SignUpUseCase,
+        isEditing: Bool = false
     ) {
         self.nicknameCheckUseCase = nicknameCheckUseCase
         self.signUpUseCase = signUpUseCase
+        self.isEditing = isEditing
         bind()
     }
     
@@ -85,12 +95,22 @@ final class ProfileCreationViewModel: ObservableObject {
                 self.updateStateForNicknameValidationForRegex(result)
             }
             .store(in: &cancellables)
+        
+        $tempImage
+            .sink { [weak self] image in
+                guard let self else { return }
+                
+                if self.state.profileImageString.isEmpty {
+                    self.state.isDisableCompletionButton = false
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func send(_ intent: ProfileCreationIntent) {
         switch intent {
-        case .viewOnAppear:
-            handleViewOnAppear()
+        case .viewOnAppear(let coordinator):
+            handleViewOnAppear(coordinator)
         case .enterNickname(let tempNickname):
             self.tempNickname = tempNickname
         case .tappedNicknameCheckButton:
@@ -112,7 +132,17 @@ final class ProfileCreationViewModel: ObservableObject {
         }
     }
     
-    private func handleViewOnAppear() { }
+    private func handleViewOnAppear(_ coordinator: DefaultCoordinator) {
+        self.coordinator = coordinator
+        
+        if isEditing {
+            let user = userInfoManager.user
+            
+            state.profileImageString = user.profileImageURLString
+            state.tempNickname = user.nickname
+            state.accountScope = user.accountScope
+        }
+    }
     
     private func handleTappedNicknameCheckButton() {
         state.isCheckingNickname = true
@@ -141,8 +171,22 @@ final class ProfileCreationViewModel: ObservableObject {
     
     private func handleTappedCompletionButton() {
         state.nickname = state.tempNickname
-        state.isLoading = true
+//        state.isLoading = true
         
+        if isEditing {
+            profileUpdate()
+        } else {
+            profileCreate()
+        }
+    }
+    
+    private func profileUpdate() {
+        print("네비 \(coordinator.selectedTab) : \(coordinator.profilePath.count)")
+        coordinator.pop()
+        print("네비 \(coordinator.selectedTab) : \(coordinator.profilePath.count)")
+    }
+    
+    private func profileCreate() {
         signUpUseCase.execute(
             nickname: state.nickname,
             accountScope: state.accountScope,
@@ -208,6 +252,8 @@ final class ProfileCreationViewModel: ObservableObject {
     }
     
     private func loadImage() async {
+        state.profileImageString = ""
+        
         guard let item = state.selectedItem else { return }
         
         item.loadTransferable(type: Data.self) { result in

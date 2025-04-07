@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject private var coordinator: DefaultCoordinator
     private let user: User
     
     init(user: User) {
@@ -28,7 +29,7 @@ struct ProfileView: View {
         .customNavigationBar {
             Text("프로필")
                 .font(.pretendardMedium(17))
-        } leaddingView: {
+        } leadingView: {
             EmptyView()
         } trailingView: {
             Image(.tjSetting)
@@ -68,7 +69,9 @@ extension ProfileView {
         VStack(spacing: 0) {
             Divider()
                 .foregroundStyle(.tjGray6)
-            MenuHorizontalView(text: "프로필 수정") { }
+            MenuHorizontalView(text: "프로필 수정") {
+                coordinator.push(.profileFix)
+            }
             MenuHorizontalView(text: "좋아요한 여행 일지") { }
             MenuHorizontalView(text: "저장한 여행 일지") { }
             MenuHorizontalView(text: "차단 회원 관리") { }

@@ -8,8 +8,19 @@
 import SwiftUI
 
 struct ProfileImageView: View {
-    let viewType: ViewType
-    var image: Image?
+    private let viewType: ViewType
+    private let image: Image?
+    private let imageString: String?
+    
+    init(
+        viewType: ViewType,
+        image: Image? = nil,
+        imageString: String? = nil
+    ) {
+        self.viewType = viewType
+        self.image = image
+        self.imageString = imageString
+    }
     
     var body: some View {
         profileImageView
@@ -21,6 +32,13 @@ struct ProfileImageView: View {
             if let image {
                 image
                     .resizable()
+            } else if let imageString,
+               let url = URL(string: imageString) {
+                AsyncImage(url: url) { image in
+                    image.resizable()
+                } placeholder: {
+                    ProgressView()
+                }
             } else {
                 Image(.defaultProfile)
                     .resizable()

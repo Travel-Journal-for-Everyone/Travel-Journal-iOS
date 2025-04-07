@@ -94,8 +94,14 @@ final class DefaultCoordinator: CoordinatorProtocol {
             ))
         case .followList:
             FollowListView()
-        case .profile:
-            ProfileView(user: .mock())
+        case .profileFix:
+            ProfileCreationView(
+                viewModel: ProfileCreationViewModel(
+                    nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
+                    signUpUseCase: DIContainer.shared.signUpUseCase,
+                    isEditing: true
+                )
+            )
         }
     }
     
