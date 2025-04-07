@@ -8,7 +8,7 @@
 import Foundation
 
 struct JournalSummary {
-    let hashTag: [String]
+    let hashtag: [String]
     let title: String
     let nights: Int
     let days: Int
@@ -19,7 +19,7 @@ struct JournalSummary {
 extension JournalSummary {
     static func mock(title: String) -> Self {
         return .init(
-            hashTag: ["부산", "해변", "해안욕장"],
+            hashtag: ["부산", "해변", "해안욕장"],
             title: title,
             nights: 2,
             days: 3,
