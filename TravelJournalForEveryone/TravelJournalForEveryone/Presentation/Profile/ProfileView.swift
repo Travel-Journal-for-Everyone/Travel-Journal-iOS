@@ -7,11 +7,15 @@
 
 import SwiftUI
 
-struct ProfileView: View {
-    @EnvironmentObject private var coordinator: DefaultCoordinator
+struct ProfileView<Coordinator: CoordinatorProtocol>: View {
+    @ObservedObject var coordinator: Coordinator
     private let user: User
     
-    init(user: User) {
+    init(
+        coordinator: Coordinator,
+        user: User
+    ) {
+        self.coordinator = coordinator
         self.user = user
     }
 
@@ -54,6 +58,7 @@ extension ProfileView {
                 }
                 
                 ActivityOverview(
+                    coordinator: coordinator,
                     user: user,
                     isCurrentUser: true
                 ) {
@@ -79,6 +84,6 @@ extension ProfileView {
     }
 }
 
-#Preview {
-    ProfileView(user: .mock())
-}
+//#Preview {
+//    ProfileView<<#Coordinator: CoordinatorProtocol#>>(user: .mock())
+//}

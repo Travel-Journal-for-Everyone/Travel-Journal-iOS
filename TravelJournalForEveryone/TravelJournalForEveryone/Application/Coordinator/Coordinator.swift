@@ -12,9 +12,11 @@ protocol CoordinatorProtocol: ObservableObject {
     var searchPath: NavigationPath { get set }
     var explorePath: NavigationPath { get set }
     var profilePath: NavigationPath { get set }
+    var isPresentingTabBar: Bool { get }
     
     var selectedTab: TJTab { get set }
     
+    @MainActor func build(_ screen: Screen) -> AnyView
     func push(_ screen: Screen)
     func pop()
     func popToRoot()
@@ -85,10 +87,12 @@ final class DefaultCoordinator: CoordinatorProtocol {
     
     @MainActor
     @ViewBuilder
-    func build(_ screen: Screen) -> some View {
+    func buildView(_ screen: Screen) -> some View {
         switch screen {
         case .myJournal(let memberID):
-            MyJournalView(viewModel: .init(
+            MyJournalView(
+                coordinator: self,
+                viewModel: .init(
                 memberID: memberID,
                 fetchUserUseCase: DIContainer.shared.fetchUserUseCase
             ))
@@ -96,6 +100,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
             FollowListView()
         case .profileFix:
             ProfileCreationView(
+                coordinator: self,
                 viewModel: ProfileCreationViewModel(
                     nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
                     updateProfileUseCase: DIContainer.shared.updateProfileUseCase,
@@ -103,6 +108,11 @@ final class DefaultCoordinator: CoordinatorProtocol {
                 )
             )
         }
+    }
+    
+    @MainActor
+    func build(_ screen: Screen) -> AnyView {
+        AnyView(buildView(screen))
     }
     
     private func updateTabBarVisibility(_ path: NavigationPath) {

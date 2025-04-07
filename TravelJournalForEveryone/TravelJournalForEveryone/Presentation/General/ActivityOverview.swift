@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ActivityOverview: View {
-    @EnvironmentObject private var coordinator: DefaultCoordinator
+struct ActivityOverview<Coordinator: CoordinatorProtocol>: View {
+    @ObservedObject var coordinator: Coordinator
     
     private let user: User
     private let isCurrentUser: Bool
@@ -16,6 +16,7 @@ struct ActivityOverview: View {
     private let placeAction: () -> Void
     
     init(
+        coordinator: Coordinator,
         user: User,
         isCurrentUser: Bool,
         travelJournalAction: @escaping () -> Void,
@@ -25,6 +26,7 @@ struct ActivityOverview: View {
         self.isCurrentUser = isCurrentUser
         self.travelJournalAction = travelJournalAction
         self.placeAction = placeAction
+        self.coordinator = coordinator
     }
     
     var body: some View {
@@ -82,12 +84,12 @@ struct ActivityOverview: View {
     }
 }
 
-#Preview {
-    ActivityOverview(
-        user: .mock(),
-        isCurrentUser: true,
-        travelJournalAction: { },
-        placeAction: { }
-    )
-    .environmentObject(DefaultCoordinator())
-}
+//#Preview {
+//    ActivityOverview(
+//        user: .mock(),
+//        isCurrentUser: true,
+//        travelJournalAction: { },
+//        placeAction: { }
+//    )
+//    .environmentObject(DefaultCoordinator())
+//}

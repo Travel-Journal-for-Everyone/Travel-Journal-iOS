@@ -7,14 +7,16 @@
 
 import SwiftUI
 
-struct MainTabView: View {
-    @EnvironmentObject private var coordinator: DefaultCoordinator
+struct MainTabView<Coordinator: CoordinatorProtocol>: View {
+    @ObservedObject var coordinator: Coordinator
     
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $coordinator.selectedTab) {
                 NavigationStack(path: $coordinator.myJournalPath) {
-                    MyJournalView(viewModel: .init(
+                    MyJournalView(
+                        coordinator: coordinator,
+                        viewModel: .init(
                         fetchUserUseCase: DIContainer.shared.fetchUserUseCase
                     ))
                     .navigationDestination(for: Screen.self) { screen in
@@ -38,7 +40,9 @@ struct MainTabView: View {
                 
                 
                 NavigationStack(path: $coordinator.profilePath) {
-                    ProfileView(user: .mock())
+                    ProfileView(
+                        coordinator: coordinator,
+                        user: .mock())
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
                                 .environmentObject(coordinator)
@@ -96,6 +100,5 @@ struct MainTabView: View {
 }
 
 #Preview {
-    MainTabView()
-        .environmentObject(DefaultCoordinator())
+    MainTabView(coordinator: DIContainer.shared.coordinator)
 }

@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct MyJournalView: View {
+struct MyJournalView<Coordinator: CoordinatorProtocol>: View {
+    @ObservedObject var coordinator: Coordinator
     @StateObject var viewModel: MyJournalViewModel
-    @EnvironmentObject private var coordinator: DefaultCoordinator
     
     @State private var isPresentingMenu = false
     
@@ -136,6 +136,7 @@ struct MyJournalView: View {
                         }
                     
                     ActivityOverview(
+                        coordinator: coordinator,
                         user: viewModel.state.user,
                         isCurrentUser: viewModel.state.isCurrentUser
                     ) {
@@ -334,6 +335,5 @@ struct MyJournalView: View {
 }
 
 #Preview {
-    MainTabView()
-        .environmentObject(DefaultCoordinator())
+    MainTabView(coordinator: DIContainer.shared.coordinator)
 }

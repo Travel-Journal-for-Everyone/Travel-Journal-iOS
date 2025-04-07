@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AuthenticationView: View {
-    @StateObject var coordinator = DefaultCoordinator()
     @StateObject var viewModel: AuthenticationViewModel
     
     var body: some View {
@@ -18,8 +17,7 @@ struct AuthenticationView: View {
                 LoginView()
                     .environmentObject(viewModel)
             case .authenticated:
-                MainTabView()
-                    .environmentObject(coordinator)
+                MainTabView(coordinator: DIContainer.shared.coordinator)
                     .environmentObject(viewModel)
             case .authenticating:
                 Color.clear
@@ -33,7 +31,8 @@ struct AuthenticationView: View {
 }
 
 #Preview {
-    AuthenticationView(viewModel: .init(
+    AuthenticationView(
+        viewModel: .init(
         loginUseCase: DIContainer.shared.loginUseCase,
         logoutUseCase: DIContainer.shared.logoutUseCase,
         authStateCheckUseCase: DIContainer.shared.authStateCheckUseCase,

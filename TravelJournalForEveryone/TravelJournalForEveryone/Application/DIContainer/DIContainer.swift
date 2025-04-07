@@ -10,6 +10,8 @@ import Foundation
 final class DIContainer {
     @MainActor static let shared = DIContainer()
     
+    lazy var coordinator = DefaultCoordinator()
+    
     // MARK: - Services
     lazy var socialLoginService = DefaultSocialLoginService()
     lazy var socialLogoutService = DefaultSocialLogoutService()

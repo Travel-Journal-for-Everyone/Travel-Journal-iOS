@@ -8,9 +8,9 @@
 import SwiftUI
 import PhotosUI
 
-struct ProfileCreationView: View {
+struct ProfileCreationView<Coordinator: CoordinatorProtocol>: View {
+    @ObservedObject var coordinator: Coordinator
     @StateObject var viewModel: ProfileCreationViewModel
-    @EnvironmentObject private var coordinator: DefaultCoordinator
     
     @State var isTappedAccountScopeButton: Bool = false
     @State private var isShowingDialog: Bool = false
@@ -99,7 +99,7 @@ struct ProfileCreationView: View {
             isTappedAccountScopeButton = false
         }
         .onAppear {
-            viewModel.send(.viewOnAppear(coordinator))
+            viewModel.send(.viewOnAppear)
         }
         .navigationDestination(
             isPresented: Binding(
@@ -293,6 +293,7 @@ struct ProfileCreationView: View {
 
 #Preview {
     ProfileCreationView(
+        coordinator: DIContainer.shared.coordinator,
         viewModel: ProfileCreationViewModel(
             nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
             updateProfileUseCase: DIContainer.shared.updateProfileUseCase

@@ -34,7 +34,7 @@ struct ProfileCreationModelState {
 
 // MARK: - Intent
 enum ProfileCreationIntent {
-    case viewOnAppear(DefaultCoordinator)
+    case viewOnAppear
     case enterNickname(String)
     case tappedNicknameCheckButton
     case tappedAccountScope(AccountScope)
@@ -60,9 +60,6 @@ final class ProfileCreationViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     
     private(set) var isEditing: Bool
-    
-    // 여기.. 어떻게 하면 좋을까요?
-    private var coordinator: DefaultCoordinator = .init()
     
     init(
         nicknameCheckUseCase: NicknameCheckUseCase,
@@ -109,8 +106,8 @@ final class ProfileCreationViewModel: ObservableObject {
     
     func send(_ intent: ProfileCreationIntent) {
         switch intent {
-        case .viewOnAppear(let coordinator):
-            handleViewOnAppear(coordinator)
+        case .viewOnAppear:
+            handleViewOnAppear()
         case .enterNickname(let tempNickname):
             self.tempNickname = tempNickname
         case .tappedNicknameCheckButton:
@@ -132,9 +129,7 @@ final class ProfileCreationViewModel: ObservableObject {
         }
     }
     
-    private func handleViewOnAppear(_ coordinator: DefaultCoordinator) {
-        self.coordinator = coordinator
-        
+    private func handleViewOnAppear() {
         if isEditing {
             let user = userInfoManager.user
             
@@ -191,7 +186,7 @@ final class ProfileCreationViewModel: ObservableObject {
             if result {
                 if let isEditing = self?.isEditing,
                    isEditing {
-                    self?.coordinator.pop()
+                    DIContainer.shared.coordinator.pop()
                 } else {
                     self?.state.isPresentedSignupCompletionView = true
                 }

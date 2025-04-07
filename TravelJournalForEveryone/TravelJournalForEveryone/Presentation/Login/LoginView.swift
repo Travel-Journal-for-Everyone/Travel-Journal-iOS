@@ -54,7 +54,9 @@ struct LoginView: View {
                     get: { authViewModel.state.isPresentedProfileCreationView },
                     set: { authViewModel.send(.isPresentedProfileCreationView($0)) }
                 )) {
+                    // 온보딩의 코디네이터는 ProfileCreationView의 생명주기가 끝나면 같이 없어지게 하기 위해 DIContainer 사용하지 않고 바로 객체 생성 해주었습니다 ..
                     ProfileCreationView(
+                        coordinator: DefaultCoordinator(),
                         viewModel: ProfileCreationViewModel(
                             nicknameCheckUseCase: DIContainer.shared.nickNameCheckUseCase,
                             updateProfileUseCase: DIContainer.shared.updateProfileUseCase
