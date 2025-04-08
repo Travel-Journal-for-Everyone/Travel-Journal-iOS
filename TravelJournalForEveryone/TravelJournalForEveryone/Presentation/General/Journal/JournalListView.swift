@@ -67,6 +67,7 @@ struct JournalListView: View {
     @ViewBuilder
     private func journalListView() -> some View {
         if viewModel.state.journalSummaries.isEmpty {
+            // TODO: - EmptyView 구현
             Spacer()
             Text("작성된 여행 일지가 없습니다.")
             Spacer()
@@ -88,6 +89,7 @@ struct JournalListView: View {
     @ViewBuilder
     private func placeGridView() -> some View {
         if viewModel.state.placeSummaries.isEmpty {
+            // TODO: - EmptyView 구현
             Spacer()
             Text("등록된 플레이스가 없습니다.")
             Spacer()

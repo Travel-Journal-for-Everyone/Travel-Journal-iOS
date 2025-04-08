@@ -12,6 +12,8 @@ struct MyJournalView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
     
     @State private var isPresentingMenu = false
+    @State private var isPresentingJournalListViewForAll = false
+    @State private var isPresentingJournalListViewForRegion = false
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -63,6 +65,30 @@ struct MyJournalView: View {
                     }
                 }
             }
+            
+            if viewModel.state.isTouchDisabled {
+                Color.black.opacity(0.001)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+            }
+        }
+        .sheet(isPresented: $isPresentingJournalListViewForRegion) {
+            viewModel.send(.sheetDismissed)
+        } content: {
+            JournalListView(
+                viewModel: .init(viewType: .region(viewModel.state.selectedRegion))
+            )
+            .padding(.top)
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $isPresentingJournalListViewForAll) {
+            viewModel.send(.sheetDismissed)
+        } content: {
+            JournalListView(
+                viewModel: .init(viewType: .all(viewModel.state.selectedActivityOverviewType))
+            )
+            .padding(.top)
+            .presentationDragIndicator(.visible)
         }
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
@@ -139,9 +165,11 @@ struct MyJournalView: View {
                         user: viewModel.state.user,
                         isCurrentUser: viewModel.state.isCurrentUser
                     ) {
-                        print("일지 리스트")
+                        viewModel.send(.tappedActivityOverviewButton(.journal))
+                        isPresentingJournalListViewForAll.toggle()
                     } placeAction: {
-                        print("플레이스 리스트")
+                        viewModel.send(.tappedActivityOverviewButton(.place))
+                        isPresentingJournalListViewForAll.toggle()
                     }
                 }
                 .padding(.horizontal, 8)
@@ -328,7 +356,8 @@ struct MyJournalView: View {
                 .offset(y:labelYOffset)
             }
             .onTapGesture {
-                print("\(regionData.regionName.mapTitle)")
+                viewModel.send(.tappedRegionButton(regionData.regionName))
+                isPresentingJournalListViewForRegion.toggle()
             }
     }
 }
