@@ -32,10 +32,13 @@ struct ProfileImageView: View {
             if let image {
                 image
                     .resizable()
+                    .scaledToFill()
             } else if let imageString,
                let url = URL(string: imageString) {
                 AsyncImage(url: url) { image in
-                    image.resizable()
+                    image
+                        .resizable()
+                        .scaledToFill()
                 } placeholder: {
                     ProgressView()
                 }

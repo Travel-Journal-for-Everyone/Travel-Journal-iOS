@@ -51,7 +51,8 @@ final class ProfileCreationViewModel: ObservableObject {
     
     @Published private var tempNickname: String = ""
     @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
-    @Published private var tempImage: Image?
+    
+    @Published private var nicknameServerCheckResult: NicknameServerCheckResult = .valid
     
     private let userInfoManager: UserInfoManager = DIContainer.shared.userInfoManager
     
@@ -92,16 +93,6 @@ final class ProfileCreationViewModel: ObservableObject {
                 self.updateStateForNicknameValidationForRegex(result)
             }
             .store(in: &cancellables)
-        
-        $tempImage
-            .sink { [weak self] image in
-                guard let self else { return }
-                
-                if self.state.profileImageString.isEmpty {
-                    self.state.isDisableCompletionButton = false
-                }
-            }
-            .store(in: &cancellables)
     }
     
     func send(_ intent: ProfileCreationIntent) {
@@ -114,6 +105,7 @@ final class ProfileCreationViewModel: ObservableObject {
             handleTappedNicknameCheckButton()
         case .tappedAccountScope(let accountScope):
             state.accountScope = accountScope
+            updateCompletionButtonState()
         case .tappedCompletionButton:
             handleTappedCompletionButton()
         case .selectedPhoto(let item):
@@ -124,6 +116,8 @@ final class ProfileCreationViewModel: ObservableObject {
         case .changeDefaultImage:
             state.selectedImage = nil
             state.selectedItem = nil
+            state.profileImageString = ""
+            updateCompletionButtonState()
         case .isPresentedProfileCreationView(let result):
             state.isPresentedSignupCompletionView = result
         }
@@ -160,6 +154,8 @@ final class ProfileCreationViewModel: ObservableObject {
                 guard let self else { return }
             
                 self.updateStateForNicknameValidationForServer(result)
+                self.nicknameServerCheckResult = result
+                self.updateCompletionButtonState()
             }
             .store(in: &cancellables)
     }
@@ -217,7 +213,9 @@ final class ProfileCreationViewModel: ObservableObject {
     
     private func updateStateForNicknameValidationForServer(_ result: NicknameServerCheckResult) {
         if result == .valid {
-            state.isDisableCompletionButton = false
+            if !isEditing {
+                state.isDisableCompletionButton = false
+            }
             state.messageColor = .tjGreen
         } else {
             state.isDisableCompletionButton = true
@@ -256,6 +254,27 @@ final class ProfileCreationViewModel: ObservableObject {
                     print(failure)
                 }
             }
+        }
+        
+        updateCompletionButtonState()
+    }
+    
+    private func updateCompletionButtonState() {
+        if isEditing {
+            let user = userInfoManager.user
+            
+            let isNicknameChanged = state.tempNickname != user.nickname
+            let isNicknameValidServer = nicknameServerCheckResult == .valid
+            
+            let isAccountScopeChanged = state.accountScope != user.accountScope
+            
+            let isImageChanged = state.profileImageString == ""
+            
+            print("isImageChanged: \(isImageChanged) -> \(state.profileImageString)")
+            
+            let isComplete = (isNicknameChanged || isImageChanged || isAccountScopeChanged) && isNicknameValidServer
+            
+            state.isDisableCompletionButton = !isComplete
         }
     }
 }
