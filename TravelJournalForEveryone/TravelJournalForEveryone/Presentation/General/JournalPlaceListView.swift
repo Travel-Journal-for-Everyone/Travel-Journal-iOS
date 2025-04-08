@@ -88,13 +88,28 @@ struct JournalPlaceListView: View {
     
     @ViewBuilder
     private func placeGridView() -> some View {
+        let columns = Array(
+            repeating: GridItem(.flexible(), spacing: 5),
+            count: 2
+        )
+        
         if viewModel.state.placeSummaries.isEmpty {
             // TODO: - EmptyView 구현
             Spacer()
             Text("등록된 플레이스가 없습니다.")
             Spacer()
         } else {
-            Text("플레이스 리스트")
+            ScrollView(.vertical) {
+                Color.clear
+                    .frame(height: 10)
+                
+                LazyVGrid(columns: columns, spacing: 10) {
+                    ForEach(viewModel.state.placeSummaries, id: \.self) { placeSummary in
+                        PlaceGridCell(placeSummary)
+                    }
+                }
+            }
+            .scrollIndicators(.never)
         }
     }
 }

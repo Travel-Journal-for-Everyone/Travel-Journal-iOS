@@ -16,7 +16,7 @@ struct JournalPlaceListState {
     var journalSummaries: [JournalSummary] = []
     var journalSummariesCount: Int = 0
     // TEST
-    var placeSummaries: [JournalSummary] = []
+    var placeSummaries: [PlaceSummary] = []
     var placeSummariesCount: Int = 0
 }
 
@@ -61,7 +61,13 @@ final class JournalPlaceListViewModel: ObservableObject {
     }
     
     private func handlePlaceGridViewOnAppear() {
-        
+        self.state.placeSummaries = [
+            .mock(placeName: "이기대 해안산책로"),
+            .mock(placeName: "해운대 해변열차"),
+            .mock(placeName: "웨이브온 커피"),
+            .mock(placeName: "해운대 더베이"),
+            .mock(placeName: "은계 호수공원"),
+        ]
     }
     
     private func handleSelectSegment(_ index: Int) {
