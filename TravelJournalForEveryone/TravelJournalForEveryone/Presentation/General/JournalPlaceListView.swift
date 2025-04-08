@@ -1,5 +1,5 @@
 //
-//  JournalListView.swift
+//  JournalPlaceListView.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 4/2/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct JournalListView: View {
-    @StateObject var viewModel: JournalListViewModel
+struct JournalPlaceListView: View {
+    @StateObject var viewModel: JournalPlaceListViewModel
     
     @Namespace private var namespace
     
@@ -100,7 +100,7 @@ struct JournalListView: View {
 }
 
 #Preview {
-    JournalListView(
+    JournalPlaceListView(
         viewModel: .init(
             viewType: .region(.gyeongsang)
             //viewType: .like

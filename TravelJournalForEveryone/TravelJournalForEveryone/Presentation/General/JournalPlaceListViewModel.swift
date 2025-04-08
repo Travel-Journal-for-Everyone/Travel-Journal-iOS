@@ -1,5 +1,5 @@
 //
-//  JournalListViewModel.swift
+//  JournalPlaceListViewModel.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 4/8/25.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 // MARK: - State
-struct JournalListState {
+struct JournalPlaceListState {
     var viewType: JournalListType = .all(.journal)
     var navigationTitle: String = ""
     var selectedSegmentIndex: Int = 0
@@ -22,7 +22,7 @@ struct JournalListState {
 
 
 // MARK: - Intent
-enum JournalListIntent {
+enum JournalPlaceListIntent {
     case journalListViewOnAppear
     case placeGridViewOnAppear
     case selectSegment(Int)
@@ -30,8 +30,8 @@ enum JournalListIntent {
 
 
 // MARK: - ViewModel(State + Intent)
-final class JournalListViewModel: ObservableObject {
-    @Published private(set) var state = JournalListState()
+final class JournalPlaceListViewModel: ObservableObject {
+    @Published private(set) var state = JournalPlaceListState()
     
     init(viewType: JournalListType) {
         self.state.viewType = viewType
@@ -40,7 +40,7 @@ final class JournalListViewModel: ObservableObject {
         updateNavigationTitle()
     }
     
-    func send(_ intent: JournalListIntent) {
+    func send(_ intent: JournalPlaceListIntent) {
         switch intent {
         case .journalListViewOnAppear:
             handleJournalListViewOnAppear()

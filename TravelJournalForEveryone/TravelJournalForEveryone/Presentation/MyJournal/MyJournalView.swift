@@ -75,7 +75,7 @@ struct MyJournalView: View {
         .sheet(isPresented: $isPresentingJournalListViewForRegion) {
             viewModel.send(.sheetDismissed)
         } content: {
-            JournalListView(
+            JournalPlaceListView(
                 viewModel: .init(viewType: .region(viewModel.state.selectedRegion))
             )
             .padding(.top)
@@ -84,7 +84,7 @@ struct MyJournalView: View {
         .sheet(isPresented: $isPresentingJournalListViewForAll) {
             viewModel.send(.sheetDismissed)
         } content: {
-            JournalListView(
+            JournalPlaceListView(
                 viewModel: .init(viewType: .all(viewModel.state.selectedActivityOverviewType))
             )
             .padding(.top)
