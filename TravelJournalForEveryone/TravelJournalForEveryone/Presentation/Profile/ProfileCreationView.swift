@@ -64,12 +64,18 @@ struct ProfileCreationView: View {
                 Text(viewModel.isEditing ? "프로필 수정" : "프로필 작성")
                     .font(.pretendardMedium(17))
             } leadingView: {
-                Image(.tjLeftArrow)
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                    .onTapGesture {
-                        coordinator.pop()
+                Group {
+                    if viewModel.isEditing {
+                        Image(.tjLeftArrow)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .onTapGesture {
+                                coordinator.pop()
+                            }
+                    } else {
+                        EmptyView()
                     }
+                }
             }
             
             if viewModel.state.isLoading {
@@ -100,6 +106,11 @@ struct ProfileCreationView: View {
         }
         .onAppear {
             viewModel.send(.viewOnAppear(coordinator))
+        }
+        .onChange(of: viewModel.state.isNavigateToRootView) { _, newValue in
+            if newValue {
+                coordinator.pop()
+            }
         }
         .navigationDestination(
             isPresented: Binding(
