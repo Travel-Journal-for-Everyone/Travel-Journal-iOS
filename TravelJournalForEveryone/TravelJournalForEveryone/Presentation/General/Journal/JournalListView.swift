@@ -33,8 +33,14 @@ struct JournalListView: View {
             
             if viewModel.state.selectedSegmentIndex == 0 {
                 journalListView()
+                    .onAppear {
+                        viewModel.send(.journalListViewOnAppear)
+                    }
             } else {
                 placeGridView()
+                    .onAppear {
+                        viewModel.send(.placeGridViewOnAppear)
+                    }
             }
         }
         .padding(.horizontal, 16)
@@ -76,9 +82,6 @@ struct JournalListView: View {
                 }
             }
             .scrollIndicators(.never)
-            .onAppear {
-                viewModel.send(.journalListViewOnAppear)
-            }
         }
     }
     

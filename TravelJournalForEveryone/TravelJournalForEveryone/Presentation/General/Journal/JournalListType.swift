@@ -8,7 +8,7 @@
 import Foundation
 
 enum JournalListType: Equatable {
-    case all
+    case all(ActivityOverviewType)
     case region(Region)
     case save
     case like

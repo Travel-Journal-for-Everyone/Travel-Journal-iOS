@@ -10,7 +10,7 @@ import Combine
 
 // MARK: - State
 struct JournalListState {
-    var viewType: JournalListType = .all
+    var viewType: JournalListType = .all(.journal)
     var navigationTitle: String = ""
     var selectedSegmentIndex: Int = 0
     var journalSummaries: [JournalSummary] = []
@@ -36,6 +36,7 @@ final class JournalListViewModel: ObservableObject {
     init(viewType: JournalListType) {
         self.state.viewType = viewType
         
+        updateSegmentIndex()
         updateNavigationTitle()
     }
     
@@ -51,7 +52,7 @@ final class JournalListViewModel: ObservableObject {
     }
     
     private func handleJournalListViewOnAppear() {
-        // TEST
+        // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
         self.state.journalSummaries = [
             .mock(title: "바다만 주구장창 보았던 부산 여행 🌊"),
             .mock(title: "가을 느낌 한가득! 울산 간월제 등산️ ⛰️"),
@@ -68,6 +69,14 @@ final class JournalListViewModel: ObservableObject {
         
         if self.state.viewType == .save {
             updateNavigationTitle()
+        }
+    }
+    
+    private func updateSegmentIndex() {
+        if self.state.viewType == .all(.journal) {
+            self.state.selectedSegmentIndex = 0
+        } else if self.state.viewType == .all(.place) {
+            self.state.selectedSegmentIndex = 1
         }
     }
     
