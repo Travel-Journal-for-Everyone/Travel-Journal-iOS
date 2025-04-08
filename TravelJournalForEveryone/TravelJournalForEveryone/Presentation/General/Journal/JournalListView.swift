@@ -1,0 +1,105 @@
+//
+//  JournalListView.swift
+//  TravelJournalForEveryone
+//
+//  Created by 김성민 on 4/2/25.
+//
+
+import SwiftUI
+
+struct JournalListView: View {
+    @StateObject var viewModel: JournalListViewModel
+    
+    @Namespace private var namespace
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            switch viewModel.state.viewType {
+            case .all, .region, .save:
+                CustomSegmentedControl(
+                    options: [
+                        "여행 일지 \(viewModel.state.journalSummariesCount)",
+                        "플레이스\(viewModel.state.placeSummariesCount)"
+                    ],
+                    selectedIndex: Binding(
+                        get: { viewModel.state.selectedSegmentIndex },
+                        set: { viewModel.send(.selectSegment($0)) }
+                    ),
+                    namespace: namespace
+                )
+            case .like:
+                EmptyView()
+            }
+            
+            if viewModel.state.selectedSegmentIndex == 0 {
+                journalListView()
+            } else {
+                placeGridView()
+            }
+        }
+        .padding(.horizontal, 16)
+        .customNavigationBar {
+            Text(viewModel.state.navigationTitle)
+                .font(.pretendardMedium(16))
+                .foregroundStyle(.tjBlack)
+        } leadingView: {
+            switch viewModel.state.viewType {
+            case .all, .region:
+                EmptyView()
+            case .save, .like:
+                Button {
+                    
+                } label: {
+                    Image(.tjLeftArrow)
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func journalListView() -> some View {
+        if viewModel.state.journalSummaries.isEmpty {
+            Spacer()
+            Text("작성된 여행 일지가 없습니다.")
+            Spacer()
+        } else {
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 15) {
+                    Color.clear
+                        .frame(height: 5)
+                    
+                    ForEach(viewModel.state.journalSummaries, id: \.self) { journalSummary in
+                        JournalListCell(journalSummary)
+                    }
+                }
+            }
+            .scrollIndicators(.never)
+            .onAppear {
+                viewModel.send(.journalListViewOnAppear)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func placeGridView() -> some View {
+        if viewModel.state.placeSummaries.isEmpty {
+            Spacer()
+            Text("등록된 플레이스가 없습니다.")
+            Spacer()
+        } else {
+            Text("플레이스 리스트")
+        }
+    }
+}
+
+#Preview {
+    JournalListView(
+        viewModel: .init(
+            viewType: .region(.gyeongsang)
+            //viewType: .like
+            //viewType: .save
+        )
+    )
+}

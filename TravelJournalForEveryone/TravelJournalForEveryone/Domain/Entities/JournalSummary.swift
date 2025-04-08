@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct JournalSummary {
+struct JournalSummary: Hashable {
     let hashtag: [String]
     let title: String
     let nights: Int
