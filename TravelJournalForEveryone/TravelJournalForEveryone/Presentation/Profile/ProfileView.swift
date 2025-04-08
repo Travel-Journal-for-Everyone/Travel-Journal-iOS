@@ -28,7 +28,7 @@ struct ProfileView: View {
         .customNavigationBar {
             Text("프로필")
                 .font(.pretendardMedium(17))
-        } leaddingView: {
+        } leadingView: {
             EmptyView()
         } trailingView: {
             Image(.tjSetting)
