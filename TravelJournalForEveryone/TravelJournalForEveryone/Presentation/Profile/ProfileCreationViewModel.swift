@@ -36,7 +36,7 @@ struct ProfileCreationModelState {
 
 // MARK: - Intent
 enum ProfileCreationIntent {
-    case viewOnAppear(DefaultCoordinator)
+    case viewOnAppear
     case enterNickname(String)
     case tappedNicknameCheckButton
     case tappedAccountScope(AccountScope)
@@ -95,22 +95,12 @@ final class ProfileCreationViewModel: ObservableObject {
                 self.updateStateForNicknameValidationForRegex(result)
             }
             .store(in: &cancellables)
-        
-        $tempImage
-            .sink { [weak self] image in
-                guard let self else { return }
-                
-                if self.state.profileImageString.isEmpty {
-                    self.state.isDisableCompletionButton = false
-                }
-            }
-            .store(in: &cancellables)
     }
     
     func send(_ intent: ProfileCreationIntent) {
         switch intent {
-        case .viewOnAppear(let coordinator):
-            handleViewOnAppear(coordinator)
+        case .viewOnAppear:
+            handleViewOnAppear()
         case .enterNickname(let tempNickname):
             self.tempNickname = tempNickname
         case .tappedNicknameCheckButton:
@@ -125,6 +115,7 @@ final class ProfileCreationViewModel: ObservableObject {
             state.selectedItem = item
             Task {
                 await loadImage()
+                updateCompletionButtonState()
             }
         case .changeDefaultImage:
             state.selectedImage = nil
@@ -136,7 +127,7 @@ final class ProfileCreationViewModel: ObservableObject {
         }
     }
     
-    private func handleViewOnAppear(_ coordinator: DefaultCoordinator) {
+    private func handleViewOnAppear() {
         if isEditing {
             let user = userInfoManager.user
             
@@ -268,8 +259,6 @@ final class ProfileCreationViewModel: ObservableObject {
                 }
             }
         }
-        
-        updateCompletionButtonState()
     }
     
     private func updateCompletionButtonState() {
@@ -282,6 +271,8 @@ final class ProfileCreationViewModel: ObservableObject {
             let isAccountScopeChanged = state.accountScope != user.accountScope
             
             let isImageChanged = state.profileImageString == ""
+            
+            print("\(isNicknameChanged), \(isAccountScopeChanged), \(isImageChanged)")
             
             let isComplete = (isNicknameChanged || isImageChanged || isAccountScopeChanged) && isNicknameValidServer
             state.isDisableCompletionButton = !isComplete

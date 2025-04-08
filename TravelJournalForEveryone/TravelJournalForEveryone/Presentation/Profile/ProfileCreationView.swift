@@ -105,7 +105,7 @@ struct ProfileCreationView: View {
             isTappedAccountScopeButton = false
         }
         .onAppear {
-            viewModel.send(.viewOnAppear(coordinator))
+            viewModel.send(.viewOnAppear)
         }
         .onChange(of: viewModel.state.isNavigateToRootView) { _, newValue in
             if newValue {
