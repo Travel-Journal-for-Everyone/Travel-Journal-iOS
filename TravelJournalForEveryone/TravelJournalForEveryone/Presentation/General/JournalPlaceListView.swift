@@ -27,23 +27,35 @@ struct JournalPlaceListView: View {
                     ),
                     namespace: namespace
                 )
+                .padding(.horizontal, 16)
+                
+                TabView(selection: Binding(
+                    get: { viewModel.state.selectedSegmentIndex },
+                    set: { viewModel.send(.selectSegment($0)) }
+                )) {
+                    journalListView()
+                        .tag(0)
+                        .onAppear {
+                            viewModel.send(.journalListViewOnAppear)
+                        }
+                    
+                    placeGridView()
+                        .tag(1)
+                        .onAppear {
+                            viewModel.send(.placeGridViewOnAppear)
+                        }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .contentMargins(.horizontal, 16)
+                .ignoresSafeArea(.all, edges: .bottom)
             case .like:
-                EmptyView()
-            }
-            
-            if viewModel.state.selectedSegmentIndex == 0 {
                 journalListView()
+                    .padding(.horizontal, 16)
                     .onAppear {
                         viewModel.send(.journalListViewOnAppear)
                     }
-            } else {
-                placeGridView()
-                    .onAppear {
-                        viewModel.send(.placeGridViewOnAppear)
-                    }
             }
         }
-        .padding(.horizontal, 16)
         .customNavigationBar {
             Text(viewModel.state.navigationTitle)
                 .font(.pretendardMedium(16))
@@ -68,9 +80,7 @@ struct JournalPlaceListView: View {
     private func journalListView() -> some View {
         if viewModel.state.journalSummaries.isEmpty {
             // TODO: - EmptyView 구현
-            Spacer()
             Text("작성된 여행 일지가 없습니다.")
-            Spacer()
         } else {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 15) {
@@ -95,9 +105,7 @@ struct JournalPlaceListView: View {
         
         if viewModel.state.placeSummaries.isEmpty {
             // TODO: - EmptyView 구현
-            Spacer()
             Text("등록된 플레이스가 없습니다.")
-            Spacer()
         } else {
             ScrollView(.vertical) {
                 Color.clear

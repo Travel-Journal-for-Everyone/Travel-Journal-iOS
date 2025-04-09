@@ -15,7 +15,6 @@ struct JournalPlaceListState {
     var selectedSegmentIndex: Int = 0
     var journalSummaries: [JournalSummary] = []
     var journalSummariesCount: Int = 0
-    // TEST
     var placeSummaries: [PlaceSummary] = []
     var placeSummariesCount: Int = 0
 }
@@ -57,16 +56,28 @@ final class JournalPlaceListViewModel: ObservableObject {
             .mock(title: "바다만 주구장창 보았던 부산 여행 🌊"),
             .mock(title: "가을 느낌 한가득! 울산 간월제 등산️ ⛰️"),
             .mock(title: "맛집 한가득 입이 행복했던 대구 😋"),
+            .mock(title: "주구장창 보았던 부산 여행 🌊"),
+            .mock(title: "느낌 한가득! 울산 간월제 등산️ ⛰️"),
+            .mock(title: "한가득 입이 행복했던 대구 😋"),
+            .mock(title: "바다만 주구장창 보았던 부산 🌊"),
+            .mock(title: "가을 느낌 한가득! 울산 간월제 ⛰️"),
+            .mock(title: "맛집 한가득 입이 행복했던 😋"),
         ]
     }
     
     private func handlePlaceGridViewOnAppear() {
+        // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
         self.state.placeSummaries = [
             .mock(placeName: "이기대 해안산책로"),
             .mock(placeName: "해운대 해변열차"),
             .mock(placeName: "웨이브온 커피"),
             .mock(placeName: "해운대 더베이"),
             .mock(placeName: "은계 호수공원"),
+            .mock(placeName: "이기대 해안산"),
+            .mock(placeName: "해운대 해변"),
+            .mock(placeName: "웨이브온"),
+            .mock(placeName: "해운대 더베"),
+            .mock(placeName: "은계 호수"),
         ]
     }
     
