@@ -76,7 +76,10 @@ struct MyJournalView: View {
             viewModel.send(.sheetDismissed)
         } content: {
             JournalPlaceListView(
-                viewModel: .init(viewType: .region(viewModel.state.selectedRegion))
+                viewModel: .init(
+                    user: viewModel.state.user,
+                    viewType: .region(viewModel.state.selectedRegion)
+                )
             )
             .padding(.top)
             .presentationDragIndicator(.visible)
@@ -85,7 +88,10 @@ struct MyJournalView: View {
             viewModel.send(.sheetDismissed)
         } content: {
             JournalPlaceListView(
-                viewModel: .init(viewType: .all(viewModel.state.selectedActivityOverviewType))
+                viewModel: .init(
+                    user: viewModel.state.user,
+                    viewType: .all(viewModel.state.selectedActivityOverviewType)
+                )
             )
             .padding(.top)
             .presentationDragIndicator(.visible)

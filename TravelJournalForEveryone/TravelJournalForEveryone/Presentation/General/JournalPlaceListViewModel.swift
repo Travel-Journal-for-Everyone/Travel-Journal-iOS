@@ -32,11 +32,15 @@ enum JournalPlaceListIntent {
 final class JournalPlaceListViewModel: ObservableObject {
     @Published private(set) var state = JournalPlaceListState()
     
-    init(viewType: JournalListType) {
+    private let user: User
+    
+    init(user: User, viewType: JournalListType) {
+        self.user = user
         self.state.viewType = viewType
         
         updateSegmentIndex()
         updateNavigationTitle()
+        updateSummaryCount()
     }
     
     func send(_ intent: JournalPlaceListIntent) {
@@ -107,6 +111,30 @@ final class JournalPlaceListViewModel: ObservableObject {
             self.state.navigationTitle = self.state.selectedSegmentIndex == 0 ? "저장한 여행 일지" : "저장한 플레이스"
         case .like:
             self.state.navigationTitle = "좋아요한 여행 일지"
+        }
+    }
+    
+    private func updateSummaryCount() {
+        switch self.state.viewType {
+        case .all:
+            self.state.journalSummariesCount = self.user.travelJournalCount
+            self.state.placeSummariesCount = self.user.placesCount
+        case .region(let region):
+            let regionIndex: Int
+            
+            switch region {
+            case .metropolitan: regionIndex = 0
+            case .gangwon: regionIndex = 1
+            case .chungcheong: regionIndex = 2
+            case .gyeongsang: regionIndex = 3
+            case .jeolla: regionIndex = 4
+            case .jeju: regionIndex = 5
+            }
+            
+            self.state.journalSummariesCount = self.user.regionDatas[regionIndex].travelJournalCount
+            self.state.placeSummariesCount = self.user.regionDatas[regionIndex].placesCount
+        case .save, .like:
+            break
         }
     }
 }

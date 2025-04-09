@@ -19,7 +19,7 @@ struct JournalPlaceListView: View {
                 CustomSegmentedControl(
                     options: [
                         "여행 일지 \(viewModel.state.journalSummariesCount)",
-                        "플레이스\(viewModel.state.placeSummariesCount)"
+                        "플레이스 \(viewModel.state.placeSummariesCount)"
                     ],
                     selectedIndex: Binding(
                         get: { viewModel.state.selectedSegmentIndex },
@@ -125,6 +125,7 @@ struct JournalPlaceListView: View {
 #Preview {
     JournalPlaceListView(
         viewModel: .init(
+            user: .mock(),
             viewType: .region(.gyeongsang)
             //viewType: .like
             //viewType: .save

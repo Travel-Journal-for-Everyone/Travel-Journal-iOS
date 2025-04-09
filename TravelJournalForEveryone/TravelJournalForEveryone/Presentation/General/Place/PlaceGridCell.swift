@@ -43,6 +43,7 @@ struct PlaceGridCell: View {
 #Preview {
     JournalPlaceListView(
         viewModel: .init(
+            user: .mock(),
             viewType: .all(.place)
         )
     )
