@@ -14,14 +14,21 @@ struct MyJournalState {
     var isInitialView: Bool = true
     var isCurrentUser: Bool = true
     var isFollowing: Bool = false
+    var isTouchDisabled: Bool = false
+    
+    var selectedActivityOverviewType: ActivityOverviewType = .journal
+    var selectedRegion: Region = .metropolitan
 }
 
 // MARK: - Intent
 enum MyJournalIntent {
     case viewOnAppear
+    case sheetDismissed
     case tappedFollowButton
     case tappedBlockButton
     case tappedReportButton
+    case tappedActivityOverviewButton(ActivityOverviewType)
+    case tappedRegionButton(Region)
 }
 
 // MARK: - ViewModel(State + Intent)
@@ -63,12 +70,18 @@ final class MyJournalViewModel: ObservableObject {
         switch intent {
         case .viewOnAppear:
             handleViewOnAppear()
+        case .sheetDismissed:
+            handleSheetDismissed()
         case .tappedFollowButton:
             handleTappedFollowButton()
         case .tappedBlockButton:
             handleTappedBlockButton()
         case .tappedReportButton:
             handleTappedReportButton()
+        case .tappedActivityOverviewButton(let type):
+            self.state.selectedActivityOverviewType = type
+        case .tappedRegionButton(let region):
+            self.state.selectedRegion = region
         }
     }
     
@@ -89,6 +102,14 @@ final class MyJournalViewModel: ObservableObject {
                     self?.state.user = fetchedUser
                 }
                 .store(in: &cancellables)
+        }
+    }
+    
+    @MainActor
+    private func handleSheetDismissed() {
+        self.state.isTouchDisabled = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            self.state.isTouchDisabled = false
         }
     }
     
