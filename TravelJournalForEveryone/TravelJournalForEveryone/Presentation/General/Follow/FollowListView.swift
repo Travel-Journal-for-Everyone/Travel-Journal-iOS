@@ -27,6 +27,7 @@ struct FollowListView: View {
                 namespace: namespace
             )
             .padding(.horizontal, 16)
+            .padding(.top, 15)
             
             TabView(selection: Binding(
                 get: { viewModel.state.selectedSegmentIndex },
