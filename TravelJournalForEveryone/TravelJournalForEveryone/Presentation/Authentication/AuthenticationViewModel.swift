@@ -8,31 +8,9 @@
 import Foundation
 import Combine
 
-// MARK: - State
-struct AuthenticationModelState {
-    var authenticationState: AuthenticationState = .unauthenticated
-    var isPresentedProfileCreationView: Bool = false
-    var isLoading: Bool = false
-    var nickname: String = ""
-}
-
-// MARK: - Intent
-enum AuthenticationIntent {
-    case authenticationViewOnAppear
-    case signUpCompletionViewOnAppear
-    case kakaoLogin
-    case appleLogin
-    case googleLogin
-    case isPresentedProfileCreationView(Bool)
-    case startButtonTapped
-    case logout
-    case unlink
-}
-
-// MARK: - ViewModel(State + Intent)
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
-    @Published private(set) var state = AuthenticationModelState()
+    @Published private(set) var state = State()
     
     private let loginUseCase: LoginUseCase
     private let logoutUseCase: LogoutUseCase
@@ -57,15 +35,7 @@ final class AuthenticationViewModel: ObservableObject {
         bind()
     }
     
-    private func bind() {
-        authStateManager.$authState
-            .sink { [unowned self] authState in
-                self.state.authenticationState = authState
-            }
-            .store(in: &cancellables)
-    }
-    
-    func send(_ intent: AuthenticationIntent) {
+    func send(_ intent: Intent) {
         switch intent {
         case .authenticationViewOnAppear:
             handleAuthenticationViewOnAppear()
@@ -87,6 +57,37 @@ final class AuthenticationViewModel: ObservableObject {
         case .unlink:
             handleUnlink()
         }
+    }
+}
+
+extension AuthenticationViewModel {
+    struct State {
+        var authenticationState: AuthenticationState = .unauthenticated
+        var isPresentedProfileCreationView: Bool = false
+        var isLoading: Bool = false
+        var nickname: String = ""
+    }
+    
+    enum Intent {
+        case authenticationViewOnAppear
+        case signUpCompletionViewOnAppear
+        case kakaoLogin
+        case appleLogin
+        case googleLogin
+        case isPresentedProfileCreationView(Bool)
+        case startButtonTapped
+        case logout
+        case unlink
+    }
+}
+
+extension AuthenticationViewModel {
+    private func bind() {
+        authStateManager.$authState
+            .sink { [unowned self] authState in
+                self.state.authenticationState = authState
+            }
+            .store(in: &cancellables)
     }
     
     private func handleAuthenticationViewOnAppear() {
@@ -213,6 +214,5 @@ final class AuthenticationViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-
     }
 }

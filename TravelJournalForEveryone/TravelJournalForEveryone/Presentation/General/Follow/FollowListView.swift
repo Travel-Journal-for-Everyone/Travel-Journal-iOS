@@ -115,6 +115,7 @@ struct FollowListView: View {
     @ViewBuilder
     private var followingListView: some View {
         if viewModel.state.followings.isEmpty {
+            // TODO: - EmptyView 구현
             Text("팔로잉하는 여행자가 없습니다.")
         } else {
             ScrollView(.vertical) {
