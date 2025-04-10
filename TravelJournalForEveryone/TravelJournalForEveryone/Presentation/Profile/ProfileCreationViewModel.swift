@@ -9,9 +9,6 @@ import SwiftUI
 import Combine
 import PhotosUI
 
-// MARK: - State
-
-// MARK: - ViewModel(State + Intent)
 @MainActor
 final class ProfileCreationViewModel: ObservableObject {
     @Published private(set) var state = State()

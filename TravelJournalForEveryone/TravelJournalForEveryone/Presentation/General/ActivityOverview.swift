@@ -39,7 +39,14 @@ struct ActivityOverview: View {
             textNumberVerticalView(title: "팔로워", number: user.followerCount)
                 .onTapGesture {
                     if user.accountScope != .privateProfile || isCurrentUser {
-                        coordinator.push(.followList)
+                        coordinator.push(
+                            .followList(
+                                nickname: user.nickname,
+                                followerCount: user.followerCount,
+                                followingCount: user.followingCount,
+                                viewType: .follower
+                            )
+                        )
                     }
                 }
             Spacer()
@@ -47,7 +54,14 @@ struct ActivityOverview: View {
             textNumberVerticalView(title: "팔로잉", number: user.followingCount)
                 .onTapGesture {
                     if user.accountScope != .privateProfile || isCurrentUser {
-                        coordinator.push(.followList)
+                        coordinator.push(
+                            .followList(
+                                nickname: user.nickname,
+                                followerCount: user.followerCount,
+                                followingCount: user.followingCount,
+                                viewType: .following
+                            )
+                        )
                     }
                 }
             Spacer()
