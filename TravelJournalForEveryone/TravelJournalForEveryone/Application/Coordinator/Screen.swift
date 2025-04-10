@@ -15,5 +15,5 @@ enum Screen: Hashable {
     // Search Tab
     // Explore Tab
     // Profile Tab
-    case profile
+    case profileFix
 }

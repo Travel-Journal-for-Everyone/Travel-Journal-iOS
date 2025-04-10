@@ -10,7 +10,7 @@ import Alamofire
 
 enum MemberAPI {
     case checkNickname(String)
-    case signUp(SignUpRequestDTO)
+    case updateProfile(ProfileInfoRequestDTO)
 }
 
 extension MemberAPI: EndPoint {
@@ -22,14 +22,14 @@ extension MemberAPI: EndPoint {
         switch self {
         case .checkNickname(let nickname):
             return "/check-nickname/\(nickname)"
-        case .signUp:
-            return "/complete-first-login"
+        case .updateProfile:
+            return "/profile/update"
         }
     }
     
     var queryParameters: [String : String]? {
         switch self {
-        case .checkNickname, .signUp:
+        default:
             return nil
         }
     }
@@ -38,8 +38,8 @@ extension MemberAPI: EndPoint {
         switch self {
         case .checkNickname:
             return .get
-        case .signUp:
-            return .post
+        case .updateProfile:
+            return .put
         }
     }
     
@@ -47,7 +47,7 @@ extension MemberAPI: EndPoint {
         switch self {
         case .checkNickname:
             return nil
-        case .signUp:
+        case .updateProfile:
             return HeaderType.multipartForm.value
         }
     }
@@ -56,7 +56,7 @@ extension MemberAPI: EndPoint {
         switch self {
         case .checkNickname:
             return URLEncoding.default
-        case .signUp:
+        case .updateProfile:
             return JSONEncoding.default
         }
     }
@@ -65,7 +65,7 @@ extension MemberAPI: EndPoint {
         switch self {
         case .checkNickname:
             return nil
-        case .signUp(let request):
+        case .updateProfile(let request):
             return [
                 "nickname": request.nickname,
                 "accountScope": request.accountScope.rawValue
@@ -75,7 +75,7 @@ extension MemberAPI: EndPoint {
     
     var requiresAuth: Bool {
         switch self {
-        case .checkNickname, .signUp:
+        default:
             return true
         }
     }
@@ -86,8 +86,8 @@ extension MemberAPI: EndPoint {
         imageData: Data?
     )? {
         switch self {
-        case .signUp(let request):
-            (textTitle: "firstLoginRequest",
+        case .updateProfile(let request):
+            (textTitle: "profileRequest",
              imageTitle: "profileImage",
              imageData: request.imageData)
         default: nil

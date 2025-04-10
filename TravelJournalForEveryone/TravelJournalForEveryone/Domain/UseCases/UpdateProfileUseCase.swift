@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-protocol SignUpUseCase {
+protocol UpdateProfileUseCase {
     @MainActor func execute(
         nickname: String,
         accountScope: AccountScope,
@@ -16,7 +16,7 @@ protocol SignUpUseCase {
     ) -> AnyPublisher<Bool, Error>
 }
 
-struct DefaultLoginCompleteUseCase: SignUpUseCase {
+struct DefaultUpdateProfileUseCase: UpdateProfileUseCase {
     private let userRepository: UserRepository
     
     init(userRepository: UserRepository) {
@@ -29,7 +29,7 @@ struct DefaultLoginCompleteUseCase: SignUpUseCase {
         accountScope: AccountScope,
         image: Data?
     ) -> AnyPublisher<Bool, Error> {
-        return userRepository.completeSignUp(
+        return userRepository.updateProfile(
             nickname: nickname,
             accountScope: accountScope,
             image: image

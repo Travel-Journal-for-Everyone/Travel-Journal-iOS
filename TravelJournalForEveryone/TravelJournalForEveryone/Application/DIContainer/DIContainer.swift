@@ -35,7 +35,7 @@ final class DIContainer {
     )
     lazy var logoutUseCase = DefaultLogoutUseCase(authRepository: authRepository)
     lazy var nickNameCheckUseCase = DefaultNicknameCheckUseCase(userRepository: userRepository)
-    lazy var signUpUseCase = DefaultLoginCompleteUseCase(userRepository: userRepository)
+    lazy var updateProfileUseCase = DefaultUpdateProfileUseCase(userRepository: userRepository)
     lazy var unlinkUseCase = DefaultUnlinkUseCase(authRepository: authRepository)
     lazy var authStateCheckUseCase = DefaultAuthStateCheckUseCase(userRepository: userRepository)
     lazy var fetchUserUseCase = DefaultFetchUserUseCase(userRepository: userRepository)

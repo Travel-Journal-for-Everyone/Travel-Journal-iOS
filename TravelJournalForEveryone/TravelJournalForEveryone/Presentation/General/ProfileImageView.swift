@@ -7,9 +7,22 @@
 
 import SwiftUI
 
+/// Image 가 있으면 Image를 먼저 보여주기 때문에
+/// ImageString을 사용하고 싶은 경우엔 Image를 nil로 설정해 주어야 합니다.
 struct ProfileImageView: View {
-    let viewType: ViewType
-    var image: Image?
+    private let viewType: ViewType
+    private let image: Image?
+    private let imageString: String?
+    
+    init(
+        viewType: ViewType,
+        image: Image? = nil,
+        imageString: String? = nil
+    ) {
+        self.viewType = viewType
+        self.image = image
+        self.imageString = imageString
+    }
     
     var body: some View {
         profileImageView
@@ -21,6 +34,16 @@ struct ProfileImageView: View {
             if let image {
                 image
                     .resizable()
+                    .scaledToFill()
+            } else if let imageString,
+               let url = URL(string: imageString) {
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    ProgressView()
+                }
             } else {
                 Image(.defaultProfile)
                     .resizable()
