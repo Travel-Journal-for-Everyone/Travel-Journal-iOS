@@ -273,7 +273,7 @@ extension ProfileCreationViewModel {
             let user = userInfoManager.user
             
             let isNicknameChanged = state.tempNickname != user.nickname
-            let isNicknameValidServer = nicknameServerCheckResult == .valid
+            let isNicknameValidServer = nicknameServerCheckResult == .valid || nicknameServerCheckResult == .initial
             
             let isAccountScopeChanged = state.accountScope != user.accountScope
             
