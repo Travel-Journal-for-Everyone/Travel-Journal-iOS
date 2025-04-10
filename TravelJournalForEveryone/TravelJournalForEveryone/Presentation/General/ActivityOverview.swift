@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+enum ActivityOverviewType {
+    case follower
+    case following
+    case journal
+    case place
+}
+
 struct ActivityOverview: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
     

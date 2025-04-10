@@ -9,7 +9,7 @@ import SwiftUI
 
 extension View {
     func customNavigationBar<C>(
-        centerView: @escaping () -> C
+        @ViewBuilder centerView: @escaping () -> C
     ) -> some View where C: View {
         modifier(
             CustomNavigationBarModifier(
@@ -21,8 +21,8 @@ extension View {
     }
     
     func customNavigationBar<C, L>(
-        centerView: @escaping () -> C,
-        leadingView: @escaping () -> L
+        @ViewBuilder centerView: @escaping () -> C,
+        @ViewBuilder leadingView: @escaping () -> L
     ) -> some View where C: View, L: View {
         modifier(
             CustomNavigationBarModifier(
@@ -34,9 +34,9 @@ extension View {
     }
     
     func customNavigationBar<C, L, T>(
-        centerView: @escaping () -> C,
-        leadingView: @escaping () -> L,
-        trailingView: @escaping () -> T
+        @ViewBuilder centerView: @escaping () -> C,
+        @ViewBuilder leadingView: @escaping () -> L,
+        @ViewBuilder trailingView: @escaping () -> T
     ) -> some View where C: View, L: View, T: View {
         modifier(
             CustomNavigationBarModifier(
