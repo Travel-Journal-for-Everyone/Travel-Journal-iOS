@@ -9,7 +9,7 @@ import Foundation
 
 enum NicknameRegexCheckResult {
     case valid
-    case empty
+    case initial
     case tooShort
     case containsWhitespace
     case invalidCharacters

@@ -10,50 +10,14 @@ import Combine
 import PhotosUI
 
 // MARK: - State
-struct ProfileCreationModelState {
-    var profileImageString: String = ""
-    var nickname: String = ""
-    var tempNickname: String = ""
-    var nicknameValidationMessage: String = ""
-    var messageColor: Color = .tjRed
-    var accountScope: AccountScope = .publicProfile
-    
-    var isDisableNicknameCheckButton: Bool = true
-    var isDisableCompletionButton: Bool = true
-    var isCheckingNickname: Bool = false
-    
-    var selectedItem: PhotosPickerItem?
-    var selectedImage: Image?
-    var selectedImageData: Data?
-    
-    var isPresentedSignupCompletionView: Bool = false
-    var isNavigateToRootView: Bool = false
-    
-    var isFocusedNicknameTextField: Bool = false
-    
-    var isLoading: Bool = false
-    var isEditing: Bool = false
-}
-
-// MARK: - Intent
-enum ProfileCreationIntent {
-    case viewOnAppear
-    case enterNickname(String)
-    case tappedNicknameCheckButton
-    case tappedAccountScope(AccountScope)
-    case tappedCompletionButton
-    case selectedPhoto(PhotosPickerItem?)
-    case changeDefaultImage
-    case isPresentedProfileCreationView(Bool)
-}
 
 // MARK: - ViewModel(State + Intent)
 @MainActor
 final class ProfileCreationViewModel: ObservableObject {
-    @Published private(set) var state = ProfileCreationModelState()
+    @Published private(set) var state = State()
     
     @Published private var tempNickname: String = ""
-    @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
+    @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .initial
     @Published private var nicknameServerCheckResult: NicknameServerCheckResult = .initial
     
     private let userInfoManager: UserInfoManager = DIContainer.shared.userInfoManager
@@ -77,7 +41,7 @@ final class ProfileCreationViewModel: ObservableObject {
         $tempNickname
             .removeDuplicates()
             .map { [weak self] tempNickname in
-                guard let self else { return .empty }
+                guard let self else { return .initial }
                 
                 self.state.tempNickname = tempNickname
                 self.state.isDisableCompletionButton = true
@@ -98,7 +62,7 @@ final class ProfileCreationViewModel: ObservableObject {
         
     }
     
-    func send(_ intent: ProfileCreationIntent) {
+    func send(_ intent: Intent) {
         switch intent {
         case .viewOnAppear:
             handleViewOnAppear()
@@ -127,7 +91,48 @@ final class ProfileCreationViewModel: ObservableObject {
             state.isPresentedSignupCompletionView = result
         }
     }
-    
+}
+
+extension ProfileCreationViewModel {
+    struct State {
+        var profileImageString: String = ""
+        var nickname: String = ""
+        var tempNickname: String = ""
+        var nicknameValidationMessage: String = ""
+        var messageColor: Color = .tjRed
+        var accountScope: AccountScope = .publicProfile
+        
+        var isDisableNicknameCheckButton: Bool = true
+        var isDisableCompletionButton: Bool = true
+        var isCheckingNickname: Bool = false
+        
+        var selectedItem: PhotosPickerItem?
+        var selectedImage: Image?
+        var selectedImageData: Data?
+        
+        var isPresentedSignupCompletionView: Bool = false
+        var isNavigateToRootView: Bool = false
+        
+        var isFocusedNicknameTextField: Bool = false
+        
+        var isLoading: Bool = false
+        var isEditing: Bool = false
+    }
+
+    enum Intent {
+        case viewOnAppear
+        case enterNickname(String)
+        case tappedNicknameCheckButton
+        case tappedAccountScope(AccountScope)
+        case tappedCompletionButton
+        case selectedPhoto(PhotosPickerItem?)
+        case changeDefaultImage
+        case isPresentedProfileCreationView(Bool)
+    }
+
+}
+
+extension ProfileCreationViewModel {
     private func handleViewOnAppear() {
         if state.isEditing {
             let user = userInfoManager.user
@@ -206,7 +211,7 @@ final class ProfileCreationViewModel: ObservableObject {
         }
         
         switch result {
-        case .valid, .empty:
+        case .valid, .initial:
             state.nicknameValidationMessage = ""
         case .tooShort:
             state.nicknameValidationMessage = "2자 이상 입력해주세요."
