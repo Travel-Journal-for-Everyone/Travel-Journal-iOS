@@ -21,7 +21,10 @@ struct UserSummaryView: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            ProfileImageView(viewType: .listCell, image: nil)
+            ProfileImageView(
+                viewType: .listCell,
+                imageString: userSummary.profileImageURLString
+            )
             
             VStack(alignment: .leading, spacing: 5) {
                 Text(userSummary.nickname)
