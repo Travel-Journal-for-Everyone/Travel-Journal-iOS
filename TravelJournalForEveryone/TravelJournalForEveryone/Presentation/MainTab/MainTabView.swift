@@ -38,7 +38,7 @@ struct MainTabView: View {
                 
                 
                 NavigationStack(path: $coordinator.profilePath) {
-                    ProfileView(user: .mock())
+                    ProfileView(viewModel: .init())
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
                         }

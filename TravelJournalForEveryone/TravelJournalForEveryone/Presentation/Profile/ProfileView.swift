@@ -9,12 +9,8 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
-    private let user: User
+    @StateObject var viewModel: ProfileTabViewModel
     
-    init(user: User) {
-        self.user = user
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             profileInfoView
@@ -34,6 +30,9 @@ struct ProfileView: View {
         } trailingView: {
             Image(.tjSetting)
         }
+        .onAppear {
+            viewModel.send(.viewOnAppear)
+        }
     }
 }
 
@@ -42,19 +41,19 @@ extension ProfileView {
         HStack(spacing: 15) {
             ProfileImageView(
                 viewType: .profileInfo,
-                image: Image("\(user.profileImageURLString)")
+                imageString: viewModel.state.user.profileImageURLString
             )
             
             VStack(alignment: .leading, spacing: 7) {
                 HStack(spacing: 6) {
-                    Text("\(user.nickname)")
+                    Text("\(viewModel.state.user.nickname)")
                         .font(.pretendardSemiBold(16))
-                    Image(user.accountScope.imageResourceString)
+                    Image(viewModel.state.user.accountScope.imageResourceString)
                         .frame(width: 16, height: 16)
                 }
                 
                 ActivityOverview(
-                    user: user,
+                    user: viewModel.state.user,
                     isCurrentUser: true
                 ) {
                     print("일지 리스트")
@@ -80,5 +79,5 @@ extension ProfileView {
 }
 
 #Preview {
-    ProfileView(user: .mock())
+    ProfileView(viewModel: .init())
 }
