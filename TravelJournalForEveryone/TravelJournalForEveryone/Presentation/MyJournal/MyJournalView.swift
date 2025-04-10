@@ -61,7 +61,7 @@ struct MyJournalView: View {
                         
                         journalCreateButton
                             .padding(.trailing, 31)
-                            .padding(.bottom, 40.adjustedH)
+                            .padding(.bottom, 90.adjustedH)
                     }
                 }
             }
