@@ -34,6 +34,7 @@ struct MenuHorizontalView<RightView: View>: View {
                 .foregroundStyle(.tjGray6)
         }
         .frame(height: 50)
+        .contentShape(Rectangle())
         .onTapGesture {
             action()
         }

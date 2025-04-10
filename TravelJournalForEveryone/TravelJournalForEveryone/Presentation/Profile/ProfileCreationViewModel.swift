@@ -27,11 +27,12 @@ struct ProfileCreationModelState {
     var selectedImageData: Data?
     
     var isPresentedSignupCompletionView: Bool = false
+    var isNavigateToRootView: Bool = false
+    
     var isFocusedNicknameTextField: Bool = false
     
     var isLoading: Bool = false
-    
-    var isNavigateToRootView: Bool = false
+    var isEditing: Bool = false
 }
 
 // MARK: - Intent
@@ -53,17 +54,14 @@ final class ProfileCreationViewModel: ObservableObject {
     
     @Published private var tempNickname: String = ""
     @Published private var nicknameRegexCheckResult: NicknameRegexCheckResult = .empty
-    @Published private var nicknameServerCheckResult: NicknameServerCheckResult = .valid
-    @Published private var tempImage: Image?
+    @Published private var nicknameServerCheckResult: NicknameServerCheckResult = .initial
     
     private let userInfoManager: UserInfoManager = DIContainer.shared.userInfoManager
     
     private let nicknameCheckUseCase: NicknameCheckUseCase
     private let updateProfileUseCase: UpdateProfileUseCase
     private var cancellables: Set<AnyCancellable> = []
-    
-    private(set) var isEditing: Bool
-    
+
     init(
         nicknameCheckUseCase: NicknameCheckUseCase,
         updateProfileUseCase: UpdateProfileUseCase,
@@ -71,7 +69,7 @@ final class ProfileCreationViewModel: ObservableObject {
     ) {
         self.nicknameCheckUseCase = nicknameCheckUseCase
         self.updateProfileUseCase = updateProfileUseCase
-        self.isEditing = isEditing
+        self.state.isEditing = isEditing
         bind()
     }
     
@@ -83,7 +81,9 @@ final class ProfileCreationViewModel: ObservableObject {
                 
                 self.state.tempNickname = tempNickname
                 self.state.isDisableCompletionButton = true
-                self.state.isDisableNicknameCheckButton = false
+                if !state.isEditing {
+                    self.state.isDisableNicknameCheckButton = false
+                }
                 
                 return self.nicknameCheckUseCase.validateNicknameByRegex(tempNickname)
             }
@@ -95,6 +95,7 @@ final class ProfileCreationViewModel: ObservableObject {
                 self.updateStateForNicknameValidationForRegex(result)
             }
             .store(in: &cancellables)
+        
     }
     
     func send(_ intent: ProfileCreationIntent) {
@@ -128,11 +129,12 @@ final class ProfileCreationViewModel: ObservableObject {
     }
     
     private func handleViewOnAppear() {
-        if isEditing {
+        if state.isEditing {
             let user = userInfoManager.user
             
             state.profileImageString = user.profileImageURLString
             state.tempNickname = user.nickname
+            state.nickname = user.nickname
             state.accountScope = user.accountScope
         }
     }
@@ -184,7 +186,7 @@ final class ProfileCreationViewModel: ObservableObject {
             self?.state.isLoading = false
         } receiveValue: { [weak self] result in
             if result {
-                if let isEditing = self?.isEditing,
+                if let isEditing = self?.state.isEditing,
                    isEditing {
                     self?.state.isNavigateToRootView = true
                 } else {
@@ -217,7 +219,7 @@ final class ProfileCreationViewModel: ObservableObject {
     
     private func updateStateForNicknameValidationForServer(_ result: NicknameServerCheckResult) {
         if result == .valid {
-            if !isEditing {
+            if !state.isEditing {
                 state.isDisableCompletionButton = false
             }
             state.messageColor = .tjGreen
@@ -234,7 +236,7 @@ final class ProfileCreationViewModel: ObservableObject {
             state.nicknameValidationMessage = "이 닉네임은 사용할 수 없습니다."
         case .duplicate:
             state.nicknameValidationMessage = "이미 사용중인 닉네임 입니다."
-        case .unknownStringCode:
+        case .unknownStringCode, .initial:
             break
         }
     }
@@ -262,7 +264,7 @@ final class ProfileCreationViewModel: ObservableObject {
     }
     
     private func updateCompletionButtonState() {
-        if isEditing {
+        if state.isEditing {
             let user = userInfoManager.user
             
             let isNicknameChanged = state.tempNickname != user.nickname
@@ -276,6 +278,7 @@ final class ProfileCreationViewModel: ObservableObject {
             
             let isComplete = (isNicknameChanged || isImageChanged || isAccountScopeChanged) && isNicknameValidServer
             state.isDisableCompletionButton = !isComplete
+            state.isDisableNicknameCheckButton = isNicknameChanged
         }
     }
 }

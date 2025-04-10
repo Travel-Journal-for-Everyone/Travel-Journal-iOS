@@ -8,6 +8,7 @@
 import Foundation
 
 enum NicknameServerCheckResult {
+    case initial
     case valid
     case containsBadWord
     case duplicate
