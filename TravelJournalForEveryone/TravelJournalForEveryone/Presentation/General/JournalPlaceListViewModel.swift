@@ -8,33 +8,15 @@
 import Foundation
 import Combine
 
-// MARK: - State
-struct JournalPlaceListState {
-    var viewType: JournalListType = .all(.journal)
-    var navigationTitle: String = ""
-    var selectedSegmentIndex: Int = 0
-    var journalSummaries: [JournalSummary] = []
-    var journalSummariesCount: Int = 0
-    var placeSummaries: [PlaceSummary] = []
-    var placeSummariesCount: Int = 0
-}
-
-
-// MARK: - Intent
-enum JournalPlaceListIntent {
-    case journalListViewOnAppear
-    case placeGridViewOnAppear
-    case selectSegment(Int)
-}
-
-
-// MARK: - ViewModel(State + Intent)
 final class JournalPlaceListViewModel: ObservableObject {
-    @Published private(set) var state = JournalPlaceListState()
+    @Published private(set) var state = State()
     
     private let user: User
     
-    init(user: User, viewType: JournalListType) {
+    init(
+        user: User,
+        viewType: JournalListType
+    ) {
         self.user = user
         self.state.viewType = viewType
         
@@ -43,7 +25,7 @@ final class JournalPlaceListViewModel: ObservableObject {
         updateSummaryCount()
     }
     
-    func send(_ intent: JournalPlaceListIntent) {
+    func send(_ intent: Intent) {
         switch intent {
         case .journalListViewOnAppear:
             handleJournalListViewOnAppear()
@@ -53,7 +35,27 @@ final class JournalPlaceListViewModel: ObservableObject {
             handleSelectSegment(index)
         }
     }
+}
+
+extension JournalPlaceListViewModel {
+    struct State {
+        var viewType: JournalListType = .all(.journal)
+        var navigationTitle: String = ""
+        var selectedSegmentIndex: Int = 0
+        var journalSummaries: [JournalSummary] = []
+        var journalSummariesCount: Int = 0
+        var placeSummaries: [PlaceSummary] = []
+        var placeSummariesCount: Int = 0
+    }
     
+    enum Intent {
+        case journalListViewOnAppear
+        case placeGridViewOnAppear
+        case selectSegment(Int)
+    }
+}
+
+extension JournalPlaceListViewModel {
     private func handleJournalListViewOnAppear() {
         // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
         self.state.journalSummaries = [

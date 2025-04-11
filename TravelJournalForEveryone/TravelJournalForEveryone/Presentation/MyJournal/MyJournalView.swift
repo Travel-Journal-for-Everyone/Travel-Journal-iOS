@@ -61,7 +61,7 @@ struct MyJournalView: View {
                         
                         journalCreateButton
                             .padding(.trailing, 31)
-                            .padding(.bottom, 40.adjustedH)
+                            .padding(.bottom, 90.adjustedH)
                     }
                 }
             }
@@ -160,7 +160,10 @@ struct MyJournalView: View {
                 .frame(height: 30)
                 
                 HStack(spacing: 0) {
-                    ProfileImageView(viewType: .home, image: nil)
+                    ProfileImageView(
+                        viewType: .home,
+                        imageString: viewModel.state.user.profileImageURLString
+                    )
                         .padding(.trailing, 16)
                         // MARK: - TEST
                         .onTapGesture {

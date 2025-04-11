@@ -20,11 +20,13 @@ struct MainTabView: View {
                     .navigationDestination(for: Screen.self) { screen in
                         coordinator.build(screen)
                     }
+                    .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.myJournal)
                 
                 NavigationStack(path: $coordinator.searchPath) {
                     SearchView()
+                        .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.search)
                 
@@ -33,6 +35,7 @@ struct MainTabView: View {
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
                         }
+                        .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.explore)
                 
@@ -42,6 +45,7 @@ struct MainTabView: View {
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
                         }
+                        .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.profile)
             }

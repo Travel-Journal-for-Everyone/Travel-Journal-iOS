@@ -8,32 +8,8 @@
 import Foundation
 import Combine
 
-// MARK: - State
-struct MyJournalState {
-    var user: User = .mock()
-    var isInitialView: Bool = true
-    var isCurrentUser: Bool = true
-    var isFollowing: Bool = false
-    var isTouchDisabled: Bool = false
-    
-    var selectedActivityOverviewType: ActivityOverviewType = .journal
-    var selectedRegion: Region = .metropolitan
-}
-
-// MARK: - Intent
-enum MyJournalIntent {
-    case viewOnAppear
-    case sheetDismissed
-    case tappedFollowButton
-    case tappedBlockButton
-    case tappedReportButton
-    case tappedActivityOverviewButton(ActivityOverviewType)
-    case tappedRegionButton(Region)
-}
-
-// MARK: - ViewModel(State + Intent)
 final class MyJournalViewModel: ObservableObject {
-    @Published private(set) var state = MyJournalState()
+    @Published private(set) var state = State()
     
     private let memberID: Int?
     private let fetchUserUseCase: FetchUserUseCase
@@ -66,7 +42,7 @@ final class MyJournalViewModel: ObservableObject {
     }
     
     @MainActor
-    func send(_ intent: MyJournalIntent) {
+    func send(_ intent: Intent) {
         switch intent {
         case .viewOnAppear:
             handleViewOnAppear()
@@ -84,7 +60,32 @@ final class MyJournalViewModel: ObservableObject {
             self.state.selectedRegion = region
         }
     }
+}
+
+extension MyJournalViewModel {
+    struct State {
+        var user: User = .mock()
+        var isInitialView: Bool = true
+        var isCurrentUser: Bool = true
+        var isFollowing: Bool = false
+        var isTouchDisabled: Bool = false
+        
+        var selectedActivityOverviewType: ActivityOverviewType = .journal
+        var selectedRegion: Region = .metropolitan
+    }
     
+    enum Intent {
+        case viewOnAppear
+        case sheetDismissed
+        case tappedFollowButton
+        case tappedBlockButton
+        case tappedReportButton
+        case tappedActivityOverviewButton(ActivityOverviewType)
+        case tappedRegionButton(Region)
+    }
+}
+
+extension MyJournalViewModel {
     @MainActor
     private func handleViewOnAppear() {
         if self.state.isCurrentUser {

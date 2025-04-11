@@ -10,7 +10,12 @@ import Foundation
 enum Screen: Hashable {
     // MyJournal Tab
     case myJournal(memberID: Int?)
-    case followList
+    case followList(
+        nickname: String,
+        followerCount: Int,
+        followingCount: Int,
+        viewType: ActivityOverviewType
+    )
     
     // Search Tab
     // Explore Tab

@@ -92,8 +92,13 @@ final class DefaultCoordinator: CoordinatorProtocol {
                 memberID: memberID,
                 fetchUserUseCase: DIContainer.shared.fetchUserUseCase
             ))
-        case .followList:
-            FollowListView()
+        case .followList(let nickname, let folloewrCount, let followingCount, let viewType):
+            FollowListView(viewModel: .init(
+                userNickname: nickname,
+                folloewrCount: folloewrCount,
+                followingCount: followingCount,
+                viewType: viewType
+            ))
         case .profileFix:
             ProfileCreationView(
                 viewModel: ProfileCreationViewModel(

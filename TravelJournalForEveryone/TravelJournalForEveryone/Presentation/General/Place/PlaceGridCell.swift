@@ -10,6 +10,10 @@ import SwiftUI
 struct PlaceGridCell: View {
     private let place: PlaceSummary
     
+    init(_ placeSummary: PlaceSummary) {
+        self.place = placeSummary
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // TODO: - Image 어떻게 할지 정하기
@@ -33,10 +37,6 @@ struct PlaceGridCell: View {
                 .font(.pretendardRegular(12))
                 .foregroundStyle(.tjGray2)
         }
-    }
-    
-    init(_ placeSummary: PlaceSummary) {
-        self.place = placeSummary
     }
 }
 
