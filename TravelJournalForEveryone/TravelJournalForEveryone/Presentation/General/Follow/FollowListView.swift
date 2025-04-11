@@ -64,7 +64,6 @@ struct FollowListView: View {
         }
     }
     
-    @ViewBuilder
     private var followerListView: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 15) {
