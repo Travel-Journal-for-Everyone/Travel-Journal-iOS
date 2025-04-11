@@ -10,6 +10,10 @@ import SwiftUI
 struct JournalListCell: View {
     private let journal: JournalSummary
     
+    init(_ journalSummary: JournalSummary) {
+        self.journal = journalSummary
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HashtagView(journal.hashtag)
@@ -34,10 +38,6 @@ struct JournalListCell: View {
             RoundedRectangle(cornerRadius: 8)
                 .fill(.tjGray7)
         }
-    }
-    
-    init(_ journalSummary: JournalSummary) {
-        self.journal = journalSummary
     }
 }
 

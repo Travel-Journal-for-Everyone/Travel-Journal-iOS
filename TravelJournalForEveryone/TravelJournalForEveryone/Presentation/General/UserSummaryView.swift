@@ -19,6 +19,14 @@ struct UserSummaryView: View {
     private let userSummary: UserSummary
     private let viewType: UserSummaryViewType
     
+    init(
+        userSummary: UserSummary,
+        viewType: UserSummaryViewType
+    ) {
+        self.userSummary = userSummary
+        self.viewType = viewType
+    }
+    
     var body: some View {
         HStack(spacing: 10) {
             ProfileImageView(
@@ -53,14 +61,6 @@ struct UserSummaryView: View {
             
             trailingView
         }
-    }
-    
-    init(
-        userSummary: UserSummary,
-        viewType: UserSummaryViewType
-    ) {
-        self.userSummary = userSummary
-        self.viewType = viewType
     }
     
     @ViewBuilder
