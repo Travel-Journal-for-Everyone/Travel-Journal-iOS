@@ -59,31 +59,31 @@ extension JournalPlaceListViewModel {
     private func handleJournalListViewOnAppear() {
         // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
         self.state.journalSummaries = [
-            .mock(title: "바다만 주구장창 보았던 부산 여행 🌊"),
-            .mock(title: "가을 느낌 한가득! 울산 간월제 등산️ ⛰️"),
-            .mock(title: "맛집 한가득 입이 행복했던 대구 😋"),
-            .mock(title: "주구장창 보았던 부산 여행 🌊"),
-            .mock(title: "느낌 한가득! 울산 간월제 등산️ ⛰️"),
-            .mock(title: "한가득 입이 행복했던 대구 😋"),
-            .mock(title: "바다만 주구장창 보았던 부산 🌊"),
-            .mock(title: "가을 느낌 한가득! 울산 간월제 ⛰️"),
-            .mock(title: "맛집 한가득 입이 행복했던 😋"),
+            .mock(id: 0, title: "바다만 주구장창 보았던 부산 여행 🌊"),
+            .mock(id: 1, title: "가을 느낌 한가득! 울산 간월제 등산️ ⛰️"),
+            .mock(id: 2, title: "맛집 한가득 입이 행복했던 대구 😋"),
+            .mock(id: 3, title: "주구장창 보았던 부산 여행 🌊"),
+            .mock(id: 4, title: "느낌 한가득! 울산 간월제 등산️ ⛰️"),
+            .mock(id: 5, title: "한가득 입이 행복했던 대구 😋"),
+            .mock(id: 6, title: "바다만 주구장창 보았던 부산 🌊"),
+            .mock(id: 7, title: "가을 느낌 한가득! 울산 간월제 ⛰️"),
+            .mock(id: 8, title: "맛집 한가득 입이 행복했던 😋"),
         ]
     }
     
     private func handlePlaceGridViewOnAppear() {
         // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
         self.state.placeSummaries = [
-            .mock(placeName: "이기대 해안산책로"),
-            .mock(placeName: "해운대 해변열차"),
-            .mock(placeName: "웨이브온 커피"),
-            .mock(placeName: "해운대 더베이"),
-            .mock(placeName: "은계 호수공원"),
-            .mock(placeName: "이기대 해안산"),
-            .mock(placeName: "해운대 해변"),
-            .mock(placeName: "웨이브온"),
-            .mock(placeName: "해운대 더베"),
-            .mock(placeName: "은계 호수"),
+            .mock(id: 0, placeName: "이기대 해안산책로"),
+            .mock(id: 1, placeName: "해운대 해변열차"),
+            .mock(id: 2, placeName: "웨이브온 커피"),
+            .mock(id: 3, placeName: "해운대 더베이"),
+            .mock(id: 4, placeName: "은계 호수공원"),
+            .mock(id: 5, placeName: "이기대 해안산"),
+            .mock(id: 6, placeName: "해운대 해변"),
+            .mock(id: 7, placeName: "웨이브온"),
+            .mock(id: 8, placeName: "해운대 더베"),
+            .mock(id: 9, placeName: "은계 호수"),
         ]
     }
     

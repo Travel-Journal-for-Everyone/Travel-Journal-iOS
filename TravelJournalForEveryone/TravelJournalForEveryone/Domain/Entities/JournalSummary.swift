@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct JournalSummary: Hashable {
+struct JournalSummary: Identifiable {
+    let id: Int
     let hashtag: [String]
     let title: String
     let nights: Int
@@ -17,8 +18,9 @@ struct JournalSummary: Hashable {
 }
 
 extension JournalSummary {
-    static func mock(title: String) -> Self {
+    static func mock(id: Int, title: String) -> Self {
         return .init(
+            id: id,
             hashtag: ["부산", "해변", "해안욕장"],
             title: title,
             nights: 2,

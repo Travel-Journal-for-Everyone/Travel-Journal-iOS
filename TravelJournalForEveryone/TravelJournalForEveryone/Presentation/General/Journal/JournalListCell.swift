@@ -42,5 +42,10 @@ struct JournalListCell: View {
 }
 
 #Preview {
-    JournalListCell(.mock(title: "바다만 주구창창 보았던 부산 여행 🌊"))
+    JournalListCell(
+        .mock(
+            id: 0,
+            title: "바다만 주구창창 보았던 부산 여행 🌊"
+        )
+    )
 }

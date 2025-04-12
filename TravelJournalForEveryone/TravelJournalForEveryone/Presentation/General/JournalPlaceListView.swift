@@ -88,7 +88,7 @@ struct JournalPlaceListView: View {
                     Color.clear
                         .frame(height: 5)
                     
-                    ForEach(viewModel.state.journalSummaries, id: \.self) { journalSummary in
+                    ForEach(viewModel.state.journalSummaries, id: \.id) { journalSummary in
                         JournalListCell(journalSummary)
                     }
                 }
@@ -113,7 +113,7 @@ struct JournalPlaceListView: View {
                     .frame(height: 10)
                 
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(viewModel.state.placeSummaries, id: \.self) { placeSummary in
+                    ForEach(viewModel.state.placeSummaries, id: \.id) { placeSummary in
                         PlaceGridCell(placeSummary)
                     }
                 }
