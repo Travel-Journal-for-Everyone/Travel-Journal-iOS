@@ -23,6 +23,7 @@ final class DIContainer {
         networkService: networkService
     )
     lazy var userRepository = DefaultUserRepository(networkService: networkService)
+    lazy var journalRepository = DefaultJournalRepository(networkService: networkService)
     
     // mock
     lazy var mockUserRepository = MockUserRepository()
@@ -39,6 +40,7 @@ final class DIContainer {
     lazy var unlinkUseCase = DefaultUnlinkUseCase(authRepository: authRepository)
     lazy var authStateCheckUseCase = DefaultAuthStateCheckUseCase(userRepository: userRepository)
     lazy var fetchUserUseCase = DefaultFetchUserUseCase(userRepository: userRepository)
+    lazy var fetchJournalsUseCase = DefaultFetchJournalsUseCase(journalRepository: journalRepository)
     
     
     // MARK: - Manager

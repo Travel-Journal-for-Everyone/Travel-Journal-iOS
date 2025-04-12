@@ -11,12 +11,17 @@ import Combine
 final class JournalPlaceListViewModel: ObservableObject {
     @Published private(set) var state = State()
     
+    private let fetchJournalsUseCase: FetchJournalsUseCase
     private let user: User
     
+    private var cancellables: Set<AnyCancellable> = []
+    
     init(
+        fetchJournalsUseCase: FetchJournalsUseCase,
         user: User,
         viewType: JournalListType
     ) {
+        self.fetchJournalsUseCase = fetchJournalsUseCase
         self.user = user
         self.state.viewType = viewType
         

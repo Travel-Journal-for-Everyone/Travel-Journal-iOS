@@ -126,6 +126,7 @@ struct JournalPlaceListView: View {
 #Preview {
     JournalPlaceListView(
         viewModel: .init(
+            fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
             user: .mock(),
             viewType: .region(.gyeongsang)
             //viewType: .like

@@ -77,6 +77,7 @@ struct MyJournalView: View {
         } content: {
             JournalPlaceListView(
                 viewModel: .init(
+                    fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
                     user: viewModel.state.user,
                     viewType: .region(viewModel.state.selectedRegion)
                 )
@@ -89,6 +90,7 @@ struct MyJournalView: View {
         } content: {
             JournalPlaceListView(
                 viewModel: .init(
+                    fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
                     user: viewModel.state.user,
                     viewType: .all(viewModel.state.selectedActivityOverviewType)
                 )
