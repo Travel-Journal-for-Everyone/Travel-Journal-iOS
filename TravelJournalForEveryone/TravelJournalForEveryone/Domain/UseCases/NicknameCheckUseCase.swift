@@ -22,7 +22,7 @@ final class DefaultNicknameCheckUseCase: NicknameCheckUseCase {
     
     func validateNicknameByRegex(_ nickname: String) -> NicknameRegexCheckResult {
         if nickname.isEmpty {
-            return .initial
+            return .empty
         }
         
         if nickname.contains(where: { $0.isWhitespace }) {
