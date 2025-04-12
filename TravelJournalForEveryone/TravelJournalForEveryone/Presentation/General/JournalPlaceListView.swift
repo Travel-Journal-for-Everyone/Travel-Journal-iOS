@@ -36,18 +36,21 @@ struct JournalPlaceListView: View {
                 )) {
                     journalListView()
                         .tag(0)
-                        .onAppear {
-                            viewModel.send(.journalListViewOnAppear)
+                        .task {
+                            if viewModel.state.isJournalsInitialLoading {
+                                viewModel.send(.journalListViewOnAppear)
+                            }
                         }
                     
                     placeGridView()
                         .tag(1)
-                        .onAppear {
+                        .task {
                             viewModel.send(.placeGridViewOnAppear)
                         }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .contentMargins(.horizontal, 16)
+                .contentMargins(0, for: .scrollIndicators)
                 .ignoresSafeArea(.all, edges: .bottom)
             case .like:
                 journalListView()
@@ -79,21 +82,31 @@ struct JournalPlaceListView: View {
     
     @ViewBuilder
     private func journalListView() -> some View {
-        if viewModel.state.journalSummaries.isEmpty {
-            // TODO: - EmptyView 구현
-            Text("작성된 여행 일지가 없습니다.")
+        if viewModel.state.isJournalsInitialLoading {
+            ProgressView()
         } else {
-            ScrollView(.vertical) {
-                LazyVStack(spacing: 15) {
-                    Color.clear
-                        .frame(height: 5)
-                    
-                    ForEach(viewModel.state.journalSummaries, id: \.self) { journalSummary in
-                        JournalListCell(journalSummary)
+            if viewModel.state.journalSummaries.isEmpty {
+                // TODO: - EmptyView 구현
+                Text("작성된 여행 일지가 없습니다.")
+            } else {
+                ScrollView(.vertical) {
+                    LazyVStack(spacing: 15) {
+                        Color.clear
+                            .frame(height: 5)
+                        
+                        ForEach(viewModel.state.journalSummaries, id: \.id) { journalSummary in
+                            JournalListCell(journalSummary)
+                        }
+                        
+                        if !viewModel.state.isLastJournalsPage {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.journalListNextPageOnAppear)
+                                }
+                        }
                     }
                 }
             }
-            .scrollIndicators(.never)
         }
     }
     
@@ -113,12 +126,11 @@ struct JournalPlaceListView: View {
                     .frame(height: 10)
                 
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(viewModel.state.placeSummaries, id: \.self) { placeSummary in
+                    ForEach(viewModel.state.placeSummaries, id: \.id) { placeSummary in
                         PlaceGridCell(placeSummary)
                     }
                 }
             }
-            .scrollIndicators(.never)
         }
     }
 }
@@ -126,6 +138,7 @@ struct JournalPlaceListView: View {
 #Preview {
     JournalPlaceListView(
         viewModel: .init(
+            fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
             user: .mock(),
             viewType: .region(.gyeongsang)
             //viewType: .like

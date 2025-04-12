@@ -75,34 +75,34 @@ extension FollowListViewModel {
     private func handleFollowerListViewOnAppear() {
         // TEST
         self.state.followingRequestUsers = [
-            .mock(nickname: "지호구"),
-            .mock(nickname: "심시미"),
-            .mock(nickname: "김짱표"),
+            .mock(id: 0, nickname: "지호구"),
+            .mock(id: 1, nickname: "심시미"),
+            .mock(id: 2, nickname: "김짱표"),
         ]
         
         self.state.followers = [
-            .mock(nickname: "김마루"),
-            .mock(nickname: "마루김마루"),
-            .mock(nickname: "쭈리"),
-            .mock(nickname: "줄링"),
-            .mock(nickname: "줄링줄링이"),
-            .mock(nickname: "김몽글"),
-            .mock(nickname: "김땡글"),
-            .mock(nickname: "김호두"),
+            .mock(id: 3, nickname: "김마루"),
+            .mock(id: 4, nickname: "마루김마루"),
+            .mock(id: 5, nickname: "쭈리"),
+            .mock(id: 6, nickname: "줄링"),
+            .mock(id: 7, nickname: "줄링줄링이"),
+            .mock(id: 8, nickname: "김몽글"),
+            .mock(id: 9, nickname: "김땡글"),
+            .mock(id: 10, nickname: "김호두"),
         ]
     }
     
     private func handleFollowingListViewOnAppear() {
         // TEST
         self.state.followings = [
-            .mock(nickname: "김마루"),
-            .mock(nickname: "마루김마루"),
-            .mock(nickname: "쭈리"),
-            .mock(nickname: "줄링"),
-            .mock(nickname: "줄링줄링이"),
-            .mock(nickname: "김몽글"),
-            .mock(nickname: "김땡글"),
-            .mock(nickname: "김호두"),
+            .mock(id: 3, nickname: "김마루"),
+            .mock(id: 4, nickname: "마루김마루"),
+            .mock(id: 5, nickname: "쭈리"),
+            .mock(id: 6, nickname: "줄링"),
+            .mock(id: 7, nickname: "줄링줄링이"),
+            .mock(id: 8, nickname: "김몽글"),
+            .mock(id: 9, nickname: "김땡글"),
+            .mock(id: 10, nickname: "김호두"),
         ]
     }
 }

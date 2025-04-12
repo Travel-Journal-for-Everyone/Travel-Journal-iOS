@@ -133,15 +133,15 @@ struct UserSummaryView: View {
 
 #Preview {
     VStack(spacing: 30) {
-        UserSummaryView(userSummary: .mock(nickname: "마루김마루"), viewType: .follow(onUnfollow: {}))
+        UserSummaryView(userSummary: .mock(id: 0, nickname: "마루김마루"), viewType: .follow(onUnfollow: {}))
         
-        UserSummaryView(userSummary: .mock(nickname: "마루김마루"), viewType: .followingRequest(onAccept: {}, onReject: {}))
+        UserSummaryView(userSummary: .mock(id: 0, nickname: "마루김마루"), viewType: .followingRequest(onAccept: {}, onReject: {}))
         
-        UserSummaryView(userSummary: .mock(nickname: "마루김마루"), viewType: .journalOrPlace(isFollowing: false, action: {}))
+        UserSummaryView(userSummary: .mock(id: 0, nickname: "마루김마루"), viewType: .journalOrPlace(isFollowing: false, action: {}))
         
-        UserSummaryView(userSummary: .mock(nickname: "마루김마루"), viewType: .searching)
+        UserSummaryView(userSummary: .mock(id: 0, nickname: "마루김마루"), viewType: .searching)
         
-        UserSummaryView(userSummary: .mock(nickname: "마루김마루"), viewType: .blocking(onUnblock: {}))
+        UserSummaryView(userSummary: .mock(id: 0, nickname: "마루김마루"), viewType: .blocking(onUnblock: {}))
     }
     .padding(.horizontal, 16)
 }

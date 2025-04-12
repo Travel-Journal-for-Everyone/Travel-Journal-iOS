@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct UserSummary: Hashable {
+struct UserSummary: Identifiable {
+    let id: Int
     let profileImageURLString: String
     let nickname: String
     let travelJournalCount: Int
@@ -15,8 +16,9 @@ struct UserSummary: Hashable {
 }
 
 extension UserSummary {
-    static func mock(nickname: String) -> Self {
+    static func mock(id: Int, nickname: String) -> Self {
         .init(
+            id: id,
             profileImageURLString: "https://fastly.picsum.photos/id/584/200/300.jpg?hmac=sBfls3kxMp0j0qH3R-K2qM8Wyak1FlpOIgtcd7cEg68",
             nickname: nickname,
             travelJournalCount: 23,

@@ -81,7 +81,7 @@ struct FollowListView: View {
                         Spacer()
                     }
                     
-                    ForEach(viewModel.state.followingRequestUsers, id: \.self) { userSummary in
+                    ForEach(viewModel.state.followingRequestUsers, id: \.id) { userSummary in
                         UserSummaryView(
                             userSummary: userSummary,
                             viewType: .followingRequest(onAccept: {
@@ -98,7 +98,7 @@ struct FollowListView: View {
                         .padding(.vertical, 5)
                 }
                 
-                ForEach(viewModel.state.followers, id: \.self) { userSummary in
+                ForEach(viewModel.state.followers, id: \.id) { userSummary in
                     UserSummaryView(
                         userSummary: userSummary,
                         viewType: .follow(onUnfollow: {
@@ -122,7 +122,7 @@ struct FollowListView: View {
                     Color.clear
                         .frame(height: 5)
                     
-                    ForEach(viewModel.state.followings, id: \.self) { userSummary in
+                    ForEach(viewModel.state.followings, id: \.id) { userSummary in
                         UserSummaryView(
                             userSummary: userSummary,
                             viewType: .follow(onUnfollow: {
