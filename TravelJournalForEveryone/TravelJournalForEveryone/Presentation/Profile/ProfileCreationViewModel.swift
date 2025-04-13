@@ -43,7 +43,6 @@ final class ProfileCreationViewModel: ObservableObject {
             .map { [weak self] tempNickname in
                 guard let self else { return .initial }
                 
-                print("\(state.tempNickname), \(tempNickname)")
                 if state.tempNickname != tempNickname {
                     self.state.isDisableNicknameCheckButton = false
                     self.state.isDisableCompletionButton = true
@@ -283,8 +282,6 @@ extension ProfileCreationViewModel {
             let isAccountScopeChanged = state.accountScope != user.accountScope
             
             let isImageChanged = state.profileImageString == ""
-            
-            print("\(isNicknameChanged), \(isAccountScopeChanged), \(isImageChanged), \(isNicknameValidRegex)")
             
             let isComplete = (isNicknameChanged || isImageChanged || isAccountScopeChanged) && isNicknameValidServer && isNicknameValidRegex
             state.isDisableCompletionButton = !isComplete
