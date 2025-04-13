@@ -40,11 +40,13 @@ final class ProfileCreationViewModel: ObservableObject {
             .map { [weak self] tempNickname in
                 guard let self else { return .initial }
                 
-                self.state.tempNickname = tempNickname
-                self.state.isDisableCompletionButton = true
-                if !state.isEditing {
+                if state.tempNickname != tempNickname {
                     self.state.isDisableNicknameCheckButton = false
+                    self.state.isDisableCompletionButton = true
+                    nicknameServerCheckResult = .changed
                 }
+                
+                self.state.tempNickname = tempNickname
                 
                 return self.nicknameCheckUseCase.validateNicknameByRegex(tempNickname)
             }
@@ -138,6 +140,7 @@ extension ProfileCreationViewModel {
             state.tempNickname = user.nickname
             state.nickname = user.nickname
             state.accountScope = user.accountScope
+            nicknameRegexCheckResult = .valid
         }
     }
     
@@ -208,7 +211,7 @@ extension ProfileCreationViewModel {
         }
         
         switch result {
-        case .valid, .initial:
+        case .valid, .initial, .empty:
             state.nicknameValidationMessage = ""
         case .tooShort:
             state.nicknameValidationMessage = "2자 이상 입력해주세요."
@@ -238,7 +241,7 @@ extension ProfileCreationViewModel {
             state.nicknameValidationMessage = "이 닉네임은 사용할 수 없습니다."
         case .duplicate:
             state.nicknameValidationMessage = "이미 사용중인 닉네임 입니다."
-        case .unknownStringCode, .initial:
+        default:
             break
         }
     }
@@ -271,16 +274,14 @@ extension ProfileCreationViewModel {
             
             let isNicknameChanged = state.tempNickname != user.nickname
             let isNicknameValidServer = nicknameServerCheckResult == .valid || nicknameServerCheckResult == .initial
+            let isNicknameValidRegex = nicknameRegexCheckResult == .valid || nicknameRegexCheckResult == .initial
             
             let isAccountScopeChanged = state.accountScope != user.accountScope
             
             let isImageChanged = state.profileImageString == ""
             
-            print("\(isNicknameChanged), \(isAccountScopeChanged), \(isImageChanged)")
-            
-            let isComplete = (isNicknameChanged || isImageChanged || isAccountScopeChanged) && isNicknameValidServer
+            let isComplete = (isNicknameChanged || isImageChanged || isAccountScopeChanged) && isNicknameValidServer && isNicknameValidRegex
             state.isDisableCompletionButton = !isComplete
-            state.isDisableNicknameCheckButton = isNicknameChanged
         }
     }
 }

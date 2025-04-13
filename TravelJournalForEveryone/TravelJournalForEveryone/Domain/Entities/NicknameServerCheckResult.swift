@@ -13,6 +13,7 @@ enum NicknameServerCheckResult {
     case containsBadWord
     case duplicate
     case unknownStringCode
+    case changed
     
     static func from(response: String) -> Self {
         switch response {
