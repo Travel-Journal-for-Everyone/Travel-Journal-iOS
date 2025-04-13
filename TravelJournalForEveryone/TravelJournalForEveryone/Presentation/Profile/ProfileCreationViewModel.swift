@@ -47,6 +47,7 @@ final class ProfileCreationViewModel: ObservableObject {
                 if state.tempNickname != tempNickname {
                     self.state.isDisableNicknameCheckButton = false
                     self.state.isDisableCompletionButton = true
+                    nicknameServerCheckResult = .changed
                 }
                 
                 self.state.tempNickname = tempNickname
@@ -244,7 +245,7 @@ extension ProfileCreationViewModel {
             state.nicknameValidationMessage = "이 닉네임은 사용할 수 없습니다."
         case .duplicate:
             state.nicknameValidationMessage = "이미 사용중인 닉네임 입니다."
-        case .unknownStringCode, .initial:
+        default:
             break
         }
     }
