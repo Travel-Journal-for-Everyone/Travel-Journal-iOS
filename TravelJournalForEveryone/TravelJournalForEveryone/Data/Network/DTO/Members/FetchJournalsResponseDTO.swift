@@ -9,14 +9,13 @@ import Foundation
 
 struct FetchJournalsResponseDTO: Decodable {
     let content: [JournalSummaryDTO]
-    let pageable: Pageable
+    let pageable: PageableInfo
     let totalPages: Int
     let totalElements: Int
     let last: Bool
     let size: Int
     let number: Int
-    // MARK: 임시로 [String] 타입 사용
-    let sort: [String]
+    let sort: SortInfo
     let numberOfElements: Int
     let first: Bool
     let empty: Bool
@@ -64,15 +63,4 @@ extension FetchJournalsResponseDTO.JournalSummaryDTO {
             endDateString: endDate
         )
     }
-}
-
-// TODO: - 나중에 다른 Pagination API를 확인하고 다른 파일로 분리할지 확인하기
-struct Pageable: Decodable {
-    let pageNumber: Int
-    let pageSize: Int
-    // MARK: 임시로 [String] 타입 사용
-    let sort: [String]
-    let offset: Int
-    let paged: Bool
-    let unpaged: Bool
 }
