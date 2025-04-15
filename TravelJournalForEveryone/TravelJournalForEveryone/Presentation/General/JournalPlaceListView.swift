@@ -45,7 +45,9 @@ struct JournalPlaceListView: View {
                     placeGridView()
                         .tag(1)
                         .task {
-                            viewModel.send(.placeGridViewOnAppear)
+                            if viewModel.state.isPlacesInitialLoading {
+                                viewModel.send(.placeGridViewOnAppear)
+                            }
                         }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
