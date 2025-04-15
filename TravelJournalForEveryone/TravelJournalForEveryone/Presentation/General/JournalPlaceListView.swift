@@ -117,17 +117,29 @@ struct JournalPlaceListView: View {
             count: 2
         )
         
-        if viewModel.state.placeSummaries.isEmpty {
-            // TODO: - EmptyView 구현
-            Text("등록된 플레이스가 없습니다.")
+        if viewModel.state.isPlacesInitialLoading {
+            ProgressView()
         } else {
-            ScrollView(.vertical) {
-                Color.clear
-                    .frame(height: 10)
-                
-                LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(viewModel.state.placeSummaries, id: \.id) { placeSummary in
-                        PlaceGridCell(placeSummary)
+            if viewModel.state.placeSummaries.isEmpty {
+                // TODO: - EmptyView 구현
+                Text("등록된 플레이스가 없습니다.")
+            } else {
+                ScrollView(.vertical) {
+                    Color.clear
+                        .frame(height: 10)
+                    
+                    LazyVGrid(columns: columns, spacing: 10) {
+                        ForEach(viewModel.state.placeSummaries, id: \.id) { placeSummary in
+                            PlaceGridCell(placeSummary)
+                        }
+                        
+                        if !viewModel.state.isLastPlacesPage {
+                            ProgressView()
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.placeGridNextPageOnAppear)
+                                }
+                        }
                     }
                 }
             }
@@ -139,6 +151,7 @@ struct JournalPlaceListView: View {
     JournalPlaceListView(
         viewModel: .init(
             fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
+            fetchPlacesUseCase: DIContainer.shared.fetchPlacesUseCase,
             user: .mock(),
             viewType: .region(.gyeongsang)
             //viewType: .like

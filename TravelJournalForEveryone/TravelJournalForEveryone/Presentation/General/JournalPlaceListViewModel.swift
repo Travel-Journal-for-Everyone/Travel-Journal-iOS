@@ -12,19 +12,23 @@ final class JournalPlaceListViewModel: ObservableObject {
     @Published private(set) var state = State()
     
     private let fetchJournalsUseCase: FetchJournalsUseCase
+    private let fetchPlacesUseCase: FetchPlacesUseCase
     
     private let user: User
     private var regionName: String = ""
     private var currentJournalsPageNumber: Int = 0
+    private var currentPlacesPageNumber: Int = 0
     
     private var cancellables: Set<AnyCancellable> = []
     
     init(
         fetchJournalsUseCase: FetchJournalsUseCase,
+        fetchPlacesUseCase: FetchPlacesUseCase,
         user: User,
         viewType: JournalListType
     ) {
         self.fetchJournalsUseCase = fetchJournalsUseCase
+        self.fetchPlacesUseCase = fetchPlacesUseCase
         self.user = user
         self.state.viewType = viewType
         
@@ -41,7 +45,9 @@ final class JournalPlaceListViewModel: ObservableObject {
         case .journalListNextPageOnAppear:
             fetchJournals()
         case .placeGridViewOnAppear:
-            handlePlaceGridViewOnAppear()
+            fetchPlaces()
+        case .placeGridNextPageOnAppear:
+            fetchPlaces()
         case .selectSegment(let index):
             handleSelectSegment(index)
         }
@@ -58,33 +64,36 @@ extension JournalPlaceListViewModel {
         var placeSummaries: [PlaceSummary] = []
         var placeSummariesCount: Int = 0
         var isJournalsInitialLoading: Bool = true
+        var isPlacesInitialLoading: Bool = true
         var isLastJournalsPage: Bool = false
+        var isLastPlacesPage: Bool = false
     }
     
     enum Intent {
         case journalListViewOnAppear
         case journalListNextPageOnAppear
         case placeGridViewOnAppear
+        case placeGridNextPageOnAppear
         case selectSegment(Int)
     }
 }
 
 extension JournalPlaceListViewModel {
-    private func handlePlaceGridViewOnAppear() {
-        // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
-        self.state.placeSummaries = [
-            .mock(id: 0, placeName: "이기대 해안산책로"),
-            .mock(id: 1, placeName: "해운대 해변열차"),
-            .mock(id: 2, placeName: "웨이브온 커피"),
-            .mock(id: 3, placeName: "해운대 더베이"),
-            .mock(id: 4, placeName: "은계 호수공원"),
-            .mock(id: 5, placeName: "이기대 해안산"),
-            .mock(id: 6, placeName: "해운대 해변"),
-            .mock(id: 7, placeName: "웨이브온"),
-            .mock(id: 8, placeName: "해운대 더베"),
-            .mock(id: 9, placeName: "은계 호수"),
-        ]
-    }
+//    private func handlePlaceGridViewOnAppear() {
+//        // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
+//        self.state.placeSummaries = [
+//            .mock(id: 0, placeName: "이기대 해안산책로"),
+//            .mock(id: 1, placeName: "해운대 해변열차"),
+//            .mock(id: 2, placeName: "웨이브온 커피"),
+//            .mock(id: 3, placeName: "해운대 더베이"),
+//            .mock(id: 4, placeName: "은계 호수공원"),
+//            .mock(id: 5, placeName: "이기대 해안산"),
+//            .mock(id: 6, placeName: "해운대 해변"),
+//            .mock(id: 7, placeName: "웨이브온"),
+//            .mock(id: 8, placeName: "해운대 더베"),
+//            .mock(id: 9, placeName: "은계 호수"),
+//        ]
+//    }
     
     private func handleSelectSegment(_ index: Int) {
         self.state.selectedSegmentIndex = index
@@ -123,6 +132,40 @@ extension JournalPlaceListViewModel {
                 )
                 self.state.isLastJournalsPage = journalsPage.isLast
                 self.currentJournalsPageNumber += 1
+            }
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func fetchPlaces() {
+        guard !self.state.isLastPlacesPage else { return }
+        
+        fetchPlacesUseCase.execute(
+            // TODO: - 임시로 memberID 넣었음
+            memberID: 2,
+            regionName: regionName,
+            pageNumber: currentPlacesPageNumber
+        )
+        .sink { [weak self] completion in
+            guard let self else { return }
+            
+            switch completion {
+            case .finished:
+                self.state.isPlacesInitialLoading = false
+            case .failure(let error):
+                print("⛔️ Fetch Places Error: \(error)")
+            }
+        } receiveValue: { [weak self] placesPage in
+            guard let self else { return }
+            
+            if placesPage.isEmpty {
+                self.state.placeSummaries = []
+            } else {
+                self.state.placeSummaries.append(
+                    contentsOf: placesPage.contents
+                )
+                self.state.isLastPlacesPage = placesPage.isLast
+                self.currentPlacesPageNumber += 1
             }
         }
         .store(in: &cancellables)

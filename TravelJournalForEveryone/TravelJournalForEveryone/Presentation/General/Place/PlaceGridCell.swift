@@ -17,7 +17,7 @@ struct PlaceGridCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // TODO: - Image 어떻게 할지 정하기
-            AsyncImage(url: URL(string: place.imageURLString)) { image in
+            AsyncImage(url: URL(string: place.thumbnailURLString)) { image in
                 image.resizable()
                 image.aspectRatio(contentMode: .fit)
             } placeholder: {
@@ -44,6 +44,7 @@ struct PlaceGridCell: View {
     JournalPlaceListView(
         viewModel: .init(
             fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
+            fetchPlacesUseCase: DIContainer.shared.fetchPlacesUseCase,
             user: .mock(),
             viewType: .all(.place)
         )

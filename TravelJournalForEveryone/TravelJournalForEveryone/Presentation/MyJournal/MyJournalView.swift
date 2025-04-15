@@ -78,6 +78,7 @@ struct MyJournalView: View {
             JournalPlaceListView(
                 viewModel: .init(
                     fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
+                    fetchPlacesUseCase: DIContainer.shared.fetchPlacesUseCase,
                     user: viewModel.state.user,
                     viewType: .region(viewModel.state.selectedRegion)
                 )
@@ -91,6 +92,7 @@ struct MyJournalView: View {
             JournalPlaceListView(
                 viewModel: .init(
                     fetchJournalsUseCase: DIContainer.shared.fetchJournalsUseCase,
+                    fetchPlacesUseCase: DIContainer.shared.fetchPlacesUseCase,
                     user: viewModel.state.user,
                     viewType: .all(viewModel.state.selectedActivityOverviewType)
                 )
@@ -166,11 +168,11 @@ struct MyJournalView: View {
                         viewType: .home,
                         imageString: viewModel.state.user.profileImageURLString
                     )
-                        .padding(.trailing, 16)
-                        // MARK: - TEST
-                        .onTapGesture {
-                            coordinator.push(.myJournal(memberID: 2))
-                        }
+                    .padding(.trailing, 16)
+                    // MARK: - TEST
+                    .onTapGesture {
+                        coordinator.push(.myJournal(memberID: 2))
+                    }
                     
                     ActivityOverview(
                         user: viewModel.state.user,
