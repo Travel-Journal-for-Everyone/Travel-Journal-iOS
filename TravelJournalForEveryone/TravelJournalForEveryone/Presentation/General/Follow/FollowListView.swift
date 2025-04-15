@@ -98,6 +98,7 @@ struct FollowListView: View {
                         .padding(.vertical, 5)
                 }
                 
+                // TODO: - Fetch API 적용할 때, EmptyView 구현하기
                 ForEach(viewModel.state.followers, id: \.id) { userSummary in
                     UserSummaryView(
                         userSummary: userSummary,
@@ -114,8 +115,9 @@ struct FollowListView: View {
     @ViewBuilder
     private var followingListView: some View {
         if viewModel.state.followings.isEmpty {
-            // TODO: - EmptyView 구현
-            Text("팔로잉하는 여행자가 없습니다.")
+            Text("팔로잉 중인 여행자가 없습니다.")
+                .font(.pretendardMedium(16))
+                .foregroundStyle(.tjGray2)
         } else {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 15) {

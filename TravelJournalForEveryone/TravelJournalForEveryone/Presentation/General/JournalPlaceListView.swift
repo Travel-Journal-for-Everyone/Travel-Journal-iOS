@@ -86,8 +86,9 @@ struct JournalPlaceListView: View {
             ProgressView()
         } else {
             if viewModel.state.journalSummaries.isEmpty {
-                // TODO: - EmptyView 구현
                 Text("작성된 여행 일지가 없습니다.")
+                    .font(.pretendardMedium(16))
+                    .foregroundStyle(.tjGray2)
             } else {
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 15) {
@@ -121,8 +122,9 @@ struct JournalPlaceListView: View {
             ProgressView()
         } else {
             if viewModel.state.placeSummaries.isEmpty {
-                // TODO: - EmptyView 구현
                 Text("등록된 플레이스가 없습니다.")
+                    .font(.pretendardMedium(16))
+                    .foregroundStyle(.tjGray2)
             } else {
                 ScrollView(.vertical) {
                     Color.clear
