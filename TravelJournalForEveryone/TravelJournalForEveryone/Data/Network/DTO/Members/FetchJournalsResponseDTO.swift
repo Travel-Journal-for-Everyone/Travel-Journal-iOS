@@ -40,13 +40,13 @@ extension FetchJournalsResponseDTO {
 }
 
 extension FetchJournalsResponseDTO {
-    func toEntity() -> JournalsPage {
+    func toEntity() -> Pageable<JournalSummary> {
         return .init(
             totalJournals: totalElements,
             isLast: last,
             pageNumber: number,
             isEmpty: empty,
-            journalSummaries: content.map { $0.toEntity() }
+            contents: content.map { $0.toEntity() }
         )
     }
 }

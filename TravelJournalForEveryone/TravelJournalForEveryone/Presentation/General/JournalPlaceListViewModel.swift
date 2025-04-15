@@ -119,7 +119,7 @@ extension JournalPlaceListViewModel {
                 self.state.journalSummaries = []
             } else {
                 self.state.journalSummaries.append(
-                    contentsOf: journalsPage.journalSummaries
+                    contentsOf: journalsPage.contents
                 )
                 self.state.isLastJournalsPage = journalsPage.isLast
                 self.currentJournalsPageNumber += 1

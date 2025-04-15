@@ -20,7 +20,7 @@ final class DefaultJournalRepository: JournalRepository {
         regionName: String,
         pageNumber: Int,
         pageSize: Int
-    ) -> AnyPublisher<JournalsPage, NetworkError> {
+    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError> {
         let request = FetchJournalsRequest(
             memberID: memberID,
             regionName: regionName,
@@ -29,7 +29,7 @@ final class DefaultJournalRepository: JournalRepository {
         )
         
         return networkService.request(
-            MembersAPI.fetchJournalList(request),
+            MembersAPI.fetchJournals(request),
             decodingType: FetchJournalsResponseDTO.self
         )
         .map { $0.toEntity() }

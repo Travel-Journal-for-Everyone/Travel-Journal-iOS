@@ -14,5 +14,5 @@ protocol JournalRepository {
         regionName: String,
         pageNumber: Int,
         pageSize: Int
-    ) -> AnyPublisher<JournalsPage, NetworkError>
+    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError>
 }

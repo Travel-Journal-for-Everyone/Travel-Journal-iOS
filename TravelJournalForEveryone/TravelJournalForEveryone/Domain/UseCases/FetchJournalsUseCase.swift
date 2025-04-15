@@ -13,7 +13,7 @@ protocol FetchJournalsUseCase {
         memberID: Int?,
         regionName: String,
         pageNumber: Int
-    ) -> AnyPublisher<JournalsPage, NetworkError>
+    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError>
 }
 
 struct DefaultFetchJournalsUseCase: FetchJournalsUseCase {
@@ -33,7 +33,7 @@ struct DefaultFetchJournalsUseCase: FetchJournalsUseCase {
         memberID: Int?,
         regionName: String,
         pageNumber: Int
-    ) -> AnyPublisher<JournalsPage, NetworkError> {
+    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError> {
         return journalRepository.fetchJournals(
             memberID: resolveMemberID(from: memberID),
             regionName: regionName,
