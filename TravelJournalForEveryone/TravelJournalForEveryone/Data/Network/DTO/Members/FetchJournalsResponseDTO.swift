@@ -9,13 +9,13 @@ import Foundation
 
 struct FetchJournalsResponseDTO: Decodable {
     let content: [JournalSummaryDTO]
-    let pageable: PageableInfo
+    let pageable: PageableDTO
     let totalPages: Int
     let totalElements: Int
     let last: Bool
     let size: Int
     let number: Int
-    let sort: SortInfo
+    let sort: SortDTO
     let numberOfElements: Int
     let first: Bool
     let empty: Bool
