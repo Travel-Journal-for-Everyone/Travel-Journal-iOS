@@ -30,11 +30,3 @@ extension JournalSummary {
         )
     }
 }
-
-struct JournalsPage {
-    let totalJournals: Int
-    let isLast: Bool
-    let pageNumber: Int
-    let isEmpty: Bool
-    let journalSummaries: [JournalSummary]
-}

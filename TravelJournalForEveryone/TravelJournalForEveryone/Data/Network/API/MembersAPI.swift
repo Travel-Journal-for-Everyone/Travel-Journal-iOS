@@ -10,7 +10,8 @@ import Alamofire
 
 enum MembersAPI {
     case fetchUser(memberID: Int)
-    case fetchJournalList(FetchJournalsRequest)
+    case fetchJournals(FetchJournalsRequest)
+    case fetchPlaces(FetchPlacesRequest)
 }
 
 extension MembersAPI: EndPoint {
@@ -22,8 +23,10 @@ extension MembersAPI: EndPoint {
         switch self {
         case .fetchUser(let memberID):
             return "/\(memberID)"
-        case .fetchJournalList(let request):
+        case .fetchJournals(let request):
             return "/\(request.memberID)/journals/region/\(request.regionName)"
+        case .fetchPlaces(let request):
+            return "/\(request.memberID)/places/region/\(request.regionName)"
         }
     }
     
@@ -31,7 +34,12 @@ extension MembersAPI: EndPoint {
         switch self {
         case .fetchUser:
             return nil
-        case .fetchJournalList(let request):
+        case .fetchJournals(let request):
+            return [
+                "page": "\(request.pageNumber)",
+                "size": "\(request.pageSize)"
+            ]
+        case .fetchPlaces(let request):
             return [
                 "page": "\(request.pageNumber)",
                 "size": "\(request.pageSize)"
@@ -41,35 +49,35 @@ extension MembersAPI: EndPoint {
     
     var method: HTTPMethod {
         switch self {
-        case .fetchUser, .fetchJournalList:
+        case .fetchUser, .fetchJournals, .fetchPlaces:
             return .get
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .fetchUser, .fetchJournalList:
+        case .fetchUser, .fetchJournals, .fetchPlaces:
             return nil
         }
     }
     
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .fetchUser, .fetchJournalList:
+        case .fetchUser, .fetchJournals, .fetchPlaces:
             return URLEncoding.default
         }
     }
     
     var bodyParameters: Parameters? {
         switch self {
-        case .fetchUser, .fetchJournalList:
+        case .fetchUser, .fetchJournals, .fetchPlaces:
             return nil
         }
     }
     
     var requiresAuth: Bool {
         switch self {
-        case .fetchUser, .fetchJournalList:
+        case .fetchUser, .fetchJournals, .fetchPlaces:
             return true
         }
     }

@@ -1,27 +1,27 @@
 //
-//  DefaultJournalRepository.swift
+//  DefaultPlaceRepository.swift
 //  TravelJournalForEveryone
 //
-//  Created by 김성민 on 4/12/25.
+//  Created by 김성민 on 4/15/25.
 //
 
 import Foundation
 import Combine
 
-final class DefaultJournalRepository: JournalRepository {
+final class DefaultPlaceRepository: PlaceRepository {
     private let networkService: NetworkService
     
     init(networkService: NetworkService) {
         self.networkService = networkService
     }
     
-    func fetchJournals(
+    func fetchPlaces(
         memberID: Int,
         regionName: String,
         pageNumber: Int,
         pageSize: Int
-    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError> {
-        let request = FetchJournalsRequest(
+    ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError> {
+        let request = FetchPlacesRequest(
             memberID: memberID,
             regionName: regionName,
             pageNumber: pageNumber,
@@ -29,8 +29,8 @@ final class DefaultJournalRepository: JournalRepository {
         )
         
         return networkService.request(
-            MembersAPI.fetchJournals(request),
-            decodingType: FetchJournalsResponseDTO.self
+            MembersAPI.fetchPlaces(request),
+            decodingType: FetchPlacesResponseDTO.self
         )
         .map { $0.toEntity() }
         .eraseToAnyPublisher()

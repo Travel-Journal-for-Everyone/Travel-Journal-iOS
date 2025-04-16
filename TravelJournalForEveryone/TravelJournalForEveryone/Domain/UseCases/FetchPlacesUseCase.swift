@@ -1,29 +1,29 @@
 //
-//  FetchJournalsUseCase.swift
+//  FetchPlacesUseCase.swift
 //  TravelJournalForEveryone
 //
-//  Created by 김성민 on 4/12/25.
+//  Created by 김성민 on 4/15/25.
 //
 
 import Foundation
 import Combine
 
-protocol FetchJournalsUseCase {
+protocol FetchPlacesUseCase {
     func execute(
         memberID: Int?,
         regionName: String,
         pageNumber: Int
-    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError>
+    ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError>
 }
 
-struct DefaultFetchJournalsUseCase: FetchJournalsUseCase {
-    private let journalRepository: JournalRepository
+struct DefaultFetchPlacesUseCase: FetchPlacesUseCase {
+    private let placeRepository: PlaceRepository
     
-    init(journalRepository: JournalRepository) {
-        self.journalRepository = journalRepository
+    init(placeRepository: PlaceRepository) {
+        self.placeRepository = placeRepository
     }
     
-    /// 로그인된 여행자 또는 다른 여행자의 Journal 목록을 가져옵니다.
+    /// 로그인된 여행자 또는 다른 여행자의 Place 목록을 가져옵니다.
     /// - Parameters:
     ///   - memberID: 특정 여행자의 정보를 가져오려면 값을 넣어주고,
     ///   nil을 입력하면 현재 로그인된 여행자 기준.
@@ -33,8 +33,8 @@ struct DefaultFetchJournalsUseCase: FetchJournalsUseCase {
         memberID: Int?,
         regionName: String,
         pageNumber: Int
-    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError> {
-        return journalRepository.fetchJournals(
+    ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError> {
+        return placeRepository.fetchPlaces(
             memberID: resolveMemberID(from: memberID),
             regionName: regionName,
             pageNumber: pageNumber,
