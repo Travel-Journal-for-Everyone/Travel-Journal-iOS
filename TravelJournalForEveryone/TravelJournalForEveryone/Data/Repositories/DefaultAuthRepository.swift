@@ -33,7 +33,7 @@ final class DefaultAuthRepository: AuthRepository {
         loginProvider: SocialType
     ) -> AnyPublisher<LoginInfo, NetworkError> {
         let request = LoginRequest(
-            idToken: idToken,
+            authCredential: idToken,
             loginProvider: loginProvider.rawValue
         )
         

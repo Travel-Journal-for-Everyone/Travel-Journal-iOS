@@ -8,7 +8,7 @@
 import Foundation
 
 struct LoginRequest {
-    let idToken: String
+    let authCredential: String
     let loginProvider: String
 }
 
