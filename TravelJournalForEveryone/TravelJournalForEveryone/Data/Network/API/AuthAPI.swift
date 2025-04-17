@@ -10,6 +10,7 @@ import Alamofire
 
 enum AuthAPI {
     case loginByIDToken(LoginRequest)
+    case loginByAuthCode(LoginRequest)
     case logout(deviceID: String)
     case unlink(socialProvider: String)
 }
@@ -20,6 +21,7 @@ extension AuthAPI: EndPoint {
     var path: String {
         switch self {
         case .loginByIDToken(let request): "/login/\(request.loginProvider)/id-token"
+        case .loginByAuthCode(let request): "/login/\(request.loginProvider)/callback"
         case .logout: "/logout"
         case .unlink(let provider): "/\(provider)/unlink"
         }
@@ -29,6 +31,8 @@ extension AuthAPI: EndPoint {
         switch self {
         case .loginByIDToken, .unlink:
             nil
+        case .loginByAuthCode(let request):
+            ["code": request.authCredential]
         case .logout(let deviceID):
             ["deviceId": deviceID]
         }
@@ -38,6 +42,8 @@ extension AuthAPI: EndPoint {
         switch self {
         case .loginByIDToken, .logout:
                 .post
+        case .loginByAuthCode:
+                .get
         case .unlink:
                 .delete
         }
@@ -47,6 +53,8 @@ extension AuthAPI: EndPoint {
         switch self {
         case .loginByIDToken(let request):
             HeaderType.bearer(request.authCredential).value
+        case .loginByAuthCode:
+            ["X-Platform": "ios"]
         case .logout, .unlink:
             HeaderType.basic.value
         }
@@ -54,7 +62,7 @@ extension AuthAPI: EndPoint {
     
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .loginByIDToken, .logout:
+        case .loginByIDToken, .loginByAuthCode, .logout:
             URLEncoding.default
         case .unlink:
             JSONEncoding.default
@@ -63,14 +71,14 @@ extension AuthAPI: EndPoint {
     
     var bodyParameters: Parameters? {
         switch self {
-        case .loginByIDToken, .logout, .unlink:
+        case .loginByIDToken, .loginByAuthCode, .logout, .unlink:
             nil
         }
     }
     
     var requiresAuth: Bool {
         switch self {
-        case .loginByIDToken:
+        case .loginByIDToken, .loginByAuthCode:
             false
         case .logout, .unlink:
             true
