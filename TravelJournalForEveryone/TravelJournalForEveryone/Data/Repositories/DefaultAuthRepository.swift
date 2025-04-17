@@ -38,7 +38,7 @@ final class DefaultAuthRepository: AuthRepository {
         )
         
         return networkService.request(
-            AuthAPI.login(request),
+            AuthAPI.loginByIDToken(request),
             decodingType: LoginResponseDTO.self
         )
         .map { responseDTO in
