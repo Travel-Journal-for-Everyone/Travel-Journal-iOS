@@ -19,9 +19,9 @@ protocol SocialLoginService {
 
 enum SocialLoginError: Error {
     case kakaoIDTokenNotFound
-    case googleIDTokenNotFound
-    case appleIDTokenNotFound
-    case appleIDTokenEncodingFailed
+    case googleAuthCodeNotFound
+    case appleAuthCodeNotFound
+    case appleAuthCodeEncodingFailed
 }
 
 final class DefaultSocialLoginService: NSObject, SocialLoginService {
@@ -102,12 +102,12 @@ final class DefaultSocialLoginService: NSObject, SocialLoginService {
                     return
                 }
                 
-                guard let idToken = result?.user.idToken else {
-                    promise(.failure(SocialLoginError.googleIDTokenNotFound))
+                guard let serverAuthCode = result?.serverAuthCode else {
+                    promise(.failure(SocialLoginError.googleAuthCodeNotFound))
                     return
                 }
                 
-                promise(.success(idToken.tokenString))
+                promise(.success(serverAuthCode))
             }
         }
         .eraseToAnyPublisher()
@@ -124,31 +124,27 @@ extension DefaultSocialLoginService: ASAuthorizationControllerDelegate, ASAuthor
         return window
     }
     
-    // apple id 연동 성공 시
+    // Apple 로그인 연동 성공 시
     func authorizationController(
         controller: ASAuthorizationController,
         didCompleteWithAuthorization authorization: ASAuthorization
     ) {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
         
-        guard let idTokenData = appleIDCredential.identityToken else {
-            subject.send(completion: .failure(SocialLoginError.appleIDTokenNotFound))
+        guard let authCodeData = appleIDCredential.authorizationCode else {
+            subject.send(completion: .failure(SocialLoginError.appleAuthCodeNotFound))
             return
         }
         
-        guard let idToken = String(data: idTokenData, encoding: .utf8) else {
-            subject.send(completion: .failure(SocialLoginError.appleIDTokenEncodingFailed))
+        guard let authCode = String(data: authCodeData, encoding: .utf8) else {
+            subject.send(completion: .failure(SocialLoginError.appleAuthCodeEncodingFailed))
             return
         }
         
-        #if DEBUG
-        print("✅ Apple ID Token: \(idToken)")
-        #endif
-        
-        subject.send(idToken)
+        subject.send(authCode)
     }
     
-    // apple id 연동 실패 시
+    // Apple 로그인 연동 실패 시
     func authorizationController(
         controller: ASAuthorizationController,
         didCompleteWithError error: Error
