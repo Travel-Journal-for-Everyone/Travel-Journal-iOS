@@ -26,10 +26,10 @@ struct DefaultLoginUseCase: LoginUseCase {
     
     @MainActor
     func execute(loginProvider: SocialType) -> AnyPublisher<Bool, Error> {
-        return fetchIDToken(loginProvider: loginProvider)
-            .flatMap { idToken in
+        return fetchAuthCredential(loginProvider: loginProvider)
+            .flatMap { authCredential in
                 requestLogin(
-                    idToken: idToken,
+                    authCredential: authCredential,
                     loginProvider: loginProvider
                 )
                 .mapError { $0 as Error }
@@ -54,16 +54,16 @@ struct DefaultLoginUseCase: LoginUseCase {
     }
     
     @MainActor
-    private func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error> {
-        return authRepository.fetchIDToken(loginProvider: loginProvider)
+    private func fetchAuthCredential(loginProvider: SocialType) -> AnyPublisher<String, Error> {
+        return authRepository.fetchAuthCredential(loginProvider: loginProvider)
     }
     
     private func requestLogin(
-        idToken: String,
+        authCredential: String,
         loginProvider: SocialType
     ) -> AnyPublisher<LoginInfo, NetworkError> {
         return authRepository.requestLogin(
-            idToken: idToken,
+            authCredential: authCredential,
             loginProvider: loginProvider
         )
     }

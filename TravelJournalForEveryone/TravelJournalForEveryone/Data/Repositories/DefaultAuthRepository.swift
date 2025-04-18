@@ -24,27 +24,39 @@ final class DefaultAuthRepository: AuthRepository {
     }
     
     @MainActor
-    func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error> {
+    func fetchAuthCredential(loginProvider: SocialType) -> AnyPublisher<String, Error> {
         socialLoginService.loginWith(loginProvider)
     }
     
     func requestLogin(
-        idToken: String,
+        authCredential: String,
         loginProvider: SocialType
     ) -> AnyPublisher<LoginInfo, NetworkError> {
         let request = LoginRequest(
-            idToken: idToken,
+            authCredential: authCredential,
             loginProvider: loginProvider.rawValue
         )
         
-        return networkService.request(
-            AuthAPI.login(request),
-            decodingType: LoginResponseDTO.self
-        )
-        .map { responseDTO in
-            responseDTO.toEntity()
+        switch loginProvider {
+        case .kakao:
+            return networkService.request(
+                AuthAPI.loginByIDToken(request),
+                decodingType: LoginResponseDTO.self
+            )
+            .map { responseDTO in
+                responseDTO.toEntity()
+            }
+            .eraseToAnyPublisher()
+        case .apple, .google:
+            return networkService.request(
+                AuthAPI.loginByAuthCode(request),
+                decodingType: LoginResponseDTO.self
+            )
+            .map { responseDTO in
+                responseDTO.toEntity()
+            }
+            .eraseToAnyPublisher()
         }
-        .eraseToAnyPublisher()
     }
     
     func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error> {

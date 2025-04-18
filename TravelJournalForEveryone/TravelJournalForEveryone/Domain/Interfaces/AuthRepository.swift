@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 protocol AuthRepository {
-    @MainActor func fetchIDToken(loginProvider: SocialType) -> AnyPublisher<String, Error>
+    @MainActor func fetchAuthCredential(loginProvider: SocialType) -> AnyPublisher<String, Error>
     func requestLogin(
-        idToken: String,
+        authCredential: String,
         loginProvider: SocialType
     ) -> AnyPublisher<LoginInfo, NetworkError>
     func socialLogout(logoutProvider: SocialType) -> AnyPublisher<Bool, Error>
