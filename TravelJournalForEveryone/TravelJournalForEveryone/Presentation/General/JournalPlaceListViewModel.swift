@@ -15,7 +15,7 @@ final class JournalPlaceListViewModel: ObservableObject {
     private let fetchPlacesUseCase: FetchPlacesUseCase
     
     private let user: User
-    private var regionName: String = ""
+    private var regionName: String? = ""
     private var currentJournalsPageNumber: Int = 0
     private var currentPlacesPageNumber: Int = 0
     
@@ -79,22 +79,6 @@ extension JournalPlaceListViewModel {
 }
 
 extension JournalPlaceListViewModel {
-//    private func handlePlaceGridViewOnAppear() {
-//        // TEST - onAppear 될 때마다 API 통신되는 지 추후 확인하기.
-//        self.state.placeSummaries = [
-//            .mock(id: 0, placeName: "이기대 해안산책로"),
-//            .mock(id: 1, placeName: "해운대 해변열차"),
-//            .mock(id: 2, placeName: "웨이브온 커피"),
-//            .mock(id: 3, placeName: "해운대 더베이"),
-//            .mock(id: 4, placeName: "은계 호수공원"),
-//            .mock(id: 5, placeName: "이기대 해안산"),
-//            .mock(id: 6, placeName: "해운대 해변"),
-//            .mock(id: 7, placeName: "웨이브온"),
-//            .mock(id: 8, placeName: "해운대 더베"),
-//            .mock(id: 9, placeName: "은계 호수"),
-//        ]
-//    }
-    
     private func handleSelectSegment(_ index: Int) {
         self.state.selectedSegmentIndex = index
         
@@ -218,10 +202,12 @@ extension JournalPlaceListViewModel {
     
     private func updateRegionName() {
         switch self.state.viewType {
-        case .all, .save, .like:
-            break
+        case .all:
+            self.regionName = nil
         case .region(let region):
             self.regionName = region.rawValue
+        case .save, .like:
+            break
         }
     }
 }

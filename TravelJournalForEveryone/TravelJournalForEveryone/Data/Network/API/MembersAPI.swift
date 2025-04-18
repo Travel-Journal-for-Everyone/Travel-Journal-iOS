@@ -24,9 +24,17 @@ extension MembersAPI: EndPoint {
         case .fetchUser(let memberID):
             return "/\(memberID)"
         case .fetchJournals(let request):
-            return "/\(request.memberID)/journals/region/\(request.regionName)"
+            if let regionName = request.regionName {
+                return "/\(request.memberID)/journals/region/\(regionName)"
+            } else {
+                return "/\(request.memberID)/journals"
+            }
         case .fetchPlaces(let request):
-            return "/\(request.memberID)/places/region/\(request.regionName)"
+            if let regionName = request.regionName {
+                return "/\(request.memberID)/places/region/\(regionName)"
+            } else {
+                return "/\(request.memberID)/places"
+            }
         }
     }
     

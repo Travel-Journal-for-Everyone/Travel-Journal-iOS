@@ -11,7 +11,7 @@ import Combine
 protocol JournalRepository {
     func fetchJournals(
         memberID: Int,
-        regionName: String,
+        regionName: String?,
         pageNumber: Int,
         pageSize: Int
     ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError>

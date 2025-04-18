@@ -9,7 +9,7 @@ import Foundation
 
 struct FetchPlacesRequest {
     let memberID: Int
-    let regionName: String
+    let regionName: String?
     let pageNumber: Int
     let pageSize: Int
 }
