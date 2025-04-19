@@ -37,12 +37,11 @@ final class SearchViewModel: ObservableObject {
             if !text.isEmpty {
                 state.searchState = .searching
             }
-            state.isLastSearchedTraveler = false
         case .deleteSearchText:
             state.searchText = ""
             state.searchState = .beforeSearch
-            resetSearching()
         case .onSubmit:
+            resetSearching()
             isSearched = true
             addRecentSearch(state.searchText)
             searchMembers(state.searchText)
@@ -51,6 +50,7 @@ final class SearchViewModel: ObservableObject {
         case .deleteAllRecentSearch:
             deleteAllRecentSearch()
         case .searchByRecentSearch(let text):
+            resetSearching()
             isSearched = true
             state.searchText = text
             switch state.selectedSegmentIndex {
@@ -175,6 +175,7 @@ extension SearchViewModel {
         state.isLastSearchedTraveler = false
         currentMembersPageNumber = 0
         state.searchedTraveler = []
+        
         isSearched = false
     }
 }
