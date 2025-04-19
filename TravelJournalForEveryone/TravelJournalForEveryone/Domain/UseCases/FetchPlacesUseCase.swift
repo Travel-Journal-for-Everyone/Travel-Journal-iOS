@@ -11,7 +11,7 @@ import Combine
 protocol FetchPlacesUseCase {
     func execute(
         memberID: Int?,
-        regionName: String,
+        regionName: String?,
         pageNumber: Int
     ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError>
 }
@@ -27,11 +27,12 @@ struct DefaultFetchPlacesUseCase: FetchPlacesUseCase {
     /// - Parameters:
     ///   - memberID: 특정 여행자의 정보를 가져오려면 값을 넣어주고,
     ///   nil을 입력하면 현재 로그인된 여행자 기준.
-    ///   - regionName: 지역 이름
+    ///   - regionName: 특정 지역의 정보를 가져오려면 값을 넣어주고,
+    ///   nil을 입력하면 전 지역의 정보를 가져옵니다.
     ///   - pageNumber: 페이지 번호
     func execute(
         memberID: Int?,
-        regionName: String,
+        regionName: String?,
         pageNumber: Int
     ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError> {
         return placeRepository.fetchPlaces(

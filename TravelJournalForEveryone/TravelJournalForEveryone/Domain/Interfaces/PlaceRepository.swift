@@ -11,7 +11,7 @@ import Combine
 protocol PlaceRepository {
     func fetchPlaces(
         memberID: Int,
-        regionName: String,
+        regionName: String?,
         pageNumber: Int,
         pageSize: Int
     ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError>

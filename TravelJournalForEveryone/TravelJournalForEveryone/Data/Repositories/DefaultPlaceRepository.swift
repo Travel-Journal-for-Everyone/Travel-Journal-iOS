@@ -17,7 +17,7 @@ final class DefaultPlaceRepository: PlaceRepository {
     
     func fetchPlaces(
         memberID: Int,
-        regionName: String,
+        regionName: String?,
         pageNumber: Int,
         pageSize: Int
     ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError> {
