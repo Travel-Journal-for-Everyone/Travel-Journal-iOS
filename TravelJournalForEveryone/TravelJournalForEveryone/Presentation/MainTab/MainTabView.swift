@@ -25,7 +25,7 @@ struct MainTabView: View {
                 .tag(TJTab.myJournal)
                 
                 NavigationStack(path: $coordinator.searchPath) {
-                    SearchView()
+                    SearchView(viewModel: .init())
                         .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.search)
