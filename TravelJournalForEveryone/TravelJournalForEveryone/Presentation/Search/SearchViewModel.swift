@@ -54,16 +54,7 @@ final class SearchViewModel: ObservableObject {
             resetSearching()
             isSearched = true
             state.searchText = text
-            switch state.selectedSegmentIndex {
-            case 0:
-                searchMembers(text)
-            case 1:
-                break
-            case 2:
-                break
-            default:
-                break
-            }
+            searchMembers(text)
         case .selectSegment(let index):
             state.selectedSegmentIndex = index
         case .travelerListViewOnAppear:
