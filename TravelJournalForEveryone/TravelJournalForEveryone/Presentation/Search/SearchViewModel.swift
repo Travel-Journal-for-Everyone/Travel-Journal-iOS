@@ -17,7 +17,16 @@ enum SearchState {
 final class SearchViewModel: ObservableObject {
     @Published private(set) var state = State()
     
+    private let searchMembersUseCase: SearchMembersUseCase
+    private var isSearched: Bool = false
+    
+    private var currentMembersPageNumber: Int = 0
+    
     private var cancellables: Set<AnyCancellable> = []
+    
+    init(searchMembersUseCase: SearchMembersUseCase) {
+        self.searchMembersUseCase = searchMembersUseCase
+    }
     
     func send(_ intent: Intent) {
         switch intent {
@@ -28,20 +37,40 @@ final class SearchViewModel: ObservableObject {
             if !text.isEmpty {
                 state.searchState = .searching
             }
+            state.isLastSearchedTraveler = false
         case .deleteSearchText:
             state.searchText = ""
+            state.searchState = .beforeSearch
+            resetSearching()
         case .onSubmit:
+            isSearched = true
             addRecentSearch(state.searchText)
-            state.searchState = .successSearch
-            // api 호출
+            searchMembers(state.searchText)
         case .deleteRecentSearch(let text):
             deleteRecentSearch(text)
         case .deleteAllRecentSearch:
             deleteAllRecentSearch()
+        case .searchByRecentSearch(let text):
+            isSearched = true
+            state.searchText = text
+            switch state.selectedSegmentIndex {
+            case 0:
+                searchMembers(text)
+            case 1:
+                break
+            case 2:
+                break
+            default:
+                break
+            }
         case .selectSegment(let index):
             state.selectedSegmentIndex = index
         case .travelerListViewOnAppear:
-            break
+            if !state.searchText.isEmpty, isSearched {
+                searchMembers(state.searchText)
+            }
+        case .travelerListNextOnAppear:
+            searchMembers(state.searchText)
         case .travelJournalListViewOnAppear:
             break
         case .placeListViewOnAppear:
@@ -56,6 +85,10 @@ extension SearchViewModel {
         var searchText: String = ""
         var recentSearchList: [String] = []
         var selectedSegmentIndex = 0
+        
+        var searchedTraveler: [UserSummary] = []
+        var isLastSearchedTraveler: Bool = false
+        var isLoading: Bool = false
     }
     
     enum Intent {
@@ -66,10 +99,12 @@ extension SearchViewModel {
         
         case deleteRecentSearch(String)
         case deleteAllRecentSearch
+        case searchByRecentSearch(String)
         
         case selectSegment(Int)
         
         case travelerListViewOnAppear
+        case travelerListNextOnAppear
         case travelJournalListViewOnAppear
         case placeListViewOnAppear
     }
@@ -104,5 +139,42 @@ extension SearchViewModel {
     private func deleteAllRecentSearch() {
         state.recentSearchList = []
         UserDefaults.standard.set(state.recentSearchList, forKey: UserDefaultsKey.recentSearches.value)
+    }
+    
+    // MARK: - Network
+    private func searchMembers(_ keyword: String) {
+        guard !state.isLastSearchedTraveler else { return }
+        
+        state.isLoading = true
+        searchMembersUseCase.execute(
+            keyword: keyword,
+            pageNumber: currentMembersPageNumber
+        )
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    self?.state.isLoading = false
+                    self?.state.searchState = .successSearch
+                case .failure(let error):
+                    self?.state.isLoading = false
+                    print("⛔️ Search Traveler Error: \(error)")
+                }
+            } receiveValue: { [weak self] membersPage in
+                guard let self else { return }
+                
+                self.state.searchedTraveler.append(
+                    contentsOf: membersPage.contents
+                )
+                self.state.isLastSearchedTraveler = membersPage.isLast
+                self.currentMembersPageNumber += 1
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func resetSearching() {
+        state.isLastSearchedTraveler = false
+        currentMembersPageNumber = 0
+        state.searchedTraveler = []
+        isSearched = false
     }
 }

@@ -18,7 +18,7 @@ struct SearchView: View {
             switch viewModel.state.searchState {
             case .beforeSearch:
                 if viewModel.state.recentSearchList.isEmpty {
-                    emptyView
+                    recentSearchEmptyView
                 } else {
                     recentSearchHeader
                     recentSearchContent
@@ -35,6 +35,11 @@ struct SearchView: View {
         .onAppear {
             viewModel.send(.viewOnAppear)
         }
+        .background(.white)
+        .onTapGesture {
+            hideKeyboard()
+        }
+        
     }
 }
 
@@ -105,7 +110,7 @@ extension SearchView {
         }
     }
     
-    private var emptyView: some View {
+    private var recentSearchEmptyView: some View {
         VStack(alignment: .leading) {
             Text("최근 검색어가 없습니다.")
                 .font(.pretendardRegular(16))
@@ -119,6 +124,9 @@ extension SearchView {
         HStack {
             Text(text)
                 .font(.pretendardRegular(16))
+                .onTapGesture {
+                    viewModel.send(.searchByRecentSearch(text))
+                }
             Spacer()
             Image(.tjClose)
                 .resizable()
@@ -129,6 +137,16 @@ extension SearchView {
         }
         .padding(.horizontal, 10)
         .frame(height: 50.adjustedH)
+    }
+    
+    private var emptyView: some View {
+        VStack {
+            Text("검색 결과가 없습니다.")
+                .font(.pretendardMedium(16))
+                .foregroundStyle(.tjGray2)
+                .padding(.top, 271)
+            Spacer()
+        }
     }
     
     private var searchResultView: some View {
@@ -175,9 +193,24 @@ extension SearchView {
     }
     
     private var travelerListView: some View {
-        ScrollView {
-            ForEach(0..<2) { user in
-                UserSummaryView(userSummary: .mock(id: 0, nickname: "김마루마루"), viewType: .searching)
+        Group {
+            if !viewModel.state.searchedTraveler.isEmpty {
+                ScrollView {
+                    LazyVStack(spacing: 15) {
+                        ForEach(viewModel.state.searchedTraveler, id: \.id) { user in
+                            UserSummaryView(userSummary: user, viewType: .searching)
+                        }
+                        
+                        if !viewModel.state.isLastSearchedTraveler {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.travelerListNextOnAppear)
+                                }
+                        }
+                    }
+                }
+            } else {
+                emptyView
             }
         }
     }
@@ -185,17 +218,9 @@ extension SearchView {
     private var travelJournalListView: some View {
         ScrollView {
             LazyVStack(spacing: 15) {
-                
                 ForEach(0..<2) { journalSummary in
                     JournalListCell(.mock(id: 0, title: "ㅇㅇㅇㅇ"))
                 }
-                
-//                if !viewModel.state.isLastJournalsPage {
-//                    ProgressView()
-//                        .task {
-//                            viewModel.send(.journalListNextPageOnAppear)
-//                        }
-//                }
             }
         }
     }
@@ -211,19 +236,11 @@ extension SearchView {
                 ForEach(0..<2) { list in
                     PlaceGridCell(.mock(id: 0, placeName: "어쩌구 추천"))
                 }
-                
-//                if !viewModel.state.isLastPlacesPage {
-//                    ProgressView()
-//                    ProgressView()
-//                        .task {
-//                            viewModel.send(.placeGridNextPageOnAppear)
-//                        }
-//                }
             }
         }
     }
 }
 
 #Preview {
-    SearchView(viewModel: SearchViewModel())
+    SearchView(viewModel: SearchViewModel(searchMembersUseCase: DIContainer.shared.searchMembersUseCase))
 }
