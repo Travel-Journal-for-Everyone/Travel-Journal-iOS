@@ -50,6 +50,7 @@ final class SearchViewModel: ObservableObject {
         case .deleteAllRecentSearch:
             deleteAllRecentSearch()
         case .searchByRecentSearch(let text):
+            addRecentSearch(text)
             resetSearching()
             isSearched = true
             state.searchText = text
