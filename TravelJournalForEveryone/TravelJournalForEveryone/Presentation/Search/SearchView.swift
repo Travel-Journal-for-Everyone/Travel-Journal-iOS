@@ -10,18 +10,14 @@ import SwiftUI
 // UD에 검색어 저장하기
 
 struct SearchView: View {
-    @EnvironmentObject private var viewModel: AuthenticationViewModel
-    
-    private let userInfoManager = DIContainer.shared.userInfoManager
-    @State private var searchText: String = ""
-    @State private var searchTextList: [String] = []
+    @StateObject var viewModel: SearchViewModel
     
     var body: some View {
         VStack(spacing: 20) {
-            searchBar(searchText)
+            searchBar(viewModel.state.searchText)
             recentSearchHeader
             
-            if searchTextList.isEmpty {
+            if viewModel.state.recentSearchList.isEmpty {
                 emptyView
             } else {
                 recentSearchContent
@@ -35,13 +31,13 @@ struct SearchView: View {
 
 extension SearchView {
     private func searchBar(_ text: String) -> some View {
-        let placeholder: String = "궁금한 여행지를 검색해보세요!"
-        
-        return HStack {
-            TextField("", text: $searchText)
+        HStack {
+            TextField("", text:  Binding( get: { viewModel.state.searchText },
+                                          set: {  viewModel.send(.enterSearchText($0)) }
+                                        ))
                 .font(.pretendardRegular(16))
                 .placeholder(when: text.isEmpty) {
-                    Text(placeholder)
+                    Text("궁금한 여행지를 검색해보세요!")
                         .font(.pretendardRegular(16))
                         .foregroundStyle(.tjGray3)
                 }
@@ -52,7 +48,7 @@ extension SearchView {
                 .resizable()
                 .frame(width: 24, height: 24)
                 .onTapGesture {
-                    searchText = ""
+                    viewModel.send(.deleteSearchText)
                 }
         }
         .padding(.horizontal, 20)
@@ -75,7 +71,7 @@ extension SearchView {
     
     private var recentSearchContent: some View {
         VStack(spacing: 0) {
-            ForEach(searchTextList, id: \.self) { text in
+            ForEach(viewModel.state.recentSearchList, id: \.self) { text in
                 recentSearchCell(text)
             }
         }
@@ -107,5 +103,5 @@ extension SearchView {
 }
 
 #Preview {
-    SearchView()
+    SearchView(viewModel: SearchViewModel())
 }
