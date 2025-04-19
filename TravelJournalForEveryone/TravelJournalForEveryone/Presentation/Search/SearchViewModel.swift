@@ -50,11 +50,11 @@ final class SearchViewModel: ObservableObject {
         case .deleteAllRecentSearch:
             deleteAllRecentSearch()
         case .searchByRecentSearch(let text):
-            addRecentSearch(text)
             resetSearching()
             isSearched = true
             state.searchText = text
             searchMembers(text)
+            addRecentSearch(text)
         case .selectSegment(let index):
             state.selectedSegmentIndex = index
         case .travelerListViewOnAppear:
