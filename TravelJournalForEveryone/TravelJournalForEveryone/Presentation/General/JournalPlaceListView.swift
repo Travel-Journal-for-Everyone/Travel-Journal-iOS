@@ -23,41 +23,51 @@ struct JournalPlaceListView: View {
                     ],
                     selectedIndex: Binding(
                         get: { viewModel.state.selectedSegmentIndex },
-                        set: { viewModel.send(.selectSegment($0)) }
+                        set: { newIndex in
+                            withAnimation {
+                                viewModel.send(.selectSegment(newIndex))
+                            }
+                        }
                     ),
                     namespace: namespace
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 15)
                 
-                TabView(selection: Binding(
-                    get: { viewModel.state.selectedSegmentIndex },
-                    set: { viewModel.send(.selectSegment($0)) }
-                )) {
-                    journalListView()
-                        .tag(0)
-                        .task {
-                            if viewModel.state.isJournalsInitialLoading {
-                                viewModel.send(.journalListViewOnAppear)
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 32) {
+                        journalListView()
+                            .containerRelativeFrame(.horizontal)
+                            .contentMargins(.horizontal, 16)
+                            .id(0)
+                            .onAppear {
+                                if viewModel.state.isJournalsInitialLoading {
+                                    viewModel.send(.journalListViewOnAppear)
+                                }
                             }
-                        }
-                    
-                    placeGridView()
-                        .tag(1)
-                        .task {
-                            if viewModel.state.isPlacesInitialLoading {
-                                viewModel.send(.placeGridViewOnAppear)
+                        
+                        placeGridView()
+                            .containerRelativeFrame(.horizontal)
+                            .contentMargins(.horizontal, 16)
+                            .id(1)
+                            .onAppear {
+                                if viewModel.state.isPlacesInitialLoading {
+                                    viewModel.send(.placeGridViewOnAppear)
+                                }
                             }
-                        }
+                    }
+                    .scrollTargetLayout()
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .contentMargins(.horizontal, 16)
-                .contentMargins(0, for: .scrollIndicators)
-                .ignoresSafeArea(.all, edges: .bottom)
+                .scrollIndicators(.hidden)
+                .scrollTargetBehavior(.viewAligned)
+                .scrollPosition(id: Binding(
+                    get: { viewModel.state.selectedSegmentIndex },
+                    set: { viewModel.send(.selectSegment($0 ?? 0)) }
+                ))
             case .like:
                 journalListView()
                     .padding(.horizontal, 16)
-                    .onAppear {
+                    .task {
                         viewModel.send(.journalListViewOnAppear)
                     }
             }
@@ -109,6 +119,8 @@ struct JournalPlaceListView: View {
                         }
                     }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(0, for: .scrollIndicators)
             }
         }
     }
@@ -146,6 +158,8 @@ struct JournalPlaceListView: View {
                         }
                     }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(0, for: .scrollIndicators)
             }
         }
     }
