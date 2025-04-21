@@ -14,6 +14,7 @@ protocol UserRepository {
     func updateProfile(
         nickname: String,
         accountScope: AccountScope,
+        memberDefaultImage: Bool,
         image: Data?
     ) -> AnyPublisher<Bool, NetworkError>
 }

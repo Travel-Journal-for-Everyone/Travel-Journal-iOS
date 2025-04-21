@@ -12,6 +12,7 @@ protocol UpdateProfileUseCase {
     @MainActor func execute(
         nickname: String,
         accountScope: AccountScope,
+        memberDefaultImage: Bool,
         image: Data?
     ) -> AnyPublisher<Bool, Error>
 }
@@ -27,11 +28,13 @@ struct DefaultUpdateProfileUseCase: UpdateProfileUseCase {
     func execute(
         nickname: String,
         accountScope: AccountScope,
+        memberDefaultImage: Bool,
         image: Data?
     ) -> AnyPublisher<Bool, Error> {
         return userRepository.updateProfile(
             nickname: nickname,
             accountScope: accountScope,
+            memberDefaultImage: memberDefaultImage,
             image: image
         )
         .mapError { $0 as Error }

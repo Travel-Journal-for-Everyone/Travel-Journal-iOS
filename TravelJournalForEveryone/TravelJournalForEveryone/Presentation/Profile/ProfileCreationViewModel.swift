@@ -178,6 +178,7 @@ extension ProfileCreationViewModel {
         updateProfileUseCase.execute(
             nickname: state.nickname,
             accountScope: state.accountScope,
+            memberDefaultImage: state.selectedImage == nil,
             image: state.selectedImageData
         )
         .sink { [weak self] completion in

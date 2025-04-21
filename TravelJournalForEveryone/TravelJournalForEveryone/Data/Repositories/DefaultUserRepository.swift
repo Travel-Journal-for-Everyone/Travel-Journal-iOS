@@ -25,11 +25,13 @@ final class DefaultUserRepository: UserRepository {
     func updateProfile(
         nickname: String,
         accountScope: AccountScope,
+        memberDefaultImage: Bool,
         image: Data?
     ) -> AnyPublisher<Bool, NetworkError> {
         let request = ProfileInfoRequestDTO(
             nickname: nickname,
             accountScope: accountScope,
+            memberDefaultImage: memberDefaultImage,
             imageData: image
         )
         
@@ -78,6 +80,7 @@ final class MockUserRepository: UserRepository {
     func updateProfile(
         nickname: String,
         accountScope: AccountScope,
+        memberDefaultImage: Bool,
         image: Data?
     ) -> AnyPublisher<Bool, NetworkError> {
         return Just(true)
