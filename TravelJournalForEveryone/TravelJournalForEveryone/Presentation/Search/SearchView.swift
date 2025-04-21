@@ -106,9 +106,6 @@ extension SearchView {
             VStack(spacing: 0) {
                 ForEach(viewModel.state.recentSearchList, id: \.self) { text in
                     recentSearchCell(text)
-                        .onTapGesture {
-                            hideKeyboard()
-                        }
                 }
             }
             .padding(.horizontal, 10)
@@ -132,6 +129,7 @@ extension SearchView {
                 .font(.pretendardRegular(16))
                 .onTapGesture {
                     viewModel.send(.searchByRecentSearch(text))
+                    hideKeyboard()
                 }
             Spacer()
             Image(.tjClose)
@@ -179,6 +177,7 @@ extension SearchView {
                 LazyHStack {
                     travelJournalListView
                         .containerRelativeFrame(.horizontal)
+                        .contentMargins(.horizontal, 16)
                         .id(0)
                         .onAppear {
                             viewModel.send(.travelJournalListViewOnAppear)
@@ -186,6 +185,7 @@ extension SearchView {
                     
                     placeListView
                         .containerRelativeFrame(.horizontal)
+                        .contentMargins(.horizontal, 16)
                         .id(1)
                         .onAppear {
                             viewModel.send(.placeListViewOnAppear)
@@ -193,6 +193,7 @@ extension SearchView {
                     
                     travelerListView
                         .containerRelativeFrame(.horizontal)
+                        .contentMargins(.horizontal, 16)
                         .id(2)
                         .task {
                             viewModel.send(.travelerListViewOnAppear)
@@ -206,7 +207,7 @@ extension SearchView {
                 get: { viewModel.state.selectedSegmentIndex },
                 set: { viewModel.send(.selectSegment($0 ?? 0)) }
             ))
-            .padding(.top, 20)
+            .padding(.horizontal, -16)
         }
     }
     
@@ -214,6 +215,8 @@ extension SearchView {
         Group {
             if !viewModel.state.searchedTraveler.isEmpty {
                 ScrollView {
+                    Color.clear.frame(height: 10)
+                    
                     LazyVStack(spacing: 15) {
                         ForEach(viewModel.state.searchedTraveler, id: \.id) { user in
                             UserSummaryView(userSummary: user, viewType: .searching)
@@ -235,6 +238,8 @@ extension SearchView {
     
     private var travelJournalListView: some View {
         ScrollView {
+            Color.clear.frame(height: 10)
+            
             LazyVStack(spacing: 15) {
                 ForEach(0..<2) { journalSummary in
                     JournalListCell(.mock(id: 0, title: "ㅇㅇㅇㅇ"))
@@ -250,6 +255,8 @@ extension SearchView {
         )
         
         return ScrollView {
+            Color.clear.frame(height: 10)
+            
             LazyVGrid(columns: columns, spacing: 10) {
                 ForEach(0..<2) { list in
                     PlaceGridCell(.mock(id: 0, placeName: "어쩌구 추천"))
