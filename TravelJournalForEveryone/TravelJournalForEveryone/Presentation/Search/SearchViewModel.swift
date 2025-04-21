@@ -36,15 +36,20 @@ final class SearchViewModel: ObservableObject {
             state.searchText = text
             if !text.isEmpty {
                 state.searchState = .searching
+            } else {
+                state.searchState = .beforeSearch
             }
         case .deleteSearchText:
             state.searchText = ""
             state.searchState = .beforeSearch
         case .onSubmit:
-            resetSearching()
-            isSearched = true
-            addRecentSearch(state.searchText)
-            searchMembers(state.searchText)
+            let trimmedText = state.searchText.replacingOccurrences(of: " ", with: "")
+            if !trimmedText.isEmpty {
+                resetSearching()
+                isSearched = true
+                addRecentSearch(trimmedText) 
+                searchMembers(trimmedText)
+            }
         case .deleteRecentSearch(let text):
             deleteRecentSearch(text)
         case .deleteAllRecentSearch:

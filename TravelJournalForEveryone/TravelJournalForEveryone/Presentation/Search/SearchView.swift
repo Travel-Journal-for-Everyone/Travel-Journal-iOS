@@ -60,6 +60,7 @@ extension SearchView {
                     .font(.pretendardRegular(16))
                     .foregroundStyle(.tjGray3)
             }
+            .submitLabel(.search)
             .onSubmit {
                 viewModel.send(.onSubmit)
             }
@@ -78,8 +79,10 @@ extension SearchView {
         .background(.tjGray6, in: RoundedRectangle(cornerRadius: 4))
         .padding(.top, 20)
         .task {
-            try? await Task.sleep(for: .seconds(0.5))
-            self.focused = true
+            if viewModel.state.searchText.isEmpty {
+                try? await Task.sleep(for: .seconds(0.5))
+                self.focused = true
+            }
         }
     }
     
@@ -103,6 +106,9 @@ extension SearchView {
             VStack(spacing: 0) {
                 ForEach(viewModel.state.recentSearchList, id: \.self) { text in
                     recentSearchCell(text)
+                        .onTapGesture {
+                            hideKeyboard()
+                        }
                 }
             }
             .padding(.horizontal, 10)
