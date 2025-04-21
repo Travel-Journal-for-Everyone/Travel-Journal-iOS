@@ -10,5 +10,6 @@ import Foundation
 struct ProfileInfoRequestDTO {
     var nickname: String
     var accountScope: AccountScope
+    var memberDefaultImage: Bool
     var imageData: Data?
 }

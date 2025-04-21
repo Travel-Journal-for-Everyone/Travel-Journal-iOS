@@ -68,7 +68,8 @@ extension MemberAPI: EndPoint {
         case .updateProfile(let request):
             return [
                 "nickname": request.nickname,
-                "accountScope": request.accountScope.rawValue
+                "accountScope": request.accountScope.rawValue,
+                "memberDefaultImage" : request.memberDefaultImage
             ]
         }
     }
