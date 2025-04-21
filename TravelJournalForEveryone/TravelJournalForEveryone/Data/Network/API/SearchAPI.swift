@@ -19,7 +19,7 @@ extension SearchAPI: EndPoint {
     
     var path: String {
         switch self {
-        case .searchMembers(let request):
+        case .searchMembers:
             return "/members"
         }
     }

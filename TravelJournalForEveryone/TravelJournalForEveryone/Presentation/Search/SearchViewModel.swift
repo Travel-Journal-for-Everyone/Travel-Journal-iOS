@@ -169,6 +169,7 @@ extension SearchViewModel {
     }
     
     private func resetSearching() {
+        state.selectedSegmentIndex = 0
         state.isLastSearchedTraveler = false
         currentMembersPageNumber = 0
         state.searchedTraveler = []

@@ -159,41 +159,53 @@ extension SearchView {
         VStack(spacing: 0) {
             CustomSegmentedControl(
                 options: [
-                    "여행자",
                     "여행 일지",
-                    "플레이스"
+                    "플레이스",
+                    "여행자"
                 ],
                 selectedIndex: Binding(
-                    get: { viewModel.state.selectedSegmentIndex },
-                    set: { viewModel.send(.selectSegment($0)) }
+                    get: {
+                        viewModel.state.selectedSegmentIndex },
+                    set: { newIndex in
+                        withAnimation { viewModel.send(.selectSegment(newIndex))
+                        }
+                    }
                 ),
                 namespace: namespace
             )
             .padding(.top, 20)
             
-            TabView(selection: Binding(
-                get: { viewModel.state.selectedSegmentIndex },
-                set: { viewModel.send(.selectSegment($0)) }
-            )) {
-                travelerListView
-                    .tag(0)
-                    .onAppear {
-                        viewModel.send(.travelerListViewOnAppear)
-                    }
-                
-                travelJournalListView
-                    .tag(1)
-                    .onAppear {
-                        viewModel.send(.travelJournalListViewOnAppear)
-                    }
-                
-                placeListView
-                    .tag(2)
-                    .onAppear {
-                        viewModel.send(.placeListViewOnAppear)
-                    }
+            ScrollView(.horizontal) {
+                LazyHStack {
+                    travelJournalListView
+                        .containerRelativeFrame(.horizontal)
+                        .id(0)
+                        .onAppear {
+                            viewModel.send(.travelJournalListViewOnAppear)
+                        }
+                    
+                    placeListView
+                        .containerRelativeFrame(.horizontal)
+                        .id(1)
+                        .onAppear {
+                            viewModel.send(.placeListViewOnAppear)
+                        }
+                    
+                    travelerListView
+                        .containerRelativeFrame(.horizontal)
+                        .id(2)
+                        .task {
+                            viewModel.send(.travelerListViewOnAppear)
+                        }
+                }
+                .scrollTargetLayout()
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
+            .scrollIndicators(.hidden)
+            .scrollTargetBehavior(.viewAligned)
+            .scrollPosition(id: Binding(
+                get: { viewModel.state.selectedSegmentIndex },
+                set: { viewModel.send(.selectSegment($0 ?? 0)) }
+            ))
             .padding(.top, 20)
         }
     }
