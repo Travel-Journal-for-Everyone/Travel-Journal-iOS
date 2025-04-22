@@ -178,7 +178,7 @@ extension SearchView {
                     travelJournalListView
                         .containerRelativeFrame(.horizontal)
                         .contentMargins(.horizontal, 16)
-                        .contentMargins(.bottom, 63)
+                        .contentMargins(.bottom, 63.adjustedH)
                         .id(0)
                         .onAppear {
                             viewModel.send(.travelJournalListViewOnAppear)
@@ -187,7 +187,7 @@ extension SearchView {
                     placeListView
                         .containerRelativeFrame(.horizontal)
                         .contentMargins(.horizontal, 16)
-                        .contentMargins(.bottom, 63)
+                        .contentMargins(.bottom, 63.adjustedH)
                         .id(1)
                         .onAppear {
                             viewModel.send(.placeListViewOnAppear)
@@ -196,7 +196,7 @@ extension SearchView {
                     travelerListView
                         .containerRelativeFrame(.horizontal)
                         .contentMargins(.horizontal, 16)
-                        .contentMargins(.bottom, 63)
+                        .contentMargins(.bottom, 63.adjustedH)
                         .id(2)
                         .task {
                             viewModel.send(.travelerListViewOnAppear)
@@ -234,7 +234,7 @@ extension SearchView {
                     }
                 }
                 .scrollIndicators(.visible)
-                .contentMargins(.bottom, 46, for: .scrollIndicators)
+                .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
                 .contentMargins(0, for: .scrollIndicators)
             } else {
                 emptyView
@@ -253,7 +253,7 @@ extension SearchView {
             }
         }
         .scrollIndicators(.visible)
-        .contentMargins(.bottom, 46, for: .scrollIndicators)
+        .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
         .contentMargins(0, for: .scrollIndicators)
     }
     
@@ -273,7 +273,7 @@ extension SearchView {
             }
         }
         .scrollIndicators(.visible)
-        .contentMargins(.bottom, 46, for: .scrollIndicators)
+        .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
         .contentMargins(0, for: .scrollIndicators)
     }
 }
