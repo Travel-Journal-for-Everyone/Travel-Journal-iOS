@@ -178,6 +178,7 @@ extension SearchView {
                     travelJournalListView
                         .containerRelativeFrame(.horizontal)
                         .contentMargins(.horizontal, 16)
+                        .contentMargins(.bottom, 63)
                         .id(0)
                         .onAppear {
                             viewModel.send(.travelJournalListViewOnAppear)
@@ -186,6 +187,7 @@ extension SearchView {
                     placeListView
                         .containerRelativeFrame(.horizontal)
                         .contentMargins(.horizontal, 16)
+                        .contentMargins(.bottom, 63)
                         .id(1)
                         .onAppear {
                             viewModel.send(.placeListViewOnAppear)
@@ -194,6 +196,7 @@ extension SearchView {
                     travelerListView
                         .containerRelativeFrame(.horizontal)
                         .contentMargins(.horizontal, 16)
+                        .contentMargins(.bottom, 63)
                         .id(2)
                         .task {
                             viewModel.send(.travelerListViewOnAppear)
@@ -231,6 +234,7 @@ extension SearchView {
                     }
                 }
                 .scrollIndicators(.visible)
+                .contentMargins(.bottom, 46, for: .scrollIndicators)
                 .contentMargins(0, for: .scrollIndicators)
             } else {
                 emptyView
@@ -249,6 +253,7 @@ extension SearchView {
             }
         }
         .scrollIndicators(.visible)
+        .contentMargins(.bottom, 46, for: .scrollIndicators)
         .contentMargins(0, for: .scrollIndicators)
     }
     
@@ -262,12 +267,13 @@ extension SearchView {
             Color.clear.frame(height: 10)
             
             LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(0..<2) { list in
+                ForEach(0..<14) { list in
                     PlaceGridCell(.mock(id: 0, placeName: "어쩌구 추천"))
                 }
             }
         }
         .scrollIndicators(.visible)
+        .contentMargins(.bottom, 46, for: .scrollIndicators)
         .contentMargins(0, for: .scrollIndicators)
     }
 }
