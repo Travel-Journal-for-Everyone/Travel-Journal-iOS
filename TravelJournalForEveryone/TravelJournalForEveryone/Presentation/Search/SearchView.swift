@@ -63,6 +63,9 @@ extension SearchView {
             .submitLabel(.search)
             .onSubmit {
                 viewModel.send(.onSubmit)
+//                if viewModel.state.searchText.replacingOccurrences(of: " ", with: "").isEmpty {
+//                    self.focused = true
+//                }
             }
             
             Spacer()
@@ -230,6 +233,8 @@ extension SearchView {
                         }
                     }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(0, for: .scrollIndicators)
             } else {
                 emptyView
             }
@@ -241,11 +246,13 @@ extension SearchView {
             Color.clear.frame(height: 10)
             
             LazyVStack(spacing: 15) {
-                ForEach(0..<2) { journalSummary in
+                ForEach(0..<20) { journalSummary in
                     JournalListCell(.mock(id: 0, title: "ㅇㅇㅇㅇ"))
                 }
             }
         }
+        .scrollIndicators(.visible)
+        .contentMargins(0, for: .scrollIndicators)
     }
     
     private var placeListView: some View {
@@ -263,6 +270,8 @@ extension SearchView {
                 }
             }
         }
+        .scrollIndicators(.visible)
+        .contentMargins(0, for: .scrollIndicators)
     }
 }
 

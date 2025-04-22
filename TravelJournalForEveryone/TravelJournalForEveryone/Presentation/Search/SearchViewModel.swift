@@ -33,11 +33,13 @@ final class SearchViewModel: ObservableObject {
         case .viewOnAppear:
             handleViewOnAppear()
         case .enterSearchText(let text):
-            state.searchText = text
-            if !text.isEmpty {
-                state.searchState = .searching
-            } else {
-                state.searchState = .beforeSearch
+            if state.searchText != text {
+                state.searchText = text
+                if !text.isEmpty {
+                    state.searchState = .searching
+                } else {
+                    state.searchState = .beforeSearch
+                }
             }
         case .deleteSearchText:
             state.searchText = ""
@@ -128,7 +130,7 @@ extension SearchViewModel {
     
     private func deleteRecentSearch(_ text: String) {
         guard let index = state.recentSearchList.firstIndex(of: text) else { return }
-            
+        
         state.recentSearchList.remove(at: index)
         UserDefaults.standard.set(state.recentSearchList, forKey: UserDefaultsKey.recentSearches.value)
     }
@@ -147,25 +149,25 @@ extension SearchViewModel {
             keyword: keyword,
             pageNumber: currentMembersPageNumber
         )
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    self?.state.isLoading = false
-                    self?.state.searchState = .successSearch
-                case .failure(let error):
-                    self?.state.isLoading = false
-                    print("⛔️ Search Traveler Error: \(error)")
-                }
-            } receiveValue: { [weak self] membersPage in
-                guard let self else { return }
-                
-                self.state.searchedTraveler.append(
-                    contentsOf: membersPage.contents
-                )
-                self.state.isLastSearchedTraveler = membersPage.isLast
-                self.currentMembersPageNumber += 1
+        .sink { [weak self] completion in
+            switch completion {
+            case .finished:
+                self?.state.isLoading = false
+                self?.state.searchState = .successSearch
+            case .failure(let error):
+                self?.state.isLoading = false
+                print("⛔️ Search Traveler Error: \(error)")
             }
-            .store(in: &cancellables)
+        } receiveValue: { [weak self] membersPage in
+            guard let self else { return }
+            
+            self.state.searchedTraveler.append(
+                contentsOf: membersPage.contents
+            )
+            self.state.isLastSearchedTraveler = membersPage.isLast
+            self.currentMembersPageNumber += 1
+        }
+        .store(in: &cancellables)
     }
     
     private func resetSearching() {
