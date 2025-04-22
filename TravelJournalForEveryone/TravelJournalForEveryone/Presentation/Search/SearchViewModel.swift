@@ -49,7 +49,7 @@ final class SearchViewModel: ObservableObject {
             if !trimmedText.isEmpty {
                 resetSearching()
                 isSearched = true
-                addRecentSearch(trimmedText) 
+                addRecentSearch(trimmedText)
                 searchMembers(trimmedText)
             }
         case .deleteRecentSearch(let text):

@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchView: View {
     @StateObject var viewModel: SearchViewModel
     @Namespace var namespace
-    @FocusState private var focused: Bool 
+    @FocusState private var focused: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -63,9 +63,6 @@ extension SearchView {
             .submitLabel(.search)
             .onSubmit {
                 viewModel.send(.onSubmit)
-//                if viewModel.state.searchText.replacingOccurrences(of: " ", with: "").isEmpty {
-//                    self.focused = true
-//                }
             }
             
             Spacer()
