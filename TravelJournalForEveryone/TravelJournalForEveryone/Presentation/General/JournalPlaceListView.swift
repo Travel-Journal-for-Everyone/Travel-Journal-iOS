@@ -120,6 +120,7 @@ struct JournalPlaceListView: View {
                     }
                 }
                 .scrollIndicators(.visible)
+                .contentMargins(.bottom, 1.adjustedH, for: .scrollIndicators)
                 .contentMargins(0, for: .scrollIndicators)
             }
         }
@@ -159,6 +160,7 @@ struct JournalPlaceListView: View {
                     }
                 }
                 .scrollIndicators(.visible)
+                .contentMargins(.bottom, 1.adjustedH, for: .scrollIndicators)
                 .contentMargins(0, for: .scrollIndicators)
             }
         }
