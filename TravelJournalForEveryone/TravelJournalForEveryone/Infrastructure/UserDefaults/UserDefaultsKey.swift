@@ -15,6 +15,7 @@ enum UserDefaultsKey {
     case deviceID
     case memberID
     case socialType
+    case recentSearches
     
     var value: String { "\(self)" }
 }

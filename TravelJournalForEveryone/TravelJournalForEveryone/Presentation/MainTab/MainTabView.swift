@@ -25,8 +25,10 @@ struct MainTabView: View {
                 .tag(TJTab.myJournal)
                 
                 NavigationStack(path: $coordinator.searchPath) {
-                    SearchView()
-                        .toolbar(.hidden, for: .tabBar)
+                    SearchView(viewModel: .init(
+                        searchMembersUseCase: DIContainer.shared.searchMembersUseCase
+                    ))
+                    .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.search)
                 
@@ -50,10 +52,17 @@ struct MainTabView: View {
                 .tag(TJTab.profile)
             }
             
-            if coordinator.isPresentingTabBar {
-                customTabBar
-                    .transition(.offset(y: 150))
+            GeometryReader { _ in
+                VStack {
+                    Spacer()
+                    if coordinator.isPresentingTabBar {
+                        customTabBar
+                            .transition(.offset(y: 150))
+                            
+                    }
+                }
             }
+            .ignoresSafeArea(.keyboard)
         }
     }
     
