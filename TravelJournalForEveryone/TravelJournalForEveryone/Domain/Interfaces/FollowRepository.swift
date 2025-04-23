@@ -10,4 +10,9 @@ import Combine
 
 protocol FollowRepository {
     func fetchFollowCount(memberID: Int) -> AnyPublisher<FollowCountInfo, NetworkError>
+    func fetchFollowers(
+        memberID: Int,
+        pageNumber: Int,
+        pageSize: Int
+    ) -> AnyPublisher<Pageable<UserSummary>, NetworkError>
 }

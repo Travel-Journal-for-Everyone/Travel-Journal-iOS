@@ -19,7 +19,7 @@ struct ActivityOverview: View {
     
     private let user: User
     private let isCurrentUser: Bool
-    private let memberID: Int
+    private let memberID: Int?
     private let travelJournalAction: () -> Void
     private let placeAction: () -> Void
     
@@ -32,14 +32,9 @@ struct ActivityOverview: View {
     ) {
         self.user = user
         self.isCurrentUser = isCurrentUser
+        self.memberID = memberID
         self.travelJournalAction = travelJournalAction
         self.placeAction = placeAction
-        
-        if let memberID {
-            self.memberID = memberID
-        } else {
-            self.memberID = UserDefaults.standard.integer(forKey: UserDefaultsKey.memberID.value)
-        }
     }
     
     var body: some View {

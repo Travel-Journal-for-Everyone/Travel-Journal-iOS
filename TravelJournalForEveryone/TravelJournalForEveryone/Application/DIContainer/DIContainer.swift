@@ -46,7 +46,10 @@ final class DIContainer {
     lazy var fetchJournalsUseCase = DefaultFetchJournalsUseCase(journalRepository: journalRepository)
     lazy var fetchPlacesUseCase = DefaultFetchPlacesUseCase(placeRepository: placeRepository)
     lazy var searchMembersUseCase = DefaultSearchMembersUseCase(repository: searchRepository)
+    
+    // follow
     lazy var fetchFollowCountUseCase = DefaultFetchFollowCountUseCase(followRepository: followRepository)
+    lazy var fetchFollowersUseCase = DefaultFetchFollowersUseCase(followRepository: followRepository)
     
     
     // MARK: - Manager

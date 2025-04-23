@@ -23,4 +23,23 @@ final class DefaultFollowRepository: FollowRepository {
         .map { $0.toEntity() }
         .eraseToAnyPublisher()
     }
+    
+    func fetchFollowers(
+        memberID: Int,
+        pageNumber: Int,
+        pageSize: Int
+    ) -> AnyPublisher<Pageable<UserSummary>, NetworkError> {
+        let request = FetchFollowersRequest(
+            memberID: memberID,
+            pageNumber: pageNumber,
+            pageSize: pageSize
+        )
+        
+        return networkService.request(
+            FollowAPI.fetchFollowers(request),
+            decodingType: FetchFollowersResponseDTO.self
+        )
+        .map { $0.toEntity() }
+        .eraseToAnyPublisher()
+    }
 }
