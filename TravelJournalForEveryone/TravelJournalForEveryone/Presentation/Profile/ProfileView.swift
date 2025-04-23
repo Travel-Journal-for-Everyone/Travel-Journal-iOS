@@ -54,7 +54,8 @@ extension ProfileView {
                 
                 ActivityOverview(
                     user: viewModel.state.user,
-                    isCurrentUser: true
+                    isCurrentUser: true,
+                    memberID: nil
                 ) {
                     print("일지 리스트")
                 } placeAction: {

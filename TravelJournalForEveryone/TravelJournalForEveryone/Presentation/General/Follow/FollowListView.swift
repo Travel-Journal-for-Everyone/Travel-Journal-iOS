@@ -50,7 +50,7 @@ struct FollowListView: View {
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .customNavigationBar {
-            Text(viewModel.state.userNickname)
+            Text(viewModel.state.nickname)
                 .font(.pretendardMedium(16))
                 .foregroundStyle(.tjBlack)
         } leadingView: {
@@ -61,6 +61,9 @@ struct FollowListView: View {
                     .resizable()
                     .frame(width: 24, height: 24)
             }
+        }
+        .onAppear {
+            viewModel.send(.listViewOnAppear)
         }
     }
     
@@ -142,9 +145,9 @@ struct FollowListView: View {
 #Preview {
     FollowListView(
         viewModel: .init(
-            userNickname: "마루김마루",
-            folloewrCount: 23,
-            followingCount: 77,
+            fetchFollowCountUseCase: DIContainer.shared.fetchFollowCountUseCase,
+            memberID: 10,
+            nickname: "몽그리바보",
             viewType: .follower
         )
     )

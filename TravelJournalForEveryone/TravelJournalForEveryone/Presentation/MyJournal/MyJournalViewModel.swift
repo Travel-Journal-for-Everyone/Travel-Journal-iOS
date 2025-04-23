@@ -11,7 +11,6 @@ import Combine
 final class MyJournalViewModel: ObservableObject {
     @Published private(set) var state = State()
     
-    private let memberID: Int?
     private let fetchUserUseCase: FetchUserUseCase
     
     private var cancellables: Set<AnyCancellable> = []
@@ -23,8 +22,8 @@ final class MyJournalViewModel: ObservableObject {
         memberID: Int? = nil,
         fetchUserUseCase: FetchUserUseCase
     ) {
-        self.memberID = memberID
         self.fetchUserUseCase = fetchUserUseCase
+        self.state.memberID = memberID
         
         guard let memberID else {
             self.state.isInitialView = true
@@ -65,6 +64,7 @@ final class MyJournalViewModel: ObservableObject {
 extension MyJournalViewModel {
     struct State {
         var user: User = .mock()
+        var memberID: Int?
         var isInitialView: Bool = true
         var isCurrentUser: Bool = true
         var isFollowing: Bool = false
@@ -91,7 +91,7 @@ extension MyJournalViewModel {
         if self.state.isCurrentUser {
             self.state.user = DIContainer.shared.userInfoManager.user
         } else {
-            fetchUserUseCase.execute(memberID: self.memberID ?? 0)
+            fetchUserUseCase.execute(memberID: self.state.memberID ?? 0)
                 .sink { completion in
                     switch completion {
                     case .finished:

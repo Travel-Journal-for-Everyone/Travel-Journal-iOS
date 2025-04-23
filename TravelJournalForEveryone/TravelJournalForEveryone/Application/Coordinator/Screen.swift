@@ -11,9 +11,8 @@ enum Screen: Hashable {
     // MyJournal Tab
     case myJournal(memberID: Int?)
     case followList(
+        memberID: Int,
         nickname: String,
-        followerCount: Int,
-        followingCount: Int,
         viewType: ActivityOverviewType
     )
     

@@ -11,28 +11,28 @@ import Combine
 final class FollowListViewModel: ObservableObject {
     @Published private(set) var state = State()
     
+    private let fetchFollowCountUseCase: FetchFollowCountUseCase
+    private let memberID: Int
+    
+    private var cancellables: Set<AnyCancellable> = []
+    
     init(
-        userNickname: String,
-        folloewrCount: Int,
-        followingCount: Int,
+        fetchFollowCountUseCase: FetchFollowCountUseCase,
+        memberID: Int,
+        nickname: String,
         viewType: ActivityOverviewType
     ) {
-        self.state.userNickname = userNickname
-        self.state.folloewrCount = folloewrCount
-        self.state.followingCount = followingCount
+        self.fetchFollowCountUseCase = fetchFollowCountUseCase
+        self.memberID = memberID
+        self.state.nickname = nickname
         
-        switch viewType {
-        case .follower:
-            self.state.selectedSegmentIndex = 0
-        case .following:
-            self.state.selectedSegmentIndex = 1
-        case .journal, .place:
-            break
-        }
+        updateSegmentIndex(viewType: viewType)
     }
     
     func send(_ intent: Intent) {
         switch intent {
+        case .listViewOnAppear:
+            fetchFollowCount(memberID: memberID)
         case .followerListViewOnAppear:
             handleFollowerListViewOnAppear()
         case .followingListViewOnAppear:
@@ -51,7 +51,7 @@ final class FollowListViewModel: ObservableObject {
 
 extension FollowListViewModel {
     struct State {
-        var userNickname: String = ""
+        var nickname: String = ""
         var selectedSegmentIndex: Int = 0
         var followingRequestUsers: [UserSummary] = []
         var followingRequestUserCount: Int = 0
@@ -62,8 +62,10 @@ extension FollowListViewModel {
     }
     
     enum Intent {
+        case listViewOnAppear
         case followerListViewOnAppear
         case followingListViewOnAppear
+        
         case selectSegment(Int)
         case tappedFollowingAcceptButton
         case tappedFollowingRejectButton
@@ -104,5 +106,34 @@ extension FollowListViewModel {
             .mock(id: 9, nickname: "김땡글"),
             .mock(id: 10, nickname: "김호두"),
         ]
+    }
+    
+    private func updateSegmentIndex(viewType: ActivityOverviewType) {
+        switch viewType {
+        case .follower:
+            self.state.selectedSegmentIndex = 0
+        case .following:
+            self.state.selectedSegmentIndex = 1
+        case .journal, .place:
+            break
+        }
+    }
+    
+    private func fetchFollowCount(memberID: Int) {
+        fetchFollowCountUseCase.execute(memberID: memberID)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print("⛔️ Fetch Follow Count Error: \(error)")
+                }
+            } receiveValue: { [weak self] followCountInfo in
+                guard let self else { return }
+                
+                self.state.folloewrCount = followCountInfo.followers
+                self.state.followingCount = followCountInfo.followings
+            }
+            .store(in: &cancellables)
     }
 }
