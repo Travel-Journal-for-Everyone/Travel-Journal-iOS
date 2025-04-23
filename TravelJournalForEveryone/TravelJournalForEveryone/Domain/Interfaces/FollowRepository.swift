@@ -15,4 +15,9 @@ protocol FollowRepository {
         pageNumber: Int,
         pageSize: Int
     ) -> AnyPublisher<Pageable<UserSummary>, NetworkError>
+    func fetchFollowings(
+        memberID: Int,
+        pageNumber: Int,
+        pageSize: Int
+    ) -> AnyPublisher<Pageable<UserSummary>, NetworkError>
 }

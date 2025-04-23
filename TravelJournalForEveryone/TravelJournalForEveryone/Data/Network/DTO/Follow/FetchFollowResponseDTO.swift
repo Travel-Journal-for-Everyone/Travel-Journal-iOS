@@ -1,5 +1,5 @@
 //
-//  FetchFollowersResponseDTO.swift
+//  FetchFollowResponseDTO.swift
 //  TravelJournalForEveryone
 //
 //  Created by 김성민 on 4/23/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct FetchFollowersResponseDTO: Decodable {
+struct FetchFollowResponseDTO: Decodable {
     let content: [UserSummaryDTO]
     let pageable: PageableDTO
     let totalPages: Int
@@ -21,7 +21,7 @@ struct FetchFollowersResponseDTO: Decodable {
     let empty: Bool
 }
 
-extension FetchFollowersResponseDTO {
+extension FetchFollowResponseDTO {
     func toEntity() -> Pageable<UserSummary> {
         return .init(
             totalContents: totalElements,

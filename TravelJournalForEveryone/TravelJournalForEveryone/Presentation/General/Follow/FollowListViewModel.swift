@@ -13,22 +13,25 @@ final class FollowListViewModel: ObservableObject {
     
     private let fetchFollowCountUseCase: FetchFollowCountUseCase
     private let fetchFollowersUseCase: FetchFollowersUseCase
+    private let fetchFollowingsUseCase: FetchFollowingsUseCase
     
     private let memberID: Int?
     private var currentFollowersPageNumber: Int = 0
-    private var currentFollowingPageNumber: Int = 0
+    private var currentFollowingsPageNumber: Int = 0
     
     private var cancellables: Set<AnyCancellable> = []
     
     init(
         fetchFollowCountUseCase: FetchFollowCountUseCase,
         fetchFollowersUseCase: FetchFollowersUseCase,
+        fetchFollowingsUseCase: FetchFollowingsUseCase,
         memberID: Int?,
         nickname: String,
         viewType: ActivityOverviewType
     ) {
         self.fetchFollowCountUseCase = fetchFollowCountUseCase
         self.fetchFollowersUseCase = fetchFollowersUseCase
+        self.fetchFollowingsUseCase = fetchFollowingsUseCase
         self.memberID = memberID
         self.state.nickname = nickname
         
@@ -38,15 +41,15 @@ final class FollowListViewModel: ObservableObject {
     func send(_ intent: Intent) {
         switch intent {
         case .listViewOnAppear:
-            handleFollowerListViewOnAppear()
+            fetchFollowCount(memberID: memberID)
         case .followerListViewOnAppear:
             fetchFollowers(memberID: memberID)
         case .followerListNextPageOnAppear:
             fetchFollowers(memberID: memberID)
         case .followingListViewOnAppear:
-            handleFollowingListViewOnAppear()
+            fetchFollowings(memberID: memberID)
         case .followingListNextPageOnAppear:
-            break
+            fetchFollowings(memberID: memberID)
         case .selectSegment(let index):
             self.state.selectedSegmentIndex = index
         case .tappedFollowingAcceptButton:
@@ -93,31 +96,6 @@ extension FollowListViewModel {
 }
 
 extension FollowListViewModel {
-    private func handleFollowerListViewOnAppear() {
-        fetchFollowCount(memberID: memberID)
-        
-        // TEST
-        self.state.followingRequestUsers = [
-//            .mock(id: 0, nickname: "지호구"),
-//            .mock(id: 1, nickname: "심시미"),
-//            .mock(id: 2, nickname: "김짱표"),
-        ]
-    }
-    
-    private func handleFollowingListViewOnAppear() {
-        // TEST
-        self.state.followings = [
-            .mock(id: 3, nickname: "김마루"),
-            .mock(id: 4, nickname: "마루김마루"),
-            .mock(id: 5, nickname: "쭈리"),
-            .mock(id: 6, nickname: "줄링"),
-            .mock(id: 7, nickname: "줄링줄링이"),
-            .mock(id: 8, nickname: "김몽글"),
-            .mock(id: 9, nickname: "김땡글"),
-            .mock(id: 10, nickname: "김호두"),
-        ]
-    }
-    
     private func updateSegmentIndex(viewType: ActivityOverviewType) {
         switch viewType {
         case .follower:
@@ -172,6 +150,36 @@ extension FollowListViewModel {
                 )
                 self.state.isLastFollowersPage = followersPage.isLast
                 self.currentFollowersPageNumber += 1
+            }
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func fetchFollowings(memberID: Int?) {
+        fetchFollowingsUseCase.execute(
+            memberID: memberID,
+            pageNumber: currentFollowingsPageNumber
+        )
+        .sink { [weak self] completion in
+            guard let self else { return }
+            
+            switch completion {
+            case .finished:
+                self.state.isFollowingsInitialLoading = false
+            case .failure(let error):
+                print("⛔️ Fetch Followings Error: \(error)")
+            }
+        } receiveValue: { [weak self] followingsPage in
+            guard let self else { return }
+            
+            if followingsPage.isEmpty {
+                self.state.followings = []
+            } else {
+                self.state.followings.append(
+                    contentsOf: followingsPage.contents
+                )
+                self.state.isLastFollowingsPage = followingsPage.isLast
+                self.currentFollowingsPageNumber += 1
             }
         }
         .store(in: &cancellables)

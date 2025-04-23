@@ -10,7 +10,8 @@ import Alamofire
 
 enum FollowAPI {
     case fetchFollowCount(memberID: Int)
-    case fetchFollowers(FetchFollowersRequest)
+    case fetchFollowers(FetchFollowRequest)
+    case fetchFollowings(FetchFollowRequest)
 }
 
 extension FollowAPI: EndPoint {
@@ -24,6 +25,8 @@ extension FollowAPI: EndPoint {
             "/\(memberID)/count"
         case .fetchFollowers(let request):
             "/\(request.memberID)/followers"
+        case .fetchFollowings(let request):
+            "/\(request.memberID)/followings"
         }
     }
     
@@ -36,40 +39,45 @@ extension FollowAPI: EndPoint {
                 "page": "\(request.pageNumber)",
                 "size": "\(request.pageSize)"
             ]
+        case .fetchFollowings(let request):
+            [
+                "page": "\(request.pageNumber)",
+                "size": "\(request.pageSize)"
+            ]
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .fetchFollowCount, .fetchFollowers:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
                 .get
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .fetchFollowCount, .fetchFollowers:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
             nil
         }
     }
     
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .fetchFollowCount, .fetchFollowers:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
             URLEncoding.default
         }
     }
     
     var bodyParameters: Parameters? {
         switch self {
-        case .fetchFollowCount, .fetchFollowers:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
             nil
         }
     }
     
     var requiresAuth: Bool {
         switch self {
-        case .fetchFollowCount, .fetchFollowers:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
             true
         }
     }

@@ -133,6 +133,13 @@ struct FollowListView: View {
                                 })
                             )
                         }
+                        
+                        if !viewModel.state.isLastFollowersPage {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.followerListNextPageOnAppear)
+                                }
+                        }
                     }
                 }
                 .scrollIndicators(.visible)
@@ -144,27 +151,40 @@ struct FollowListView: View {
     
     @ViewBuilder
     private var followingListView: some View {
-        if viewModel.state.followings.isEmpty {
-            Text("팔로잉 중인 여행자가 없습니다.")
-                .font(.pretendardMedium(16))
-                .foregroundStyle(.tjGray2)
+        if viewModel.state.isFollowingsInitialLoading {
+            ProgressView()
         } else {
-            ScrollView(.vertical) {
-                LazyVStack(spacing: 15) {
-                    Color.clear
-                        .frame(height: 5)
-                    
-                    ForEach(viewModel.state.followings, id: \.id) { userSummary in
-                        UserSummaryView(
-                            userSummary: userSummary,
-                            viewType: .follow(onUnfollow: {
-                                viewModel.send(.tappedUnfollowButton)
-                            })
-                        )
+            if viewModel.state.followings.isEmpty {
+                Text("팔로잉 중인 여행자가 없습니다.")
+                    .font(.pretendardMedium(16))
+                    .foregroundStyle(.tjGray2)
+            } else {
+                ScrollView(.vertical) {
+                    LazyVStack(spacing: 15) {
+                        Color.clear
+                            .frame(height: 5)
+                        
+                        ForEach(viewModel.state.followings, id: \.id) { userSummary in
+                            UserSummaryView(
+                                userSummary: userSummary,
+                                viewType: .follow(onUnfollow: {
+                                    viewModel.send(.tappedUnfollowButton)
+                                })
+                            )
+                        }
+                        
+                        if !viewModel.state.isLastFollowingsPage {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.followingListNextPageOnAppear)
+                                }
+                        }
                     }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(.bottom, 1.adjustedH, for: .scrollIndicators)
+                .contentMargins(0, for: .scrollIndicators)
             }
-            .scrollIndicators(.never)
         }
     }
 }
@@ -174,6 +194,7 @@ struct FollowListView: View {
         viewModel: .init(
             fetchFollowCountUseCase: DIContainer.shared.fetchFollowCountUseCase,
             fetchFollowersUseCase: DIContainer.shared.fetchFollowersUseCase,
+            fetchFollowingsUseCase: DIContainer.shared.fetchFollowingsUseCase,
             memberID: 10,
             nickname: "몽그리바보",
             viewType: .follower

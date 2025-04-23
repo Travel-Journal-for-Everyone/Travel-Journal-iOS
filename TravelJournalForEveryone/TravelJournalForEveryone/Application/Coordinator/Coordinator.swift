@@ -97,6 +97,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
                 viewModel: .init(
                     fetchFollowCountUseCase: DIContainer.shared.fetchFollowCountUseCase,
                     fetchFollowersUseCase: DIContainer.shared.fetchFollowersUseCase,
+                    fetchFollowingsUseCase: DIContainer.shared.fetchFollowingsUseCase,
                     memberID: memberID,
                     nickname: nickname,
                     viewType: viewType
