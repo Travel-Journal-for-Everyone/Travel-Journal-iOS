@@ -42,7 +42,7 @@ extension FetchJournalsResponseDTO {
 extension FetchJournalsResponseDTO {
     func toEntity() -> Pageable<JournalSummary> {
         return .init(
-            totalJournals: totalElements,
+            totalContents: totalElements,
             isLast: last,
             pageNumber: number,
             isEmpty: empty,

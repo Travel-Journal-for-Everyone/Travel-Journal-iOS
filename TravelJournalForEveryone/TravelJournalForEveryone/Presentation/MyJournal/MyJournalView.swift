@@ -176,7 +176,8 @@ struct MyJournalView: View {
                     
                     ActivityOverview(
                         user: viewModel.state.user,
-                        isCurrentUser: viewModel.state.isCurrentUser
+                        isCurrentUser: viewModel.state.isCurrentUser,
+                        memberID: viewModel.state.memberID
                     ) {
                         viewModel.send(.tappedActivityOverviewButton(.journal))
                         isPresentingJournalListViewForAll.toggle()

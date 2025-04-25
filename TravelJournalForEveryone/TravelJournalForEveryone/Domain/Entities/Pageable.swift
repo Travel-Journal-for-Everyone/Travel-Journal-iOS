@@ -8,7 +8,7 @@
 import Foundation
 
 struct Pageable<Content> {
-    let totalJournals: Int
+    let totalContents: Int
     let isLast: Bool
     let pageNumber: Int
     let isEmpty: Bool

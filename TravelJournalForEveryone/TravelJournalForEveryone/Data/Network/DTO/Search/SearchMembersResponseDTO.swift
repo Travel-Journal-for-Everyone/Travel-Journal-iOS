@@ -40,7 +40,7 @@ extension SearchMembersResponseDTO {
 extension SearchMembersResponseDTO {
     func toEntity() -> Pageable<UserSummary> {
         return .init(
-            totalJournals: totalElements,
+            totalContents: totalElements,
             isLast: last,
             pageNumber: number,
             isEmpty: empty,

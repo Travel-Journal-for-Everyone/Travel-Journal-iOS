@@ -19,17 +19,20 @@ struct ActivityOverview: View {
     
     private let user: User
     private let isCurrentUser: Bool
+    private let memberID: Int?
     private let travelJournalAction: () -> Void
     private let placeAction: () -> Void
     
     init(
         user: User,
         isCurrentUser: Bool,
+        memberID: Int?,
         travelJournalAction: @escaping () -> Void,
         placeAction: @escaping () -> Void
     ) {
         self.user = user
         self.isCurrentUser = isCurrentUser
+        self.memberID = memberID
         self.travelJournalAction = travelJournalAction
         self.placeAction = placeAction
     }
@@ -41,9 +44,8 @@ struct ActivityOverview: View {
                     if user.accountScope != .privateProfile || isCurrentUser {
                         coordinator.push(
                             .followList(
+                                memberID: memberID,
                                 nickname: user.nickname,
-                                followerCount: user.followerCount,
-                                followingCount: user.followingCount,
                                 viewType: .follower
                             )
                         )
@@ -56,9 +58,8 @@ struct ActivityOverview: View {
                     if user.accountScope != .privateProfile || isCurrentUser {
                         coordinator.push(
                             .followList(
+                                memberID: memberID,
                                 nickname: user.nickname,
-                                followerCount: user.followerCount,
-                                followingCount: user.followingCount,
                                 viewType: .following
                             )
                         )
@@ -107,6 +108,7 @@ struct ActivityOverview: View {
     ActivityOverview(
         user: .mock(),
         isCurrentUser: true,
+        memberID: 10,
         travelJournalAction: { },
         placeAction: { }
     )

@@ -40,7 +40,7 @@ extension FetchPlacesResponseDTO {
 extension FetchPlacesResponseDTO {
     func toEntity() -> Pageable<PlaceSummary> {
         return .init(
-            totalJournals: totalElements,
+            totalContents: totalElements,
             isLast: last,
             pageNumber: number,
             isEmpty: empty,
