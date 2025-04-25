@@ -12,6 +12,10 @@ enum FollowAPI {
     case fetchFollowCount(memberID: Int)
     case fetchFollowers(FetchFollowRequest)
     case fetchFollowings(FetchFollowRequest)
+    
+    case follow(memberID: Int)
+    case unfollow(memberID: Int)
+    case isFollowing(memberID: Int)
 }
 
 extension FollowAPI: EndPoint {
@@ -27,12 +31,16 @@ extension FollowAPI: EndPoint {
             "/\(request.memberID)/followers"
         case .fetchFollowings(let request):
             "/\(request.memberID)/followings"
+        case .follow(let memberID), .unfollow(let memberID):
+            "/\(memberID)"
+        case .isFollowing(let memberID):
+            "/\(memberID)/is-following"
         }
     }
     
     var queryParameters: [String : String]? {
         switch self {
-        case .fetchFollowCount:
+        case .fetchFollowCount, .follow, .unfollow, .isFollowing:
             nil
         case .fetchFollowers(let request):
             [
@@ -49,35 +57,39 @@ extension FollowAPI: EndPoint {
     
     var method: HTTPMethod {
         switch self {
-        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings, .isFollowing:
                 .get
+        case .follow:
+                .post
+        case .unfollow:
+                .delete
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings, .follow, .unfollow, .isFollowing:
             nil
         }
     }
     
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings, .follow, .unfollow, .isFollowing:
             URLEncoding.default
         }
     }
     
     var bodyParameters: Parameters? {
         switch self {
-        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings, .follow, .unfollow, .isFollowing:
             nil
         }
     }
     
     var requiresAuth: Bool {
         switch self {
-        case .fetchFollowCount, .fetchFollowers, .fetchFollowings:
+        case .fetchFollowCount, .fetchFollowers, .fetchFollowings, .follow, .unfollow, .isFollowing:
             true
         }
     }
