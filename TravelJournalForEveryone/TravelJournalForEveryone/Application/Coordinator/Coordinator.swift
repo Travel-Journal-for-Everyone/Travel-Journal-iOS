@@ -88,10 +88,15 @@ final class DefaultCoordinator: CoordinatorProtocol {
     func build(_ screen: Screen) -> some View {
         switch screen {
         case .myJournal(let memberID):
-            MyJournalView(viewModel: .init(
-                memberID: memberID,
-                fetchUserUseCase: DIContainer.shared.fetchUserUseCase
-            ))
+            MyJournalView(
+                viewModel: .init(
+                    memberID: memberID,
+                    fetchUserUseCase: DIContainer.shared.fetchUserUseCase,
+                    followUseCase: DIContainer.shared.followUseCase,
+                    unfollowUseCase: DIContainer.shared.unfollowUseCase,
+                    checkFollowUseCase: DIContainer.shared.checkFollowUseCase
+                )
+            )
         case .followList(let memberID, let nickname, let viewType):
             FollowListView(
                 viewModel: .init(

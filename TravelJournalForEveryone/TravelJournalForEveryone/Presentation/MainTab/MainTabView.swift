@@ -14,9 +14,14 @@ struct MainTabView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $coordinator.selectedTab) {
                 NavigationStack(path: $coordinator.myJournalPath) {
-                    MyJournalView(viewModel: .init(
-                        fetchUserUseCase: DIContainer.shared.fetchUserUseCase
-                    ))
+                    MyJournalView(
+                        viewModel: .init(
+                            fetchUserUseCase: DIContainer.shared.fetchUserUseCase,
+                            followUseCase: DIContainer.shared.followUseCase,
+                            unfollowUseCase: DIContainer.shared.unfollowUseCase,
+                            checkFollowUseCase: DIContainer.shared.checkFollowUseCase
+                        )
+                    )
                     .navigationDestination(for: Screen.self) { screen in
                         coordinator.build(screen)
                     }
@@ -28,6 +33,9 @@ struct MainTabView: View {
                     SearchView(viewModel: .init(
                         searchMembersUseCase: DIContainer.shared.searchMembersUseCase
                     ))
+                    .navigationDestination(for: Screen.self) { screen in
+                        coordinator.build(screen)
+                    }
                     .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.search)
@@ -58,7 +66,6 @@ struct MainTabView: View {
                     if coordinator.isPresentingTabBar {
                         customTabBar
                             .transition(.offset(y: 150))
-                            
                     }
                 }
             }
