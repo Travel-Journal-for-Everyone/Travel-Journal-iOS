@@ -51,6 +51,9 @@ final class DIContainer {
     lazy var fetchFollowCountUseCase = DefaultFetchFollowCountUseCase(followRepository: followRepository)
     lazy var fetchFollowersUseCase = DefaultFetchFollowersUseCase(followRepository: followRepository)
     lazy var fetchFollowingsUseCase = DefaultFetchFollowingsUseCase(followRepository: followRepository)
+    lazy var followUseCase = DefaultFollowUseCase(followRepository: followRepository)
+    lazy var unfollowUseCase = DefaultUnfollowUseCase(followRepository: followRepository)
+    lazy var checkFollowUseCase = DefaultCheckFollowUseCase(followRepository: followRepository)
     
     
     // MARK: - Manager
