@@ -117,6 +117,10 @@ struct FollowListView: View {
                                         viewModel.send(.tappedFollowingRejectButton)
                                     })
                                 )
+                                .contentShape(.rect)
+                                .onTapGesture {
+                                    coordinator.push(.myJournal(memberID: userSummary.id))
+                                }
                             }
                             
                             Rectangle()
@@ -132,6 +136,10 @@ struct FollowListView: View {
                                     viewModel.send(.tappedUnfollowButton)
                                 })
                             )
+                            .contentShape(.rect)
+                            .onTapGesture {
+                                coordinator.push(.myJournal(memberID: userSummary.id))
+                            }
                         }
                         
                         if !viewModel.state.isLastFollowersPage {
@@ -171,6 +179,10 @@ struct FollowListView: View {
                                     viewModel.send(.tappedUnfollowButton)
                                 })
                             )
+                            .contentShape(.rect)
+                            .onTapGesture {
+                                coordinator.push(.myJournal(memberID: userSummary.id))
+                            }
                         }
                         
                         if !viewModel.state.isLastFollowingsPage {
