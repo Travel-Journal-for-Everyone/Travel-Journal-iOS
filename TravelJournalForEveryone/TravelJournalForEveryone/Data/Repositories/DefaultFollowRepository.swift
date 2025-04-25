@@ -61,4 +61,46 @@ final class DefaultFollowRepository: FollowRepository {
         .map { $0.toEntity() }
         .eraseToAnyPublisher()
     }
+    
+    func follow(memberID: Int) -> AnyPublisher<Bool, NetworkError> {
+        return networkService.request(
+            FollowAPI.follow(memberID: memberID)
+        )
+        .map { stringResponse in
+            if stringResponse == "팔로우 성공" {
+                return true
+            } else {
+                return false
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func unfollow(memberID: Int) -> AnyPublisher<Bool, NetworkError> {
+        return networkService.request(
+            FollowAPI.unfollow(memberID: memberID)
+        )
+        .map { stringResponse in
+            if stringResponse == "언팔로우 성공" {
+                return true
+            } else {
+                return false
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func isFollowing(memberID: Int) -> AnyPublisher<Bool, NetworkError> {
+        return networkService.request(
+            FollowAPI.isFollowing(memberID: memberID)
+        )
+        .map { stringResponse in
+            if stringResponse == "true" {
+                return true
+            } else {
+                return false
+            }
+        }
+        .eraseToAnyPublisher()
+    }
 }

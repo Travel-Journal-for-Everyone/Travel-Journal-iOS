@@ -20,4 +20,7 @@ protocol FollowRepository {
         pageNumber: Int,
         pageSize: Int
     ) -> AnyPublisher<Pageable<UserSummary>, NetworkError>
+    func follow(memberID: Int) -> AnyPublisher<Bool, NetworkError>
+    func unfollow(memberID: Int) -> AnyPublisher<Bool, NetworkError>
+    func isFollowing(memberID: Int) -> AnyPublisher<Bool, NetworkError>
 }
