@@ -133,7 +133,7 @@ struct FollowListView: View {
                             UserSummaryView(
                                 userSummary: userSummary,
                                 viewType: .follow(onUnfollow: {
-                                    viewModel.send(.tappedUnfollowButton)
+                                    // TODO: - 팔로워 X 버튼 Action
                                 })
                             )
                             .contentShape(.rect)
@@ -176,7 +176,7 @@ struct FollowListView: View {
                             UserSummaryView(
                                 userSummary: userSummary,
                                 viewType: .follow(onUnfollow: {
-                                    viewModel.send(.tappedUnfollowButton)
+                                    viewModel.send(.tappedUnfollowButton(memberID: userSummary.id))
                                 })
                             )
                             .contentShape(.rect)
@@ -192,6 +192,7 @@ struct FollowListView: View {
                                 }
                         }
                     }
+                    .animation(.easeIn, value: viewModel.state.followings)
                 }
                 .scrollIndicators(.visible)
                 .contentMargins(.bottom, 1.adjustedH, for: .scrollIndicators)
@@ -207,6 +208,7 @@ struct FollowListView: View {
             fetchFollowCountUseCase: DIContainer.shared.fetchFollowCountUseCase,
             fetchFollowersUseCase: DIContainer.shared.fetchFollowersUseCase,
             fetchFollowingsUseCase: DIContainer.shared.fetchFollowingsUseCase,
+            unfollowUseCase: DIContainer.shared.unfollowUseCase,
             memberID: 10,
             nickname: "몽그리바보",
             viewType: .follower

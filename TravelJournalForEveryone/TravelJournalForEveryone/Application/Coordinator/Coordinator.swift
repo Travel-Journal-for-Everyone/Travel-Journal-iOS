@@ -103,6 +103,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
                     fetchFollowCountUseCase: DIContainer.shared.fetchFollowCountUseCase,
                     fetchFollowersUseCase: DIContainer.shared.fetchFollowersUseCase,
                     fetchFollowingsUseCase: DIContainer.shared.fetchFollowingsUseCase,
+                    unfollowUseCase: DIContainer.shared.unfollowUseCase,
                     memberID: memberID,
                     nickname: nickname,
                     viewType: viewType

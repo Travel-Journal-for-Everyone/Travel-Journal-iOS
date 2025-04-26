@@ -14,6 +14,7 @@ final class FollowListViewModel: ObservableObject {
     private let fetchFollowCountUseCase: FetchFollowCountUseCase
     private let fetchFollowersUseCase: FetchFollowersUseCase
     private let fetchFollowingsUseCase: FetchFollowingsUseCase
+    private let unfollowUseCase: UnfollowUseCase
     
     private let memberID: Int?
     private var currentFollowersPageNumber: Int = 0
@@ -25,6 +26,7 @@ final class FollowListViewModel: ObservableObject {
         fetchFollowCountUseCase: FetchFollowCountUseCase,
         fetchFollowersUseCase: FetchFollowersUseCase,
         fetchFollowingsUseCase: FetchFollowingsUseCase,
+        unfollowUseCase: UnfollowUseCase,
         memberID: Int?,
         nickname: String,
         viewType: ActivityOverviewType
@@ -32,6 +34,7 @@ final class FollowListViewModel: ObservableObject {
         self.fetchFollowCountUseCase = fetchFollowCountUseCase
         self.fetchFollowersUseCase = fetchFollowersUseCase
         self.fetchFollowingsUseCase = fetchFollowingsUseCase
+        self.unfollowUseCase = unfollowUseCase
         self.memberID = memberID
         self.state.nickname = nickname
         
@@ -56,8 +59,8 @@ final class FollowListViewModel: ObservableObject {
             break
         case .tappedFollowingRejectButton:
             break
-        case .tappedUnfollowButton:
-            break
+        case .tappedUnfollowButton(let memberID):
+            unfollow(memberID: memberID)
         }
     }
 }
@@ -91,7 +94,7 @@ extension FollowListViewModel {
         case selectSegment(Int)
         case tappedFollowingAcceptButton
         case tappedFollowingRejectButton
-        case tappedUnfollowButton
+        case tappedUnfollowButton(memberID: Int)
     }
 }
 
@@ -183,5 +186,27 @@ extension FollowListViewModel {
             }
         }
         .store(in: &cancellables)
+    }
+    
+    private func unfollow(memberID: Int) {
+        unfollowUseCase.execute(memberID: memberID)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print("⛔️ Unfollow Error: \(error)")
+                }
+            } receiveValue: { [weak self] isSuccess in
+                guard let self else { return }
+                
+                if isSuccess {
+                    //self.fetchFollowCount(memberID: self.memberID)
+                    self.state.followingCount -= 1
+                    
+                    self.state.followings.removeAll { $0.id == memberID }
+                }
+            }
+            .store(in: &cancellables)
     }
 }
