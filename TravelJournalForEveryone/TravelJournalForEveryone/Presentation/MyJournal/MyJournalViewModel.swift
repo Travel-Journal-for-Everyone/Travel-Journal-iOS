@@ -16,6 +16,8 @@ final class MyJournalViewModel: ObservableObject {
     private let unfollowUseCase: UnfollowUseCase
     private let checkFollowUseCase: CheckFollowUseCase
     
+    private let followButtonTappedSubject = PassthroughSubject<Void, Never>()
+    
     private var cancellables: Set<AnyCancellable> = []
     
     /// - Parameters:
@@ -47,6 +49,14 @@ final class MyJournalViewModel: ObservableObject {
         } else {
             self.state.isCurrentUser = false
         }
+        
+        followButtonTappedSubject
+            .debounce(for: .seconds(0.8), scheduler: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                self.handleFollowAction()
+            }
+            .store(in: &cancellables)
     }
     
     @MainActor
@@ -144,6 +154,10 @@ extension MyJournalViewModel {
     }
     
     private func handleTappedFollowButton() {
+        followButtonTappedSubject.send()
+    }
+    
+    private func handleFollowAction() {
         if self.state.isFollowing {
             unfollowUseCase.execute(memberID: self.state.memberID ?? 0)
                 .sink { completion in
