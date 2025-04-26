@@ -97,7 +97,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
                     checkFollowUseCase: DIContainer.shared.checkFollowUseCase
                 )
             )
-        case .followList(let memberID, let nickname, let viewType):
+        case .followList(let memberID, let isCurrentUser, let nickname, let viewType):
             FollowListView(
                 viewModel: .init(
                     fetchFollowCountUseCase: DIContainer.shared.fetchFollowCountUseCase,
@@ -105,6 +105,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
                     fetchFollowingsUseCase: DIContainer.shared.fetchFollowingsUseCase,
                     unfollowUseCase: DIContainer.shared.unfollowUseCase,
                     memberID: memberID,
+                    isCurrentUser: isCurrentUser,
                     nickname: nickname,
                     viewType: viewType
                 )

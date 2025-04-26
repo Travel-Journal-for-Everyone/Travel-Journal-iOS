@@ -12,6 +12,7 @@ enum Screen: Hashable {
     case myJournal(memberID: Int?)
     case followList(
         memberID: Int?,
+        isCurrentUser: Bool,
         nickname: String,
         viewType: ActivityOverviewType
     )

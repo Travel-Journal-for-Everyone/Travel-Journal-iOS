@@ -28,6 +28,7 @@ final class FollowListViewModel: ObservableObject {
         fetchFollowingsUseCase: FetchFollowingsUseCase,
         unfollowUseCase: UnfollowUseCase,
         memberID: Int?,
+        isCurrentUser: Bool,
         nickname: String,
         viewType: ActivityOverviewType
     ) {
@@ -36,6 +37,7 @@ final class FollowListViewModel: ObservableObject {
         self.fetchFollowingsUseCase = fetchFollowingsUseCase
         self.unfollowUseCase = unfollowUseCase
         self.memberID = memberID
+        self.state.isCurrentUser = isCurrentUser
         self.state.nickname = nickname
         
         updateSegmentIndex(viewType: viewType)
@@ -68,6 +70,7 @@ final class FollowListViewModel: ObservableObject {
 extension FollowListViewModel {
     struct State {
         var nickname: String = ""
+        var isCurrentUser: Bool = false
         var selectedSegmentIndex: Int = 0
         
         var followingRequestUsers: [UserSummary] = []
@@ -201,9 +204,7 @@ extension FollowListViewModel {
                 guard let self else { return }
                 
                 if isSuccess {
-                    //self.fetchFollowCount(memberID: self.memberID)
-                    self.state.followingCount -= 1
-                    
+                    self.fetchFollowCount(memberID: self.memberID)
                     self.state.followings.removeAll { $0.id == memberID }
                 }
             }
