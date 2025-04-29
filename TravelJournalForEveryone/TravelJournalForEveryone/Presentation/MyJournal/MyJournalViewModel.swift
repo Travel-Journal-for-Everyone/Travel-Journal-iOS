@@ -51,7 +51,7 @@ final class MyJournalViewModel: ObservableObject {
         }
         
         followButtonTappedSubject
-            .debounce(for: .seconds(0.8), scheduler: DispatchQueue.main)
+            .throttle(for: .seconds(1.5), scheduler: RunLoop.main, latest: false)
             .sink { [weak self] in
                 guard let self else { return }
                 self.handleFollowAction()
