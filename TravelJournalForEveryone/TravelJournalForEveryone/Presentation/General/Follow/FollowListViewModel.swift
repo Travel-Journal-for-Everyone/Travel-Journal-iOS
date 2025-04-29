@@ -20,9 +20,6 @@ final class FollowListViewModel: ObservableObject {
     private var currentFollowersPageNumber: Int = 0
     private var currentFollowingsPageNumber: Int = 0
     
-    private var tempSelectedMemberID: Int?
-    private var tempFollowingCount: Int?
-    
     private var cancellables: Set<AnyCancellable> = []
     
     init(
@@ -66,8 +63,6 @@ final class FollowListViewModel: ObservableObject {
             break
         case .tappedUnfollowButton(let memberID):
             unfollow(memberID: memberID)
-        case .tappedUserSummaryView(let memberID):
-            handleTappedUserSummaryView(memberID: memberID)
         }
     }
 }
@@ -103,7 +98,6 @@ extension FollowListViewModel {
         case tappedFollowingAcceptButton
         case tappedFollowingRejectButton
         case tappedUnfollowButton(memberID: Int)
-        case tappedUserSummaryView(memberID: Int)
     }
 }
 
@@ -117,11 +111,6 @@ extension FollowListViewModel {
         case .journal, .place:
             break
         }
-    }
-    
-    private func handleTappedUserSummaryView(memberID: Int) {
-        self.tempFollowingCount = self.state.followingCount
-        self.tempSelectedMemberID = memberID
     }
     
     private func fetchFollowCount(memberID: Int?) {
@@ -138,14 +127,6 @@ extension FollowListViewModel {
                 
                 self.state.followerCount = followCountInfo.followers
                 self.state.followingCount = followCountInfo.followings
-                
-                if let tempFollowingCount = self.tempFollowingCount,
-                   let tempSelectedMemberID = self.tempSelectedMemberID
-                {
-                    if self.state.followingCount != tempFollowingCount {
-                        self.state.followings.removeAll { $0.id == tempSelectedMemberID }
-                    }
-                }
             }
             .store(in: &cancellables)
     }
@@ -224,7 +205,8 @@ extension FollowListViewModel {
                 
                 if isSuccess {
                     self.fetchFollowCount(memberID: self.memberID)
-                    self.state.followings.removeAll { $0.id == memberID }
+                    // TODO: - 아래 코드 유지할지, 변경할지 정하기
+                    // self.state.followings.removeAll { $0.id == memberID }
                 }
             }
             .store(in: &cancellables)

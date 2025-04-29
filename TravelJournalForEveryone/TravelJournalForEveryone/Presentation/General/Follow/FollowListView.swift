@@ -201,7 +201,6 @@ struct FollowListView: View {
                             }
                             .contentShape(.rect)
                             .onTapGesture {
-                                viewModel.send(.tappedUserSummaryView(memberID: userSummary.id))
                                 coordinator.push(.myJournal(memberID: userSummary.id))
                             }
                         }
