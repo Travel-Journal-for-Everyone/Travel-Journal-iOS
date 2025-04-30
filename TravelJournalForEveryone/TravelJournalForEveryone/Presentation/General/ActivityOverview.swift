@@ -45,6 +45,7 @@ struct ActivityOverview: View {
                         coordinator.push(
                             .followList(
                                 memberID: memberID,
+                                isCurrentUser: isCurrentUser,
                                 nickname: user.nickname,
                                 viewType: .follower
                             )
@@ -59,6 +60,7 @@ struct ActivityOverview: View {
                         coordinator.push(
                             .followList(
                                 memberID: memberID,
+                                isCurrentUser: isCurrentUser,
                                 nickname: user.nickname,
                                 viewType: .following
                             )

@@ -8,6 +8,7 @@
 import SwiftUI
 
 enum UserSummaryViewType {
+    case basic
     case follow(onUnfollow: () -> Void)
     case followingRequest(onAccept: () -> Void, onReject: () -> Void)
     case journalOrPlace(isFollowing: Bool, action: () -> Void)
@@ -66,6 +67,8 @@ struct UserSummaryView: View {
     @ViewBuilder
     private var trailingView: some View {
         switch viewType {
+        case .basic, .searching:
+            EmptyView()
         case .follow(let onUnfollow):
             Button {
                 onUnfollow()
@@ -110,8 +113,6 @@ struct UserSummaryView: View {
             FollowButton(isFollowing: isFollowing) {
                 action()
             }
-        case .searching:
-            EmptyView()
         case .blocking(let onCancel):
             Button {
                 onCancel()

@@ -97,41 +97,60 @@ struct FollowListView: View {
                         Color.clear
                             .frame(height: 5)
                         
-                        if viewModel.state.followingRequestUsers.isEmpty {
-                            EmptyView()
-                        } else {
-                            HStack {
-                                Text("요청 (\(viewModel.state.followingRequestUserCount))")
-                                    .font(.pretendardMedium(16))
-                                    .foregroundStyle(.tjBlack)
+                        if viewModel.state.isCurrentUser {
+                            if viewModel.state.followingRequestUsers.isEmpty {
+                                EmptyView()
+                            } else {
+                                HStack {
+                                    Text("요청 (\(viewModel.state.followingRequestUserCount))")
+                                        .font(.pretendardMedium(16))
+                                        .foregroundStyle(.tjBlack)
+                                    
+                                    Spacer()
+                                }
                                 
-                                Spacer()
+                                ForEach(viewModel.state.followingRequestUsers, id: \.id) { userSummary in
+                                    UserSummaryView(
+                                        userSummary: userSummary,
+                                        viewType: .followingRequest(onAccept: {
+                                            viewModel.send(.tappedFollowingAcceptButton)
+                                        }, onReject: {
+                                            viewModel.send(.tappedFollowingRejectButton)
+                                        })
+                                    )
+                                    .contentShape(.rect)
+                                    .onTapGesture {
+                                        coordinator.push(.myJournal(memberID: userSummary.id))
+                                    }
+                                }
+                                
+                                Rectangle()
+                                    .frame(height: 1)
+                                    .foregroundStyle(.tjGray5)
+                                    .padding(.vertical, 5)
                             }
-                            
-                            ForEach(viewModel.state.followingRequestUsers, id: \.id) { userSummary in
-                                UserSummaryView(
-                                    userSummary: userSummary,
-                                    viewType: .followingRequest(onAccept: {
-                                        viewModel.send(.tappedFollowingAcceptButton)
-                                    }, onReject: {
-                                        viewModel.send(.tappedFollowingRejectButton)
-                                    })
-                                )
-                            }
-                            
-                            Rectangle()
-                                .frame(height: 1)
-                                .foregroundStyle(.tjGray5)
-                                .padding(.vertical, 5)
                         }
                         
                         ForEach(viewModel.state.followers, id: \.id) { userSummary in
-                            UserSummaryView(
-                                userSummary: userSummary,
-                                viewType: .follow(onUnfollow: {
-                                    viewModel.send(.tappedUnfollowButton)
-                                })
-                            )
+                            Group {
+                                if viewModel.state.isCurrentUser {
+                                    UserSummaryView(
+                                        userSummary: userSummary,
+                                        viewType: .follow(onUnfollow: {
+                                            // TODO: - 팔로워 X 버튼 Action
+                                        })
+                                    )
+                                } else {
+                                    UserSummaryView(
+                                        userSummary: userSummary,
+                                        viewType: .basic
+                                    )
+                                }
+                            }
+                            .contentShape(.rect)
+                            .onTapGesture {
+                                coordinator.push(.myJournal(memberID: userSummary.id))
+                            }
                         }
                         
                         if !viewModel.state.isLastFollowersPage {
@@ -165,12 +184,25 @@ struct FollowListView: View {
                             .frame(height: 5)
                         
                         ForEach(viewModel.state.followings, id: \.id) { userSummary in
-                            UserSummaryView(
-                                userSummary: userSummary,
-                                viewType: .follow(onUnfollow: {
-                                    viewModel.send(.tappedUnfollowButton)
-                                })
-                            )
+                            Group {
+                                if viewModel.state.isCurrentUser {
+                                    UserSummaryView(
+                                        userSummary: userSummary,
+                                        viewType: .follow(onUnfollow: {
+                                            viewModel.send(.tappedUnfollowButton(memberID: userSummary.id))
+                                        })
+                                    )
+                                } else {
+                                    UserSummaryView(
+                                        userSummary: userSummary,
+                                        viewType: .basic
+                                    )
+                                }
+                            }
+                            .contentShape(.rect)
+                            .onTapGesture {
+                                coordinator.push(.myJournal(memberID: userSummary.id))
+                            }
                         }
                         
                         if !viewModel.state.isLastFollowingsPage {
@@ -180,6 +212,7 @@ struct FollowListView: View {
                                 }
                         }
                     }
+                    .animation(.easeIn, value: viewModel.state.followings)
                 }
                 .scrollIndicators(.visible)
                 .contentMargins(.bottom, 1.adjustedH, for: .scrollIndicators)
@@ -195,7 +228,9 @@ struct FollowListView: View {
             fetchFollowCountUseCase: DIContainer.shared.fetchFollowCountUseCase,
             fetchFollowersUseCase: DIContainer.shared.fetchFollowersUseCase,
             fetchFollowingsUseCase: DIContainer.shared.fetchFollowingsUseCase,
+            unfollowUseCase: DIContainer.shared.unfollowUseCase,
             memberID: 10,
+            isCurrentUser: true,
             nickname: "몽그리바보",
             viewType: .follower
         )

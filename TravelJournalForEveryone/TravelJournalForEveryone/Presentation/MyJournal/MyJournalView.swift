@@ -142,10 +142,15 @@ struct MyJournalView: View {
                                 .frame(width: 24, height: 24)
                         }
                     } else {
-                        FollowButton(isFollowing: viewModel.state.isFollowing) {
-                            viewModel.send(.tappedFollowButton)
+                        if viewModel.state.isLoadingFollowState {
+                            // TODO: - SkeletonView가 있으면 좋을 듯
+                            EmptyView()
+                        } else {
+                            FollowButton(isFollowing: viewModel.state.isFollowing) {
+                                viewModel.send(.tappedFollowButton)
+                            }
+                            .padding(.trailing, 5)
                         }
-                        .padding(.trailing, 5)
                         
                         Button {
                             withAnimation(.smooth(duration: 0.25)) {
@@ -169,10 +174,6 @@ struct MyJournalView: View {
                         imageString: viewModel.state.user.profileImageURLString
                     )
                     .padding(.trailing, 16)
-                    // MARK: - TEST
-                    .onTapGesture {
-                        coordinator.push(.myJournal(memberID: 2))
-                    }
                     
                     ActivityOverview(
                         user: viewModel.state.user,

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SearchView: View {
     @StateObject var viewModel: SearchViewModel
+    @EnvironmentObject private var coordinator: DefaultCoordinator
     @Namespace var namespace
     @FocusState private var focused: Bool
     
@@ -223,6 +224,10 @@ extension SearchView {
                     LazyVStack(spacing: 15) {
                         ForEach(viewModel.state.searchedTraveler, id: \.id) { user in
                             UserSummaryView(userSummary: user, viewType: .searching)
+                                .contentShape(.rect)
+                                .onTapGesture {
+                                    coordinator.push(.myJournal(memberID: user.id))
+                                }
                         }
                         
                         if !viewModel.state.isLastSearchedTraveler {

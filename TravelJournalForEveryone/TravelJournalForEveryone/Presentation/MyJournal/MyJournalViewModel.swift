@@ -12,6 +12,11 @@ final class MyJournalViewModel: ObservableObject {
     @Published private(set) var state = State()
     
     private let fetchUserUseCase: FetchUserUseCase
+    private let followUseCase: FollowUseCase
+    private let unfollowUseCase: UnfollowUseCase
+    private let checkFollowUseCase: CheckFollowUseCase
+    
+    private let followButtonTappedSubject = PassthroughSubject<Void, Never>()
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -20,9 +25,15 @@ final class MyJournalViewModel: ObservableObject {
     ///     입력할 경우, 다른 사용자의 정보를 보는 ViewModel로 활용합니다.
     init(
         memberID: Int? = nil,
-        fetchUserUseCase: FetchUserUseCase
+        fetchUserUseCase: FetchUserUseCase,
+        followUseCase: FollowUseCase,
+        unfollowUseCase: UnfollowUseCase,
+        checkFollowUseCase: CheckFollowUseCase
     ) {
         self.fetchUserUseCase = fetchUserUseCase
+        self.followUseCase = followUseCase
+        self.unfollowUseCase = unfollowUseCase
+        self.checkFollowUseCase = checkFollowUseCase
         self.state.memberID = memberID
         
         guard let memberID else {
@@ -38,6 +49,14 @@ final class MyJournalViewModel: ObservableObject {
         } else {
             self.state.isCurrentUser = false
         }
+        
+        followButtonTappedSubject
+            .throttle(for: .seconds(1.5), scheduler: RunLoop.main, latest: false)
+            .sink { [weak self] in
+                guard let self else { return }
+                self.handleFollowAction()
+            }
+            .store(in: &cancellables)
     }
     
     @MainActor
@@ -70,6 +89,8 @@ extension MyJournalViewModel {
         var isFollowing: Bool = false
         var isTouchDisabled: Bool = false
         
+        var isLoadingFollowState: Bool = true
+        
         var selectedActivityOverviewType: ActivityOverviewType = .journal
         var selectedRegion: Region = .metropolitan
     }
@@ -91,6 +112,8 @@ extension MyJournalViewModel {
         if self.state.isCurrentUser {
             self.state.user = DIContainer.shared.userInfoManager.user
         } else {
+            self.state.isLoadingFollowState = true
+            
             fetchUserUseCase.execute(memberID: self.state.memberID ?? 0)
                 .sink { completion in
                     switch completion {
@@ -101,6 +124,22 @@ extension MyJournalViewModel {
                     }
                 } receiveValue: { [weak self] fetchedUser in
                     self?.state.user = fetchedUser
+                }
+                .store(in: &cancellables)
+            
+            checkFollowUseCase.execute(memberID: self.state.memberID ?? 0)
+                .sink { [weak self] completion in
+                    guard let self else { return }
+                    
+                    switch completion {
+                    case .finished:
+                        self.state.isLoadingFollowState = false
+                    case .failure(let error):
+                        print("⛔️ Check Follow State Error: \(error)")
+                    }
+                } receiveValue: { [weak self] isFollowing in
+                    guard let self else { return }
+                    self.state.isFollowing = isFollowing
                 }
                 .store(in: &cancellables)
         }
@@ -115,7 +154,39 @@ extension MyJournalViewModel {
     }
     
     private func handleTappedFollowButton() {
-        self.state.isFollowing.toggle()
+        followButtonTappedSubject.send()
+    }
+    
+    private func handleFollowAction() {
+        if self.state.isFollowing {
+            unfollowUseCase.execute(memberID: self.state.memberID ?? 0)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("⛔️ Unfollow Error: \(error)")
+                    }
+                } receiveValue: { [weak self] isSuccess in
+                    guard let self else { return }
+                    self.state.isFollowing = false
+                }
+                .store(in: &cancellables)
+        } else {
+            followUseCase.execute(memberID: self.state.memberID ?? 0)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("⛔️ follow Error: \(error)")
+                    }
+                } receiveValue: { [weak self] isSuccess in
+                    guard let self else { return }
+                    self.state.isFollowing = true
+                }
+                .store(in: &cancellables)
+        }
     }
     
     private func handleTappedBlockButton() {

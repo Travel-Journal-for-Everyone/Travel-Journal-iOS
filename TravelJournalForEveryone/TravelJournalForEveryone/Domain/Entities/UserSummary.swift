@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserSummary: Identifiable {
+struct UserSummary: Identifiable, Equatable {
     let id: Int
     let profileImageURLString: String
     let nickname: String

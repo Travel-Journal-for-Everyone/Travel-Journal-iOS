@@ -14,6 +14,7 @@ final class FollowListViewModel: ObservableObject {
     private let fetchFollowCountUseCase: FetchFollowCountUseCase
     private let fetchFollowersUseCase: FetchFollowersUseCase
     private let fetchFollowingsUseCase: FetchFollowingsUseCase
+    private let unfollowUseCase: UnfollowUseCase
     
     private let memberID: Int?
     private var currentFollowersPageNumber: Int = 0
@@ -25,14 +26,18 @@ final class FollowListViewModel: ObservableObject {
         fetchFollowCountUseCase: FetchFollowCountUseCase,
         fetchFollowersUseCase: FetchFollowersUseCase,
         fetchFollowingsUseCase: FetchFollowingsUseCase,
+        unfollowUseCase: UnfollowUseCase,
         memberID: Int?,
+        isCurrentUser: Bool,
         nickname: String,
         viewType: ActivityOverviewType
     ) {
         self.fetchFollowCountUseCase = fetchFollowCountUseCase
         self.fetchFollowersUseCase = fetchFollowersUseCase
         self.fetchFollowingsUseCase = fetchFollowingsUseCase
+        self.unfollowUseCase = unfollowUseCase
         self.memberID = memberID
+        self.state.isCurrentUser = isCurrentUser
         self.state.nickname = nickname
         
         updateSegmentIndex(viewType: viewType)
@@ -56,8 +61,8 @@ final class FollowListViewModel: ObservableObject {
             break
         case .tappedFollowingRejectButton:
             break
-        case .tappedUnfollowButton:
-            break
+        case .tappedUnfollowButton(let memberID):
+            unfollow(memberID: memberID)
         }
     }
 }
@@ -65,6 +70,7 @@ final class FollowListViewModel: ObservableObject {
 extension FollowListViewModel {
     struct State {
         var nickname: String = ""
+        var isCurrentUser: Bool = false
         var selectedSegmentIndex: Int = 0
         
         var followingRequestUsers: [UserSummary] = []
@@ -91,7 +97,7 @@ extension FollowListViewModel {
         case selectSegment(Int)
         case tappedFollowingAcceptButton
         case tappedFollowingRejectButton
-        case tappedUnfollowButton
+        case tappedUnfollowButton(memberID: Int)
     }
 }
 
@@ -183,5 +189,26 @@ extension FollowListViewModel {
             }
         }
         .store(in: &cancellables)
+    }
+    
+    private func unfollow(memberID: Int) {
+        unfollowUseCase.execute(memberID: memberID)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print("⛔️ Unfollow Error: \(error)")
+                }
+            } receiveValue: { [weak self] isSuccess in
+                guard let self else { return }
+                
+                if isSuccess {
+                    self.fetchFollowCount(memberID: self.memberID)
+                    // TODO: - 아래 코드 유지할지, 변경할지 정하기
+                    // self.state.followings.removeAll { $0.id == memberID }
+                }
+            }
+            .store(in: &cancellables)
     }
 }
