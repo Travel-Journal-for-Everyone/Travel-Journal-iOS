@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
+    @EnvironmentObject private var authViewModel: AuthenticationViewModel
+    
     @StateObject var viewModel: ProfileTabViewModel
     
     var body: some View {
@@ -75,6 +77,15 @@ extension ProfileView {
             MenuHorizontalView(text: "좋아요한 여행 일지") { }
             MenuHorizontalView(text: "저장한 여행 일지") { }
             MenuHorizontalView(text: "차단 회원 관리") { }
+            
+            // MARK: - 로그아웃 및 회원탈퇴 임시 작성
+            MenuHorizontalView(text: "로그아웃") {
+                authViewModel.send(.logout)
+            }
+            
+            MenuHorizontalView(text: "회원탈퇴") {
+                authViewModel.send(.unlink)
+            }
         }
     }
 }
