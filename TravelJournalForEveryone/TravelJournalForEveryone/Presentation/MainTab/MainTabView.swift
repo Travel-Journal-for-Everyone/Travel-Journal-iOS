@@ -41,7 +41,7 @@ struct MainTabView: View {
                 .tag(TJTab.search)
                 
                 NavigationStack(path: $coordinator.explorePath) {
-                    ExploreView()
+                    ExploreView(viewModel: .init())
                         .navigationDestination(for: Screen.self) { screen in
                             coordinator.build(screen)
                         }
