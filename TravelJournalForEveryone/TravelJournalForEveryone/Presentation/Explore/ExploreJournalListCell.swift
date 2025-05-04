@@ -65,8 +65,10 @@ struct ExploreJournalListCell: View {
                 
                 Spacer()
                 
-                // TODO: - 라이트 버전으로 수정 필요
-                HashtagView(journal.hashtag)
+                HashtagView(
+                    journal.hashtag,
+                    isLightMode: true
+                )
             }
             .padding(.leading, 15)
             .padding(.top, 20)

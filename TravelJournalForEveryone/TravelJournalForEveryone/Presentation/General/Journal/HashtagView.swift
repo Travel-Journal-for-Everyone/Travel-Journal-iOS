@@ -9,22 +9,24 @@ import SwiftUI
 
 struct HashtagView: View {
     private let hashtag: [String]
+    private let isLightMode: Bool
     
-    init(_ hashtag: [String]) {
+    init(_ hashtag: [String], isLightMode: Bool = false) {
         self.hashtag = hashtag
+        self.isLightMode = isLightMode
     }
     
     var body: some View {
         HStack(spacing: 5) {
             ForEach(hashtag, id: \.self) { tag in
                 Text("#\(tag)")
-                    .foregroundColor(.tjPrimaryMain)
+                    .foregroundColor(isLightMode ? .tjPrimaryMain : .tjPrimaryMain)
                     .font(.pretendardRegular(12))
                     .padding(.vertical, 5)
                     .padding(.horizontal, 10)
                     .background(
                         Capsule()
-                            .fill(.tjPrimaryLight)
+                            .fill(isLightMode ? .tjWhite : .tjPrimaryLight)
                     )
             }
             
@@ -34,5 +36,11 @@ struct HashtagView: View {
 }
 
 #Preview {
-    HashtagView(["바다", "부산", "해운대"])
+    VStack {
+        HashtagView(["바다", "부산", "해운대"])
+        
+        HashtagView(["바다", "부산", "해운대"], isLightMode: true)
+    }
+    .padding()
+    .background(.tjGray5)
 }
