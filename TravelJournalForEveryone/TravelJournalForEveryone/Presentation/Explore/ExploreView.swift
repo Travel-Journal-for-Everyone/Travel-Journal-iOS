@@ -31,7 +31,21 @@ struct ExploreView: View {
             
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 32) {
+                    journalListView
+                        .containerRelativeFrame(.horizontal)
+                        .contentMargins(.horizontal, 16)
+                        .contentMargins(.bottom, 63.adjustedH)
+                        .id(0)
+                        .onAppear {
+                            if viewModel.state.isJournalsInitialLoading {
+                                viewModel.send(.journalListViewOnAppear)
+                            }
+                        }
                     
+                    placeGridView
+                        .containerRelativeFrame(.horizontal)
+                        .contentMargins(.horizontal, 16)
+                        .id(1)
                 }
                 .scrollTargetLayout()
             }
@@ -48,8 +62,62 @@ struct ExploreView: View {
                 .foregroundStyle(.tjBlack)
         }
     }
+    
+    @ViewBuilder
+    private var journalListView: some View {
+        if viewModel.state.isJournalsInitialLoading {
+            ProgressView()
+        } else {
+            if viewModel.state.journalSummaries.isEmpty {
+                VStack(spacing: 12) {
+                    Text("탐험할 여행 일지가 없습니다.")
+                        .font(.pretendardMedium(16))
+                        .foregroundStyle(.tjGray2)
+                    
+                    RefreshButton {
+                        viewModel.send(.refreshJournals)
+                    }
+                }
+            } else {
+                ScrollView(.vertical) {
+                    LazyVStack(spacing: 15) {
+                        Color.clear
+                            .frame(height: 5)
+                        
+                        ForEach(viewModel.state.journalSummaries, id: \.id) { exploreJournalSummary in
+                            ExploreJournalListCell(exploreJournalSummary)
+                                .contentShape(.rect)
+                                .onTapGesture {
+                                    print("\(exploreJournalSummary.id)")
+                                }
+                        }
+                        
+                        if !viewModel.state.isLastJournalsPage {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.journalListNextPageOnAppear)
+                                }
+                        }
+                    }
+                }
+                .refreshable {
+                    viewModel.send(.refreshJournals)
+                }
+                .scrollIndicators(.visible)
+                .contentMargins(.bottom, 54.adjustedH, for: .scrollIndicators)
+                .contentMargins(0, for: .scrollIndicators)
+            }
+        }
+    }
+    
+    private var placeGridView: some View {
+        Text("플레이스 그리드 뷰")
+    }
 }
 
 #Preview {
-    ExploreView(viewModel: .init())
+    //ExploreView(viewModel: .init())
+    
+    MainTabView()
+        .environmentObject(DefaultCoordinator())
 }
