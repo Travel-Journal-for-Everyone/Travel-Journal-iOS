@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "TJRefresh.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
