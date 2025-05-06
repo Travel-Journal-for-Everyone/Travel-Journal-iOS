@@ -21,7 +21,7 @@ final class ExploreViewModel: ObservableObject {
         case .journalListNextPageOnAppear:
             fetchJournals()
         case .refreshJournals:
-            refhrefJournals()
+            refreshJournals()
         }
     }
 }
@@ -62,7 +62,7 @@ extension ExploreViewModel {
         }
     }
     
-    private func refhrefJournals() {
+    private func refreshJournals() {
         print("새로 고침")
     }
 }
