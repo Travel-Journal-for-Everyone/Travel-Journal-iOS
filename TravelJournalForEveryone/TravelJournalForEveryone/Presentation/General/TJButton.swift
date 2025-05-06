@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct TJButton: View {
-    let title: String
-    let action: () -> Void
-    var isDisabled: Bool
-    var size: Size
-    var height: CGFloat
+    private let title: String
+    private let action: () -> Void
+    private var isDisabled: Bool
+    private var size: Size
+    private var height: CGFloat
     
     init(
         title: String,
