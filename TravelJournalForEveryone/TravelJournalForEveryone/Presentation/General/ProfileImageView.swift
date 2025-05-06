@@ -36,7 +36,7 @@ struct ProfileImageView: View {
                     .resizable()
                     .scaledToFill()
             } else if let imageString,
-               let url = URL(string: imageString) {
+                      let url = URL(string: imageString) {
                 AsyncImage(url: url) { image in
                     image
                         .resizable()
@@ -78,7 +78,9 @@ extension ProfileImageView {
         
         var size: CGFloat {
             switch self {
-            case .exploringJournal, .comment:
+            case .exploringJournal:
+                return 25
+            case .comment:
                 return 30
             case .journalDetail, .placeDetail, .listCell:
                 return 52
