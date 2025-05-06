@@ -45,7 +45,13 @@ struct ExploreView: View {
                     placeGridView
                         .containerRelativeFrame(.horizontal)
                         .contentMargins(.horizontal, 16)
+                        .contentMargins(.bottom, 63.adjustedH)
                         .id(1)
+                        .onAppear {
+                            if viewModel.state.isPlacesInitialLoading {
+                                viewModel.send(.placeGridViewOnAppear)
+                            }
+                        }
                 }
                 .scrollTargetLayout()
             }
@@ -110,8 +116,57 @@ struct ExploreView: View {
         }
     }
     
+    @ViewBuilder
     private var placeGridView: some View {
-        Text("플레이스 그리드 뷰")
+        let columns = Array(
+            repeating: GridItem(.flexible(), spacing: 5),
+            count: 2
+        )
+        
+        if viewModel.state.isPlacesInitialLoading {
+            ProgressView()
+        } else {
+            if viewModel.state.placesSummaries.isEmpty {
+                VStack(spacing: 12) {
+                    Text("탐험할 플레이스가 없습니다.")
+                        .font(.pretendardMedium(16))
+                        .foregroundStyle(.tjGray2)
+                    
+                    RefreshButton {
+                        viewModel.send(.refreshPlaces)
+                    }
+                }
+            } else {
+                ScrollView(.vertical) {
+                    Color.clear
+                        .frame(height: 10)
+                    
+                    LazyVGrid(columns: columns, spacing: 10) {
+                        ForEach(viewModel.state.placesSummaries) { placeSummary in
+                            PlaceGridCell(placeSummary)
+                                .contentShape(.rect)
+                                .onTapGesture {
+                                    print("\(placeSummary.id)")
+                                }
+                        }
+                        
+                        if !viewModel.state.isLastPlacesPage {
+                            ProgressView()
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.placeGridNextPageOnAppear)
+                                }
+                        }
+                    }
+                }
+                .refreshable {
+                    viewModel.send(.refreshPlaces)
+                }
+                .scrollIndicators(.visible)
+                .contentMargins(.bottom, 54.adjustedH, for: .scrollIndicators)
+                .contentMargins(0, for: .scrollIndicators)
+            }
+        }
     }
 }
 
