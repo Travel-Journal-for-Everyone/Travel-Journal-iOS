@@ -23,6 +23,7 @@ struct SearchView: View {
                 } else {
                     recentSearchHeader
                     recentSearchContent
+                        .padding(.horizontal, -16)
                 }
             case .searching:
                 Spacer()
@@ -33,10 +34,11 @@ struct SearchView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
+        .background(.white)
+        .ignoresSafeArea(.keyboard)
         .onAppear {
             viewModel.send(.viewOnAppear)
         }
-        .background(.white)
         .onTapGesture {
             hideKeyboard()
         }
@@ -103,14 +105,22 @@ extension SearchView {
     }
     
     private var recentSearchContent: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                ForEach(viewModel.state.recentSearchList, id: \.self) { text in
-                    recentSearchCell(text)
+        VStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    ForEach(viewModel.state.recentSearchList, id: \.self) { text in
+                        recentSearchCell(text)
+                    }
+                    
                 }
+                .padding(.horizontal, 26)
+                .padding(.top, 15)
             }
-            .padding(.horizontal, 10)
-            .padding(.top, 15)
+            .scrollDismissesKeyboard(.immediately)
+            
+            Rectangle()
+                .fill(.clear)
+                .frame(height: 50)
         }
     }
     
@@ -125,14 +135,19 @@ extension SearchView {
     }
     
     private func recentSearchCell(_ text: String) -> some View {
-        HStack {
-            Text(text)
-                .font(.pretendardRegular(16))
-                .onTapGesture {
-                    viewModel.send(.searchByRecentSearch(text))
-                    hideKeyboard()
-                }
-            Spacer()
+        HStack(spacing: 0) {
+            HStack {
+                Text(text)
+                    .font(.pretendardRegular(16))
+
+                Spacer()
+            }
+            .contentShape(.rect)
+            .onTapGesture {
+                viewModel.send(.searchByRecentSearch(text))
+                hideKeyboard()
+            }
+            
             Image(.tjClose)
                 .resizable()
                 .frame(width: 20, height: 20)
