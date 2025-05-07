@@ -117,10 +117,7 @@ extension SearchView {
                 .padding(.top, 15)
             }
             .scrollDismissesKeyboard(.immediately)
-            
-            Rectangle()
-                .fill(.clear)
-                .frame(height: 50)
+            .contentMargins(.bottom, 50)
         }
     }
     
