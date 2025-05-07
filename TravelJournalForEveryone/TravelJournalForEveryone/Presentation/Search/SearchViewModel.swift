@@ -18,14 +18,25 @@ final class SearchViewModel: ObservableObject {
     @Published private(set) var state = State()
     
     private let searchMembersUseCase: SearchMembersUseCase
+    private let searchPlacesUseCase: SearchPlacesUseCase
+    private let searchJournalsUseCase: SearchJournalsUseCase
+    
     private var isSearched: Bool = false
     
     private var currentMembersPageNumber: Int = 0
+    private var currentPlacePageNumber: Int = 0
+    private var currentJournalPageNumber: Int = 0
     
     private var cancellables: Set<AnyCancellable> = []
     
-    init(searchMembersUseCase: SearchMembersUseCase) {
+    init(
+        searchMembersUseCase: SearchMembersUseCase,
+        searchPlacesUseCase: SearchPlacesUseCase,
+        searchJournalsUseCase: SearchJournalsUseCase
+    ) {
         self.searchMembersUseCase = searchMembersUseCase
+        self.searchPlacesUseCase = searchPlacesUseCase
+        self.searchJournalsUseCase = searchJournalsUseCase
     }
     
     func send(_ intent: Intent) {
@@ -50,7 +61,7 @@ final class SearchViewModel: ObservableObject {
                 resetSearching()
                 isSearched = true
                 addRecentSearch(trimmedText)
-                searchMembers(trimmedText)
+                searchJournals(trimmedText)
             }
         case .deleteRecentSearch(let text):
             deleteRecentSearch(text)
@@ -64,16 +75,13 @@ final class SearchViewModel: ObservableObject {
             addRecentSearch(text)
         case .selectSegment(let index):
             state.selectedSegmentIndex = index
-        case .travelerListViewOnAppear:
-            if !state.searchText.isEmpty, isSearched {
-                searchMembers(state.searchText)
-            }
-        case .travelerListNextOnAppear:
+            
+        case .fetchTravelerList:
             searchMembers(state.searchText)
-        case .travelJournalListViewOnAppear:
-            break
-        case .placeListViewOnAppear:
-            break
+        case .fetchPlaceList:
+            searchPlaces(state.searchText)
+        case .fetchJournalList:
+            searchJournals(state.searchText)
         }
     }
 }
@@ -87,6 +95,13 @@ extension SearchViewModel {
         
         var searchedTraveler: [UserSummary] = []
         var isLastSearchedTraveler: Bool = false
+        
+        var searchedPlaces: [PlaceSummary] = []
+        var isLastSearchedPlace: Bool = false
+        
+        var searchedJournals: [JournalSummary] = []
+        var isLastSearchedJournal: Bool = false
+        
         var isLoading: Bool = false
     }
     
@@ -102,10 +117,9 @@ extension SearchViewModel {
         
         case selectSegment(Int)
         
-        case travelerListViewOnAppear
-        case travelerListNextOnAppear
-        case travelJournalListViewOnAppear
-        case placeListViewOnAppear
+        case fetchTravelerList
+        case fetchJournalList
+        case fetchPlaceList
     }
 }
 
@@ -166,6 +180,64 @@ extension SearchViewModel {
             )
             self.state.isLastSearchedTraveler = membersPage.isLast
             self.currentMembersPageNumber += 1
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func searchPlaces(_ keyword: String) {
+        guard !state.isLastSearchedPlace else { return }
+        
+        state.isLoading = true
+        searchPlacesUseCase.execute(
+            keyword: keyword,
+            pageNumber: currentPlacePageNumber
+        )
+        .sink { [weak self] completion in
+            switch completion {
+            case .finished:
+                self?.state.isLoading = false
+                self?.state.searchState = .successSearch
+            case .failure(let error):
+                self?.state.isLoading = false
+                print("⛔️ Search Traveler Error: \(error)")
+            }
+        } receiveValue: { [weak self] page in
+            guard let self else { return }
+            
+            self.state.searchedPlaces.append(
+                contentsOf: page.contents
+            )
+            self.state.isLastSearchedPlace = page.isLast
+            self.currentPlacePageNumber += 1
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func searchJournals(_ keyword: String) {
+        guard !state.isLastSearchedJournal else { return }
+        
+        state.isLoading = true
+        searchJournalsUseCase.execute(
+            keyword: keyword,
+            pageNumber: currentJournalPageNumber
+        )
+        .sink { [weak self] completion in
+            switch completion {
+            case .finished:
+                self?.state.isLoading = false
+                self?.state.searchState = .successSearch
+            case .failure(let error):
+                self?.state.isLoading = false
+                print("⛔️ Search Traveler Error: \(error)")
+            }
+        } receiveValue: { [weak self] page in
+            guard let self else { return }
+            
+            self.state.searchedJournals.append(
+                contentsOf: page.contents
+            )
+            self.state.isLastSearchedJournal = page.isLast
+            self.currentJournalPageNumber += 1
         }
         .store(in: &cancellables)
     }

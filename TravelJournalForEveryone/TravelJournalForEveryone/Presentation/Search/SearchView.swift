@@ -194,7 +194,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(0)
                         .onAppear {
-                            viewModel.send(.travelJournalListViewOnAppear)
+                            viewModel.send(.fetchJournalList)
                         }
                     
                     placeListView
@@ -203,7 +203,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(1)
                         .onAppear {
-                            viewModel.send(.placeListViewOnAppear)
+                            viewModel.send(.fetchPlaceList)
                         }
                     
                     travelerListView
@@ -212,7 +212,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(2)
                         .task {
-                            viewModel.send(.travelerListViewOnAppear)
+                            viewModel.send(.fetchTravelerList)
                         }
                 }
                 .scrollTargetLayout()
@@ -245,7 +245,7 @@ extension SearchView {
                         if !viewModel.state.isLastSearchedTraveler {
                             ProgressView()
                                 .task {
-                                    viewModel.send(.travelerListNextOnAppear)
+                                    viewModel.send(.fetchTravelerList)
                                 }
                         }
                     }
@@ -264,8 +264,15 @@ extension SearchView {
             Color.clear.frame(height: 10)
             
             LazyVStack(spacing: 15) {
-                ForEach(0..<20) { journalSummary in
-                    JournalListCell(.mock(id: 0, title: "ㅇㅇㅇㅇ"))
+                ForEach(viewModel.state.searchedJournals, id: \.id) { journal in
+                    JournalListCell(journal)
+                }
+                
+                if !viewModel.state.isLastSearchedJournal {
+                    ProgressView()
+                        .task {
+                            viewModel.send(.fetchJournalList)
+                        }
                 }
             }
         }
@@ -284,8 +291,15 @@ extension SearchView {
             Color.clear.frame(height: 10)
             
             LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(0..<14) { list in
-                    PlaceGridCell(.mock(id: 0, placeName: "어쩌구 추천"))
+                ForEach(viewModel.state.searchedPlaces, id: \.id) { place in
+                    PlaceGridCell(place)
+                }
+                
+                if !viewModel.state.isLastSearchedPlace {
+                    ProgressView()
+                        .task {
+                            viewModel.send(.fetchPlaceList)
+                        }
                 }
             }
         }
@@ -296,5 +310,11 @@ extension SearchView {
 }
 
 #Preview {
-    SearchView(viewModel: SearchViewModel(searchMembersUseCase: DIContainer.shared.searchMembersUseCase))
+    SearchView(
+        viewModel: SearchViewModel(
+            searchMembersUseCase: DIContainer.shared.searchMembersUseCase,
+            searchPlacesUseCase: DIContainer.shared.searchPlacesUseCase,
+            searchJournalsUseCase: DIContainer.shared.searchJournalsUseCase
+        )
+    )
 }

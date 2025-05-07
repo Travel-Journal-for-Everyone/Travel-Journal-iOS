@@ -18,7 +18,7 @@ enum SearchType {
         case .member:
             "/members"
         case .place:
-            "/palces"
+            "/places"
         case .journal:
             "/journals"
         }
@@ -37,7 +37,7 @@ extension SearchAPI: EndPoint {
     
     var path: String {
         switch self {
-        case let .search(type, keyword):
+        case let .search(type, _):
             return type.path
         }
     }
