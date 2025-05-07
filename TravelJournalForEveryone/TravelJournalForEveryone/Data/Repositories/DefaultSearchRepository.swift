@@ -20,15 +20,15 @@ final class DefaultSearchRepository: SearchRepository {
         pageNumber: Int,
         pageSize: Int
     ) -> AnyPublisher<Pageable<UserSummary>, NetworkError> {
-        let request = SearchMembersRequest(
+        let request = SearchRequest(
             keyword: keyword,
             pageNumber: pageNumber,
             pageSize: pageSize
         )
         
         return networkService.request(
-            SearchAPI.searchMembers(request),
-            decodingType: SearchMembersResponseDTO.self
+            SearchAPI.search(type: .member, request: request),
+            decodingType: BasePageableDTO<SearchMembersDTO>.self
         )
         .map { $0.toEntity() }
         .eraseToAnyPublisher()
