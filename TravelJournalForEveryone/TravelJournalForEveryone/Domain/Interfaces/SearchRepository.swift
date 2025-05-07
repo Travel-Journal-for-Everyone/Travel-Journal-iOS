@@ -14,4 +14,16 @@ protocol SearchRepository {
         pageNumber: Int,
         pageSize: Int
     ) -> AnyPublisher<Pageable<UserSummary>, NetworkError>
+    
+    func searchPlaces(
+        keyword: String,
+        pageNumber: Int,
+        pageSize: Int
+    ) -> AnyPublisher<Pageable<PlaceSummary>, NetworkError>
+    
+    func searchJournals(
+        keyword: String,
+        pageNumber: Int,
+        pageSize: Int
+    ) -> AnyPublisher<Pageable<JournalSummary>, NetworkError>
 }
