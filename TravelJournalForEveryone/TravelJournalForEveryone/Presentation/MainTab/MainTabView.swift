@@ -31,7 +31,9 @@ struct MainTabView: View {
                 
                 NavigationStack(path: $coordinator.searchPath) {
                     SearchView(viewModel: .init(
-                        searchMembersUseCase: DIContainer.shared.searchMembersUseCase
+                        searchMembersUseCase: DIContainer.shared.searchMembersUseCase,
+                        searchPlacesUseCase: DIContainer.shared.searchPlacesUseCase,
+                        searchJournalsUseCase: DIContainer.shared.searchJournalsUseCase
                     ))
                     .navigationDestination(for: Screen.self) { screen in
                         coordinator.build(screen)

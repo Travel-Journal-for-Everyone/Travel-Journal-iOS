@@ -37,7 +37,7 @@ final class DefaultFollowRepository: FollowRepository {
         
         return networkService.request(
             FollowAPI.fetchFollowers(request),
-            decodingType: FetchFollowResponseDTO.self
+            decodingType: BasePageableDTO<UserSummaryDTO>.self
         )
         .map { $0.toEntity() }
         .eraseToAnyPublisher()
@@ -56,7 +56,7 @@ final class DefaultFollowRepository: FollowRepository {
         
         return networkService.request(
             FollowAPI.fetchFollowings(request),
-            decodingType: FetchFollowResponseDTO.self
+            decodingType: BasePageableDTO<UserSummaryDTO>.self
         )
         .map { $0.toEntity() }
         .eraseToAnyPublisher()
