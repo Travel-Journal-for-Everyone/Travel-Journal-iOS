@@ -89,32 +89,29 @@ struct ExploreJournalListCell: View {
                     .padding(.bottom, 5)
                 
                 Text("\(journal.address)")
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 15)
             }
             .font(.pretendardRegular(12))
-            .foregroundStyle(.tjGray2)
+            .foregroundStyle(.tjBlack)
             
             HStack(spacing: 8) {
                 HStack(spacing: 5) {
-                    Image(.tjLike)
-                        .resizable()
-                        .frame(width: 20, height: 20)
+                    Text("좋아요")
+                        .font(.pretendardRegular(12))
                     
                     Text("\(journal.likeCount)")
-                        .font(.pretendardMedium(12))
-                        .foregroundStyle(.tjBlack)
+                        .font(.pretendardSemiBold(12))
                 }
                 
                 HStack(spacing: 5) {
-                    Image(.tjComment)
-                        .resizable()
-                        .frame(width: 20, height: 20)
+                    Text("댓글")
+                        .font(.pretendardRegular(12))
                     
                     Text("\(journal.commentCount)")
-                        .font(.pretendardMedium(12))
-                        .foregroundStyle(.tjBlack)
+                        .font(.pretendardSemiBold(12))
                 }
             }
+            .foregroundStyle(.tjGray2)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
