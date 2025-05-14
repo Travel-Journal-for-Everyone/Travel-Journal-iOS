@@ -76,7 +76,10 @@ extension ProfileView {
             }
             MenuHorizontalView(text: "좋아요한 여행 일지") { }
             MenuHorizontalView(text: "저장한 여행 일지") { }
-            MenuHorizontalView(text: "차단 회원 관리") { }
+            
+            MenuHorizontalView(text: "차단 회원 관리") {
+                coordinator.push(.blockedUserList)
+            }
             
             // MARK: - 로그아웃 및 회원탈퇴 임시 작성
             MenuHorizontalView(text: "로그아웃") {

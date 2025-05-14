@@ -118,6 +118,8 @@ final class DefaultCoordinator: CoordinatorProtocol {
                     isEditing: true
                 )
             )
+        case .blockedUserList:
+            BlockedUserListView(viewModel: .init())
         }
     }
     
