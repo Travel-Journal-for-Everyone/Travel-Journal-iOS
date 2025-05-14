@@ -9,8 +9,8 @@ import SwiftUI
 
 struct CustomAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
-    let alertType: AlertType
-    let action: () -> Void
+    private let alertType: AlertType
+    private let action: () -> Void
     
     init(
         isPresented: Binding<Bool>,
