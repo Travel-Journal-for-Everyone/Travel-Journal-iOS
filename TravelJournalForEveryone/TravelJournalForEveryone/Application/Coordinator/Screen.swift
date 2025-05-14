@@ -21,4 +21,5 @@ enum Screen: Hashable {
     // Explore Tab
     // Profile Tab
     case profileFix
+    case blockedUserList
 }
