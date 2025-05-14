@@ -40,22 +40,27 @@ struct UserSummaryView: View {
                     .font(.pretendardMedium(16))
                     .foregroundStyle(.tjBlack)
                 
-                HStack(spacing: 5) {
-                    HStack(spacing: 2) {
-                        Image(.tjJournal)
-                            .frame(width: 16, height: 16)
-                        Text("\(userSummary.travelJournalCount)")
-                            .font(.pretendardRegular(12))
+                switch viewType {
+                case .blocking:
+                    EmptyView()
+                default:
+                    HStack(spacing: 5) {
+                        HStack(spacing: 2) {
+                            Image(.tjJournal)
+                                .frame(width: 16, height: 16)
+                            Text("\(userSummary.travelJournalCount)")
+                                .font(.pretendardRegular(12))
+                        }
+                        
+                        HStack(spacing: 2) {
+                            Image(.tjPlace)
+                                .frame(width: 16, height: 16)
+                            Text("\(userSummary.placeCount)")
+                                .font(.pretendardRegular(12))
+                        }
                     }
-                    
-                    HStack(spacing: 2) {
-                        Image(.tjPlace)
-                            .frame(width: 16, height: 16)
-                        Text("\(userSummary.placeCount)")
-                            .font(.pretendardRegular(12))
-                    }
+                    .foregroundStyle(.tjGray2)
                 }
-                .foregroundStyle(.tjGray2)
             }
             
             Spacer()
