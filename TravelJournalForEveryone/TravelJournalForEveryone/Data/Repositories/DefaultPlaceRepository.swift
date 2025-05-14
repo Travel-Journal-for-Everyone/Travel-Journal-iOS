@@ -30,7 +30,7 @@ final class DefaultPlaceRepository: PlaceRepository {
         
         return networkService.request(
             MembersAPI.fetchPlaces(request),
-            decodingType: FetchPlacesResponseDTO.self
+            decodingType: BasePageableDTO<PlaceSummaryDTO>.self
         )
         .map { $0.toEntity() }
         .eraseToAnyPublisher()

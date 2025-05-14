@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct UserSummaryDTO: Decodable {
+struct UserSummaryDTO: Decodable, BasePageableContent {
+    typealias Entity = UserSummary
+    
     let id: Int
     let profileImageURLString: String
     let nickname: String

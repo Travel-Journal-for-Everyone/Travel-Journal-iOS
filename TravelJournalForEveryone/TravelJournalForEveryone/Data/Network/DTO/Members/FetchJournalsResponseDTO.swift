@@ -6,61 +6,29 @@
 //
 
 import Foundation
-
-struct FetchJournalsResponseDTO: Decodable {
-    let content: [JournalSummaryDTO]
-    let pageable: PageableDTO
-    let totalPages: Int
-    let totalElements: Int
-    let last: Bool
-    let size: Int
-    let number: Int
-    let sort: SortDTO
-    let numberOfElements: Int
-    let first: Bool
-    let empty: Bool
-}
-
-extension FetchJournalsResponseDTO {
-    struct JournalSummaryDTO: Decodable {
-        let journalID: Int
-        let hashtag: [String]
-        let title: String
-        let nights: Int
-        let days: Int
-        let startDate: String
-        let endDate: String
-        
-        private enum CodingKeys: String, CodingKey {
-            case journalID = "journalId"
-            case hashtag = "hashTag"
-            case title, nights, days, startDate, endDate
-        }
-    }
-}
-
-extension FetchJournalsResponseDTO {
-    func toEntity() -> Pageable<JournalSummary> {
-        return .init(
-            totalContents: totalElements,
-            isLast: last,
-            pageNumber: number,
-            isEmpty: empty,
-            contents: content.map { $0.toEntity() }
-        )
-    }
-}
-
-extension FetchJournalsResponseDTO.JournalSummaryDTO {
-    func toEntity() -> JournalSummary {
-        return .init(
-            id: journalID,
-            hashtag: hashtag,
-            title: title,
-            nights: nights,
-            days: days,
-            startDateString: startDate,
-            endDateString: endDate
-        )
-    }
-}
+//
+//struct FetchJournalsResponseDTO: Decodable {
+//    let content: [JournalSummaryDTO]
+//    let pageable: PageableDTO
+//    let totalPages: Int
+//    let totalElements: Int
+//    let last: Bool
+//    let size: Int
+//    let number: Int
+//    let sort: SortDTO
+//    let numberOfElements: Int
+//    let first: Bool
+//    let empty: Bool
+//}
+//
+//extension FetchJournalsResponseDTO {
+//    func toEntity() -> Pageable<JournalSummary> {
+//        return .init(
+//            totalContents: totalElements,
+//            isLast: last,
+//            pageNumber: number,
+//            isEmpty: empty,
+//            contents: content.map { $0.toEntity() }
+//        )
+//    }
+//}
