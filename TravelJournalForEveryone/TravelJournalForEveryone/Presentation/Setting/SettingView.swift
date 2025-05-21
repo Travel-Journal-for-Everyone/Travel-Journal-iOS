@@ -42,8 +42,7 @@ extension SettingView {
                     .resizable()
                     .frame(width: 24, height: 24)
             } action: {
-                // 푸시 알림 설정 화면으로 넘어가기
-                coordinator.pop()
+                coordinator.push(.pushSetting)
             }
             
             MenuHorizontalView(text: "화면모드 설정") {
@@ -51,8 +50,7 @@ extension SettingView {
                     .resizable()
                     .frame(width: 24, height: 24)
             } action: {
-                // 푸시 알림 설정 화면으로 넘어가기
-                coordinator.pop()
+                coordinator.push(.screenSetting)
             }
             
             MenuHorizontalView(text: "이용약관") { }

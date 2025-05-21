@@ -23,4 +23,6 @@ enum Screen: Hashable {
     case profileFix
     case blockedUserList
     case setting
+    case pushSetting
+    case screenSetting
 }
