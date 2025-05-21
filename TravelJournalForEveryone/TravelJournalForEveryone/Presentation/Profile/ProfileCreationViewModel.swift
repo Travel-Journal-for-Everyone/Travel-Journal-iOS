@@ -174,11 +174,11 @@ extension ProfileCreationViewModel {
     private func handleTappedCompletionButton() {
         state.nickname = state.tempNickname
         state.isLoading = true
-        
+
         updateProfileUseCase.execute(
             nickname: state.nickname,
             accountScope: state.accountScope,
-            memberDefaultImage: state.selectedImage == nil,
+            memberDefaultImage: state.profileImageString.isEmpty && state.selectedImage == nil,
             image: state.selectedImageData
         )
         .sink { [weak self] completion in
