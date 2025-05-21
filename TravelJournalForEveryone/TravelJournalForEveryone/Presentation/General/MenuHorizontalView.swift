@@ -31,7 +31,7 @@ struct MenuHorizontalView<RightView: View>: View {
             }
             .padding(15)
             Divider()
-                .foregroundStyle(.tjGray6)
+                .background(.tjGray6)
         }
         .frame(height: 50)
         .contentShape(Rectangle())

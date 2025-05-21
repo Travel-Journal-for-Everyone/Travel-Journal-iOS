@@ -31,6 +31,9 @@ struct ProfileView: View {
             EmptyView()
         } trailingView: {
             Image(.tjSetting)
+                .onTapGesture {
+                    coordinator.push(.setting)
+                }
         }
         .onAppear {
             viewModel.send(.viewOnAppear)
