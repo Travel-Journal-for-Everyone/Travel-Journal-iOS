@@ -194,7 +194,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(0)
                         .onAppear {
-                            viewModel.send(.fetchJournalList)
+                            viewModel.send(.journalListOnAppear)
                         }
                     
                     placeListView
@@ -203,7 +203,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(1)
                         .onAppear {
-                            viewModel.send(.fetchPlaceList)
+                            viewModel.send(.placeListOnAppear)
                         }
                     
                     travelerListView
@@ -212,7 +212,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(2)
                         .task {
-                            viewModel.send(.fetchTravelerList)
+                            viewModel.send(.travelerListOnAppear)
                         }
                 }
                 .scrollTargetLayout()
@@ -242,10 +242,10 @@ extension SearchView {
                                 }
                         }
                         
-                        if !viewModel.state.isLastSearchedTraveler {
+                        if !viewModel.state.isLastSearchedTraveler && !viewModel.state.isLoading {
                             ProgressView()
                                 .task {
-                                    viewModel.send(.fetchTravelerList)
+                                    viewModel.send(.travelerListNextOnAppear)
                                 }
                         }
                     }
@@ -270,10 +270,10 @@ extension SearchView {
                             JournalListCell(journal)
                         }
                         
-                        if !viewModel.state.isLastSearchedJournal {
+                        if !viewModel.state.isLastSearchedJournal && !viewModel.state.isLoading {
                             ProgressView()
                                 .task {
-                                    viewModel.send(.fetchJournalList)
+                                    viewModel.send(.journalListNextOnAppear)
                                 }
                         }
                     }
@@ -303,10 +303,10 @@ extension SearchView {
                             PlaceGridCell(place)
                         }
                         
-                        if !viewModel.state.isLastSearchedPlace {
+                        if !viewModel.state.isLastSearchedPlace && !viewModel.state.isLoading {
                             ProgressView()
                                 .task {
-                                    viewModel.send(.fetchPlaceList)
+                                    viewModel.send(.placeListNextOnAppear)
                                 }
                         }
                     }

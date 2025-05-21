@@ -76,11 +76,11 @@ final class SearchViewModel: ObservableObject {
         case .selectSegment(let index):
             state.selectedSegmentIndex = index
             
-        case .fetchTravelerList:
+        case .travelerListOnAppear, .travelerListNextOnAppear:
             searchMembers(state.searchText)
-        case .fetchPlaceList:
+        case .placeListOnAppear, .placeListNextOnAppear:
             searchPlaces(state.searchText)
-        case .fetchJournalList:
+        case .journalListOnAppear, .journalListNextOnAppear:
             searchJournals(state.searchText)
         }
     }
@@ -117,9 +117,14 @@ extension SearchViewModel {
         
         case selectSegment(Int)
         
-        case fetchTravelerList
-        case fetchJournalList
-        case fetchPlaceList
+        case travelerListOnAppear
+        case travelerListNextOnAppear
+        
+        case journalListOnAppear
+        case journalListNextOnAppear
+        
+        case placeListOnAppear
+        case placeListNextOnAppear
     }
 }
 
