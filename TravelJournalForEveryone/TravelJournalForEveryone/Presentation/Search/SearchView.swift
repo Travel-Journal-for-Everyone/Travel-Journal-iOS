@@ -260,25 +260,31 @@ extension SearchView {
     }
     
     private var travelJournalListView: some View {
-        ScrollView {
-            Color.clear.frame(height: 10)
-            
-            LazyVStack(spacing: 15) {
-                ForEach(viewModel.state.searchedJournals, id: \.id) { journal in
-                    JournalListCell(journal)
-                }
-                
-                if !viewModel.state.isLastSearchedJournal {
-                    ProgressView()
-                        .task {
-                            viewModel.send(.fetchJournalList)
+        Group {
+            if !viewModel.state.searchedJournals.isEmpty {
+                ScrollView {
+                    Color.clear.frame(height: 10)
+                    
+                    LazyVStack(spacing: 15) {
+                        ForEach(viewModel.state.searchedJournals, id: \.id) { journal in
+                            JournalListCell(journal)
                         }
+                        
+                        if !viewModel.state.isLastSearchedJournal {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.fetchJournalList)
+                                }
+                        }
+                    }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
+                .contentMargins(0, for: .scrollIndicators)
+            } else {
+                emptyView
             }
         }
-        .scrollIndicators(.visible)
-        .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
-        .contentMargins(0, for: .scrollIndicators)
     }
     
     private var placeListView: some View {
@@ -287,25 +293,31 @@ extension SearchView {
             count: 2
         )
         
-        return ScrollView {
-            Color.clear.frame(height: 10)
-            
-            LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(viewModel.state.searchedPlaces, id: \.id) { place in
-                    PlaceGridCell(place)
-                }
-                
-                if !viewModel.state.isLastSearchedPlace {
-                    ProgressView()
-                        .task {
-                            viewModel.send(.fetchPlaceList)
+        return Group {
+            if !viewModel.state.searchedPlaces.isEmpty {
+                ScrollView {
+                    Color.clear.frame(height: 10)
+                    
+                    LazyVGrid(columns: columns, spacing: 10) {
+                        ForEach(viewModel.state.searchedPlaces, id: \.id) { place in
+                            PlaceGridCell(place)
                         }
+                        
+                        if !viewModel.state.isLastSearchedPlace {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.fetchPlaceList)
+                                }
+                        }
+                    }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
+                .contentMargins(0, for: .scrollIndicators)
+            } else {
+                emptyView
             }
         }
-        .scrollIndicators(.visible)
-        .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
-        .contentMargins(0, for: .scrollIndicators)
     }
 }
 

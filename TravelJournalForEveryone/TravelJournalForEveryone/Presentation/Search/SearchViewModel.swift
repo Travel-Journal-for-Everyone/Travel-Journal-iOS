@@ -244,9 +244,18 @@ extension SearchViewModel {
     
     private func resetSearching() {
         state.selectedSegmentIndex = 0
+        
         state.isLastSearchedTraveler = false
+        state.isLastSearchedPlace = false
+        state.isLastSearchedJournal = false
+        
         currentMembersPageNumber = 0
+        currentPlacePageNumber = 0
+        currentJournalPageNumber = 0
+        
         state.searchedTraveler = []
+        state.searchedPlaces = []
+        state.searchedJournals = []
         
         isSearched = false
     }
