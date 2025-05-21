@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
+    @EnvironmentObject private var authViewModel: AuthenticationViewModel
     
     var body: some View {
         VStack {
@@ -19,6 +20,14 @@ struct SettingView: View {
         }
         .padding(.horizontal, 16)
         .padding(.top, 15)
+        .onChange(of: authViewModel.state.isLoading) { oldValue, newValue in
+            guard oldValue else { return }
+            
+            if !newValue {
+                coordinator.popToRoot()
+                coordinator.selectedTab = .myJournal
+            }
+        }
         .customNavigationBar {
             Text("설정")
                 .font(.pretendardMedium(17))
@@ -66,8 +75,7 @@ extension SettingView {
     private var outSection: some View {
         HStack(spacing: 8) {
             Button {
-                print("로그아웃")
-                // api 호출 + navigation root
+                authViewModel.send(.logout)
             } label: {
                 Text("로그아웃")
                     .font(.pretendardMedium(12))
@@ -79,8 +87,7 @@ extension SettingView {
                 .foregroundStyle(.tjGray3)
             
             Button {
-                print("회원탈퇴")
-                // api 호출 + navigation root
+                authViewModel.send(.unlink)
             } label: {
                 Text("회원탈퇴")
                     .font(.pretendardMedium(12))
