@@ -24,7 +24,7 @@ struct PlaceSummaryDTO: Decodable {
 extension PlaceSummaryDTO: BasePageableContent {
     typealias Entity = PlaceSummary
     
-    func toEntity() -> PlaceSummary {
+    func toEntity() -> Entity {
         return .init(
             id: id,
             thumbnailURLString: thumbnailURLString,

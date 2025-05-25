@@ -7,9 +7,7 @@
 
 import Foundation
 
-struct UserSummaryDTO: Decodable, BasePageableContent {
-    typealias Entity = UserSummary
-    
+struct UserSummaryDTO: Decodable {
     let id: Int
     let profileImageURLString: String
     let nickname: String
@@ -25,8 +23,10 @@ struct UserSummaryDTO: Decodable, BasePageableContent {
     }
 }
 
-extension UserSummaryDTO {
-    func toEntity() -> UserSummary {
+extension UserSummaryDTO: BasePageableContent {
+    typealias Entity = UserSummary
+    
+    func toEntity() -> Entity {
         return .init(
             id: id,
             profileImageURLString: profileImageURLString,

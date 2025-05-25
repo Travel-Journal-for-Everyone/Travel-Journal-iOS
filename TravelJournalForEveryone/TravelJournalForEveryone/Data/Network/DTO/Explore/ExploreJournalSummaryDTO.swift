@@ -7,9 +7,7 @@
 
 import Foundation
 
-struct ExploreJournalSummaryDTO: Decodable, BasePageableContent {
-    typealias Entity = ExploreJournalSummary
-    
+struct ExploreJournalSummaryDTO: Decodable {
     let journalID: Int
     let title: String
     let hashtag: [String]
@@ -38,7 +36,9 @@ struct ExploreJournalSummaryDTO: Decodable, BasePageableContent {
     }
 }
 
-extension ExploreJournalSummaryDTO {
+extension ExploreJournalSummaryDTO: BasePageableContent {
+    typealias Entity = ExploreJournalSummary
+    
     func toEntity() -> Entity {
         return .init(
             id: journalID,

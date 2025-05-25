@@ -26,7 +26,7 @@ struct JournalSummaryDTO: Decodable {
 extension JournalSummaryDTO: BasePageableContent {
     typealias Entity = JournalSummary
     
-    func toEntity() -> JournalSummary {
+    func toEntity() -> Entity {
         .init(
             id: journalID,
             hashtag: hashtag,
