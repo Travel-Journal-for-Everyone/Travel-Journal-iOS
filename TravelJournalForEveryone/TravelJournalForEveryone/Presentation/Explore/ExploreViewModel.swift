@@ -38,7 +38,7 @@ final class ExploreViewModel: ObservableObject {
         case .seeJournal(let id):
             seeJournal(id: id)
         case .journalListViewOnDisappear:
-            postMarkedJournals()
+            postJournalIDsAsSeen()
         }
     }
 }
@@ -85,11 +85,8 @@ extension ExploreViewModel {
             .store(in: &cancellables)
     }
     
-    // MARK: - 추후에 여행 일지 목록을 새로고침 할 일이 없으면 해당 코드 지우기
     private func refreshJournals() {
-        print("여행 일지 목록 새로 고침")
-        
-        postMarkedJournals()
+        postJournalIDsAsSeen()
         
         self.state.isJournalsInitialLoading = true
         self.currentPageNumber = 0
@@ -101,7 +98,9 @@ extension ExploreViewModel {
         journalIDsAsSeen.insert(id)
     }
     
-    private func postMarkedJournals() {
+    private func postJournalIDsAsSeen() {
+        guard !self.journalIDsAsSeen.isEmpty else { return }
+        
         markJournalsUseCase.execute(journalIDs: Array(journalIDsAsSeen))
             .sink { completion in
                 switch completion {
