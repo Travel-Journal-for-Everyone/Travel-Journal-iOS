@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PushSettingView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
+    @StateObject var viewModel: SettingViewModel
     
     var body: some View {
         VStack {
@@ -36,40 +37,52 @@ extension PushSettingView {
     private var menuSection: some View {
         VStack {
             MenuHorizontalView(text: "전체 푸시 알림") {
-                Toggle("", isOn: .constant(true))
+                Toggle("", isOn: Binding(
+                    get: { viewModel.state.isAllPushOn },
+                    set: { _ in
+                        viewModel.send(.allToggleTapped)
+                    }
+                ))
                     .frame(width: 51.adjustedW, height: 29.adjustedH)
                     .tint(.tjPrimaryMain)
-            } action: {
-                // 푸시 관련 설정
-            }
+            } action: { }
             
             MenuHorizontalView(text: "댓글 알림") {
-                Toggle("", isOn: .constant(true))
+                Toggle("", isOn: Binding(
+                    get: { viewModel.state.isCommentPushOn },
+                    set: { _ in
+                        viewModel.send(.commentToggleTapped)
+                    }
+                ))
                     .frame(width: 51.adjustedW, height: 29.adjustedH)
                     .tint(.tjPrimaryMain)
-            } action: {
-                // 푸시 관련 설정
-            }
+            } action: { }
             
             MenuHorizontalView(text: "좋아요 알림") {
-                Toggle("", isOn: .constant(true))
+                Toggle("", isOn: Binding(
+                    get: { viewModel.state.isLikePushOn },
+                    set: { _ in
+                        viewModel.send(.likeToggleTapped)
+                    }
+                ))
                     .frame(width: 51.adjustedW, height: 29.adjustedH)
                     .tint(.tjPrimaryMain)
-            } action: {
-                // 푸시 관련 설정
-            }
+            } action: { }
             
             MenuHorizontalView(text: "팔로우 요청 알림") {
-                Toggle("", isOn: .constant(true))
+                Toggle("", isOn: Binding(
+                    get: { viewModel.state.isFollowPushOn },
+                    set: { _ in
+                        viewModel.send(.followToggleTapped)
+                    }
+                ))
                     .frame(width: 51.adjustedW, height: 29.adjustedH)
                     .tint(.tjPrimaryMain)
-            } action: {
-                // 푸시 관련 설정
-            }
+            } action: { }
         }
     }
 }
 
 #Preview {
-    PushSettingView()
+    PushSettingView(viewModel: .init())
 }
