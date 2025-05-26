@@ -49,9 +49,9 @@ final class SettingViewModel: ObservableObject {
 extension SettingViewModel {
     struct State {
         var isAllPushOn: Bool = true
-        var isCommentPushOn: Bool = false
-        var isLikePushOn: Bool = false
-        var isFollowPushOn: Bool = false
+        var isCommentPushOn: Bool = true
+        var isLikePushOn: Bool = true
+        var isFollowPushOn: Bool = true
         
         var screenType: ScreenType = .light
     }
@@ -75,6 +75,12 @@ extension SettingViewModel {
     
     private func allToggle() {
         state.isAllPushOn.toggle()
+        
+        if state.isAllPushOn {
+            state.isCommentPushOn = true
+            state.isLikePushOn = true
+            state.isFollowPushOn = true
+        }
     }
     
     private func commentToggle() {
