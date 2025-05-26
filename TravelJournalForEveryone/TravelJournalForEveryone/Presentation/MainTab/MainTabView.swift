@@ -13,6 +13,7 @@ struct MainTabView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $coordinator.selectedTab) {
+                // MyJournal
                 NavigationStack(path: $coordinator.myJournalPath) {
                     MyJournalView(
                         viewModel: .init(
@@ -29,6 +30,7 @@ struct MainTabView: View {
                 }
                 .tag(TJTab.myJournal)
                 
+                // Search
                 NavigationStack(path: $coordinator.searchPath) {
                     SearchView(viewModel: .init(
                         searchMembersUseCase: DIContainer.shared.searchMembersUseCase,
@@ -42,16 +44,20 @@ struct MainTabView: View {
                 }
                 .tag(TJTab.search)
                 
+                // Explore
                 NavigationStack(path: $coordinator.explorePath) {
-                    ExploreView(viewModel: .init())
-                        .navigationDestination(for: Screen.self) { screen in
-                            coordinator.build(screen)
-                        }
-                        .toolbar(.hidden, for: .tabBar)
+                    ExploreView(viewModel: .init(
+                        fetchExploreJournalsUseCase: DIContainer.shared.fetchExploreJournalsUseCase,
+                        markJournalsUseCase: DIContainer.shared.markJournalsUseCase
+                    ))
+                    .navigationDestination(for: Screen.self) { screen in
+                        coordinator.build(screen)
+                    }
+                    .toolbar(.hidden, for: .tabBar)
                 }
                 .tag(TJTab.explore)
                 
-                
+                // Profile
                 NavigationStack(path: $coordinator.profilePath) {
                     ProfileView(viewModel: .init())
                         .navigationDestination(for: Screen.self) { screen in

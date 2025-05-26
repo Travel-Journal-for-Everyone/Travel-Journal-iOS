@@ -11,7 +11,22 @@ import Combine
 final class ExploreViewModel: ObservableObject {
     @Published private(set) var state = State()
     
-    @MainActor // TEST
+    private let fetchExploreJournalsUseCase: FetchExploreJournalsUseCase
+    private let markJournalsUseCase: MarkJournalsUseCase
+    
+    private var currentPageNumber: Int = 0
+    private var journalIDsAsSeen: Set<Int> = []
+    
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init(
+        fetchExploreJournalsUseCase: FetchExploreJournalsUseCase,
+        markJournalsUseCase: MarkJournalsUseCase
+    ) {
+        self.fetchExploreJournalsUseCase = fetchExploreJournalsUseCase
+        self.markJournalsUseCase = markJournalsUseCase
+    }
+    
     func send(_ intent: Intent) {
         switch intent {
         case .journalListViewOnAppear:
@@ -20,6 +35,10 @@ final class ExploreViewModel: ObservableObject {
             fetchJournals()
         case .refreshJournals:
             refreshJournals()
+        case .seeJournal(let id):
+            seeJournal(id: id)
+        case .journalListViewOnDisappear:
+            postJournalIDsAsSeen()
         }
     }
 }
@@ -35,28 +54,68 @@ extension ExploreViewModel {
         case journalListViewOnAppear
         case journalListNextPageOnAppear
         case refreshJournals
+        case seeJournal(id: Int)
+        case journalListViewOnDisappear
     }
 }
 
 extension ExploreViewModel {
-    @MainActor // TEST
     private func fetchJournals() {
-        // TEST
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.state.isJournalsInitialLoading = false
-            self.state.isLastJournalsPage = true
-            
-            self.state.journalSummaries = [
-                .mock(id: 0, title: "바다만 주구장창 보았던 부산 여행 🌊"),
-                .mock(id: 1, title: "바다만 주구장창 보았던 시흥 여행 🌊"),
-                .mock(id: 2, title: "바다만 주구장창 보았던 서울 여행 🌊"),
-                .mock(id: 3, title: "바다만 주구장창 보았던 제주 여행 🌊"),
-                .mock(id: 4, title: "바다만 주구장창 보았던 강릉 여행 🌊"),
-            ]
-        }
+        fetchExploreJournalsUseCase.execute(pageNumber: currentPageNumber)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                
+                switch completion {
+                case .finished:
+                    self.state.isJournalsInitialLoading = false
+                case .failure(let error):
+                    print("⛔️ Fetch Journals Error: \(error)")
+                }
+            } receiveValue: { [weak self] journalsPage in
+                guard let self else { return }
+                
+                if journalsPage.isEmpty {
+                    self.state.journalSummaries = []
+                } else {
+                    self.state.journalSummaries.append(contentsOf: journalsPage.contents)
+                    self.state.isLastJournalsPage = journalsPage.isLast
+                    self.currentPageNumber += 1
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func refreshJournals() {
-        print("여행 일지 목록 새로 고침")
+        postJournalIDsAsSeen()
+        
+        self.state.isJournalsInitialLoading = true
+        self.currentPageNumber = 0
+        
+        fetchJournals()
+    }
+    
+    private func seeJournal(id: Int) {
+        journalIDsAsSeen.insert(id)
+    }
+    
+    private func postJournalIDsAsSeen() {
+        guard !self.journalIDsAsSeen.isEmpty else { return }
+        
+        markJournalsUseCase.execute(journalIDs: Array(journalIDsAsSeen))
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print("⛔️ Mark Journals Error: \(error)")
+                }
+            } receiveValue: { [weak self] isSuccess in
+                guard let self else { return }
+                
+                if isSuccess {
+                    self.journalIDsAsSeen.removeAll()
+                }
+            }
+            .store(in: &cancellables)
     }
 }
