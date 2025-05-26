@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ScreenSettingView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
+    @StateObject var viewModel: SettingViewModel
     
     var body: some View {
         VStack {
@@ -35,36 +36,20 @@ struct ScreenSettingView: View {
 extension ScreenSettingView {
     private var menuSection: some View {
         VStack {
-            MenuHorizontalView(text: "라이트 모드") {
-                Image(.tjCheck)
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .opacity(0)
-            } action: {
-                
-            }
-            
-            MenuHorizontalView(text: "다크 모드") {
-                Image(.tjCheck)
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .opacity(0)
-            } action: {
-                
-            }
-            
-            MenuHorizontalView(text: "기기 설정과 동일") {
-                Image(.tjCheck)
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .opacity(1)
-            } action: {
-                
+            ForEach(ScreenType.allCases, id: \.self) { type in
+                MenuHorizontalView(text: type.title) {
+                    Image(.tjCheck)
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .opacity(viewModel.state.screenType == type ? 1 : 0)
+                } action: {
+                    viewModel.send(.changeScreenType(type: type))
+                }
             }
         }
     }
 }
 
 #Preview {
-    ScreenSettingView()
+    ScreenSettingView(viewModel: .init())
 }

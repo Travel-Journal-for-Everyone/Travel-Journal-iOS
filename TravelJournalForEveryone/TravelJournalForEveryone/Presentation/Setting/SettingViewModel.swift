@@ -8,6 +8,23 @@
 import Foundation
 import Combine
 
+enum ScreenType: CaseIterable {
+    case light
+    case dark
+    case system
+    
+    var title: String {
+        switch self {
+        case .light:
+            "라이트 모드"
+        case .dark:
+            "다크 모드"
+        case .system:
+            "기기 설정과 동일"
+        }
+    }
+}
+
 final class SettingViewModel: ObservableObject {
     @Published private(set) var state = State()
     
@@ -23,6 +40,8 @@ final class SettingViewModel: ObservableObject {
             likeToggle()
         case .followToggleTapped:
             followToggle()
+        case .changeScreenType(let type):
+            changeScreenType(type)
         }
     }
 }
@@ -34,6 +53,7 @@ extension SettingViewModel {
         var isLikePushOn: Bool = false
         var isFollowPushOn: Bool = false
         
+        var screenType: ScreenType = .light
     }
     
     enum Intent {
@@ -44,7 +64,7 @@ extension SettingViewModel {
         case likeToggleTapped
         case followToggleTapped
         
-//        case all
+        case changeScreenType(type: ScreenType)
     }
 }
 
@@ -67,5 +87,9 @@ extension SettingViewModel {
     
     private func followToggle() {
         state.isFollowPushOn.toggle()
+    }
+    
+    private func changeScreenType(_ type: ScreenType) {
+        state.screenType = type
     }
 }

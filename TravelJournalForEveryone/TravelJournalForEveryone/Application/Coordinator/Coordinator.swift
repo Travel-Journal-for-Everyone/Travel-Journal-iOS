@@ -125,7 +125,7 @@ final class DefaultCoordinator: CoordinatorProtocol {
         case .pushSetting:
             PushSettingView(viewModel: .init())
         case .screenSetting:
-            ScreenSettingView()
+            ScreenSettingView(viewModel: .init())
         }
     }
     
