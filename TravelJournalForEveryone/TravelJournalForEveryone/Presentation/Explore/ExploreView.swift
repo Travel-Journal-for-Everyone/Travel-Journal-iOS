@@ -24,6 +24,9 @@ struct ExploreView: View {
                     .font(.pretendardMedium(16))
                     .foregroundStyle(.tjBlack)
             }
+            .onDisappear {
+                viewModel.send(.journalListViewOnDisappear)
+            }
     }
     
     @ViewBuilder
@@ -35,6 +38,8 @@ struct ExploreView: View {
         } else {
             if viewModel.state.journalSummaries.isEmpty {
                 VStack(spacing: 12) {
+                    Spacer()
+                    
                     Text("탐험할 여행 일지가 없습니다.")
                         .font(.pretendardMedium(16))
                         .foregroundStyle(.tjGray2)
@@ -42,18 +47,20 @@ struct ExploreView: View {
                     RefreshButton {
                         viewModel.send(.refreshJournals)
                     }
+                    
+                    Spacer()
                 }
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 15) {
-                        Color.clear
-                            .frame(height: 5)
-                        
+                    LazyVStack(spacing: 20) {
                         ForEach(viewModel.state.journalSummaries, id: \.id) { exploreJournalSummary in
                             ExploreJournalListCell(exploreJournalSummary)
                                 .contentShape(.rect)
                                 .onTapGesture {
                                     print("\(exploreJournalSummary.id)")
+                                }
+                                .onAppear {
+                                    viewModel.send(.seeJournal(id: exploreJournalSummary.id))
                                 }
                         }
                         
@@ -69,6 +76,7 @@ struct ExploreView: View {
                     viewModel.send(.refreshJournals)
                 }
                 .scrollIndicators(.visible)
+                .contentMargins(.top, 20.adjustedH)
                 .contentMargins(.bottom, 54.adjustedH, for: .scrollIndicators)
                 .contentMargins(0, for: .scrollIndicators)
             }

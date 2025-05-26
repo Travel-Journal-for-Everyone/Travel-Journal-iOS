@@ -194,7 +194,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(0)
                         .onAppear {
-                            viewModel.send(.travelJournalListViewOnAppear)
+                            viewModel.send(.journalListOnAppear)
                         }
                     
                     placeListView
@@ -203,7 +203,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(1)
                         .onAppear {
-                            viewModel.send(.placeListViewOnAppear)
+                            viewModel.send(.placeListOnAppear)
                         }
                     
                     travelerListView
@@ -212,7 +212,7 @@ extension SearchView {
                         .contentMargins(.bottom, 63.adjustedH)
                         .id(2)
                         .task {
-                            viewModel.send(.travelerListViewOnAppear)
+                            viewModel.send(.travelerListOnAppear)
                         }
                 }
                 .scrollTargetLayout()
@@ -242,7 +242,7 @@ extension SearchView {
                                 }
                         }
                         
-                        if !viewModel.state.isLastSearchedTraveler {
+                        if !viewModel.state.isLastSearchedTraveler && !viewModel.state.isLoading {
                             ProgressView()
                                 .task {
                                     viewModel.send(.travelerListNextOnAppear)
@@ -260,18 +260,31 @@ extension SearchView {
     }
     
     private var travelJournalListView: some View {
-        ScrollView {
-            Color.clear.frame(height: 10)
-            
-            LazyVStack(spacing: 15) {
-                ForEach(0..<20) { journalSummary in
-                    JournalListCell(.mock(id: 0, title: "ㅇㅇㅇㅇ"))
+        Group {
+            if !viewModel.state.searchedJournals.isEmpty {
+                ScrollView {
+                    Color.clear.frame(height: 10)
+                    
+                    LazyVStack(spacing: 15) {
+                        ForEach(viewModel.state.searchedJournals, id: \.id) { journal in
+                            JournalListCell(journal)
+                        }
+                        
+                        if !viewModel.state.isLastSearchedJournal && !viewModel.state.isLoading {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.journalListNextOnAppear)
+                                }
+                        }
+                    }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
+                .contentMargins(0, for: .scrollIndicators)
+            } else {
+                emptyView
             }
         }
-        .scrollIndicators(.visible)
-        .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
-        .contentMargins(0, for: .scrollIndicators)
     }
     
     private var placeListView: some View {
@@ -280,21 +293,40 @@ extension SearchView {
             count: 2
         )
         
-        return ScrollView {
-            Color.clear.frame(height: 10)
-            
-            LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(0..<14) { list in
-                    PlaceGridCell(.mock(id: 0, placeName: "어쩌구 추천"))
+        return Group {
+            if !viewModel.state.searchedPlaces.isEmpty {
+                ScrollView {
+                    Color.clear.frame(height: 10)
+                    
+                    LazyVGrid(columns: columns, spacing: 10) {
+                        ForEach(viewModel.state.searchedPlaces, id: \.id) { place in
+                            PlaceGridCell(place)
+                        }
+                        
+                        if !viewModel.state.isLastSearchedPlace && !viewModel.state.isLoading {
+                            ProgressView()
+                                .task {
+                                    viewModel.send(.placeListNextOnAppear)
+                                }
+                        }
+                    }
                 }
+                .scrollIndicators(.visible)
+                .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
+                .contentMargins(0, for: .scrollIndicators)
+            } else {
+                emptyView
             }
         }
-        .scrollIndicators(.visible)
-        .contentMargins(.bottom, 46.adjustedH, for: .scrollIndicators)
-        .contentMargins(0, for: .scrollIndicators)
     }
 }
 
 #Preview {
-    SearchView(viewModel: SearchViewModel(searchMembersUseCase: DIContainer.shared.searchMembersUseCase))
+    SearchView(
+        viewModel: SearchViewModel(
+            searchMembersUseCase: DIContainer.shared.searchMembersUseCase,
+            searchPlacesUseCase: DIContainer.shared.searchPlacesUseCase,
+            searchJournalsUseCase: DIContainer.shared.searchJournalsUseCase
+        )
+    )
 }

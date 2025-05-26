@@ -23,8 +23,10 @@ struct UserSummaryDTO: Decodable {
     }
 }
 
-extension UserSummaryDTO {
-    func toEntity() -> UserSummary {
+extension UserSummaryDTO: BasePageableContent {
+    typealias Entity = UserSummary
+    
+    func toEntity() -> Entity {
         return .init(
             id: id,
             profileImageURLString: profileImageURLString,

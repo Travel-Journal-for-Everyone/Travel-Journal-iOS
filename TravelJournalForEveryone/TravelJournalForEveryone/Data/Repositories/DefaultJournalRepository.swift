@@ -30,7 +30,7 @@ final class DefaultJournalRepository: JournalRepository {
         
         return networkService.request(
             MembersAPI.fetchJournals(request),
-            decodingType: FetchJournalsResponseDTO.self
+            decodingType: BasePageableDTO<JournalSummaryDTO>.self
         )
         .map { $0.toEntity() }
         .eraseToAnyPublisher()
