@@ -31,6 +31,9 @@ struct ProfileView: View {
             EmptyView()
         } trailingView: {
             Image(.tjSetting)
+                .onTapGesture {
+                    coordinator.push(.setting)
+                }
         }
         .onAppear {
             viewModel.send(.viewOnAppear)
@@ -79,15 +82,6 @@ extension ProfileView {
             
             MenuHorizontalView(text: "차단 회원 관리") {
                 coordinator.push(.blockedUserList)
-            }
-            
-            // MARK: - 로그아웃 및 회원탈퇴 임시 작성
-            MenuHorizontalView(text: "로그아웃") {
-                authViewModel.send(.logout)
-            }
-            
-            MenuHorizontalView(text: "회원탈퇴") {
-                authViewModel.send(.unlink)
             }
         }
     }

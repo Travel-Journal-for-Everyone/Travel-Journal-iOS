@@ -120,6 +120,12 @@ final class DefaultCoordinator: CoordinatorProtocol {
             )
         case .blockedUserList:
             BlockedUserListView(viewModel: .init())
+        case .setting:
+            SettingView()
+        case .pushSetting:
+            PushSettingView(viewModel: .init())
+        case .screenSetting:
+            ScreenSettingView(viewModel: .init())
         }
     }
     

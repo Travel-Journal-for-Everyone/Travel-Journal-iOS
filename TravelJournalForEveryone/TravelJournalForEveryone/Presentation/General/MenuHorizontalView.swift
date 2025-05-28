@@ -9,12 +9,12 @@ import SwiftUI
 struct MenuHorizontalView<RightView: View>: View {
     private let text: String
     private let rightView: () -> RightView
-    private let action: () -> Void
+    private let action: (() -> Void)?
     
     init(
         text: String,
         rightView: @escaping () -> RightView = { EmptyView() },
-        action: @escaping () -> Void
+        action: (() -> Void)?
     ) {
         self.text = text
         self.rightView = rightView
@@ -31,12 +31,12 @@ struct MenuHorizontalView<RightView: View>: View {
             }
             .padding(15)
             Divider()
-                .foregroundStyle(.tjGray6)
+                .background(.tjGray6)
         }
         .frame(height: 50)
         .contentShape(Rectangle())
         .onTapGesture {
-            action()
+            action?()
         }
     }
 }
