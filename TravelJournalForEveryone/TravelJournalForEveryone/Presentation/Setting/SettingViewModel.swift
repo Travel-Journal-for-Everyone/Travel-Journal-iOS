@@ -25,6 +25,23 @@ enum ScreenType: CaseIterable {
     }
 }
 
+enum PushType: CaseIterable {
+    case comment
+    case like
+    case follow
+    
+    var title: String {
+        switch self {
+        case .comment:
+            "댓글 알림"
+        case .like:
+            "좋아요 알림"
+        case .follow:
+            "팔로우 요청 알림"
+        }
+    }
+}
+
 final class SettingViewModel: ObservableObject {
     @Published private(set) var state = State()
     
@@ -34,12 +51,8 @@ final class SettingViewModel: ObservableObject {
             handleViewOnAppear()
         case .allToggleTapped:
             allToggle()
-        case .commentToggleTapped:
-            commentToggle()
-        case .likeToggleTapped:
-            likeToggle()
-        case .followToggleTapped:
-            followToggle()
+        case .pushTypeTapped(let type):
+            pushTypeToggle(type: type)
         case .changeScreenType(let type):
             changeScreenType(type)
         }
@@ -49,9 +62,7 @@ final class SettingViewModel: ObservableObject {
 extension SettingViewModel {
     struct State {
         var isAllPushOn: Bool = true
-        var isCommentPushOn: Bool = true
-        var isLikePushOn: Bool = true
-        var isFollowPushOn: Bool = true
+        var pushList: [PushType] = []
         
         var screenType: ScreenType = .light
     }
@@ -60,9 +71,7 @@ extension SettingViewModel {
         case viewOnAppear
         
         case allToggleTapped
-        case commentToggleTapped
-        case likeToggleTapped
-        case followToggleTapped
+        case pushTypeTapped(type: PushType)
         
         case changeScreenType(type: ScreenType)
     }
@@ -71,28 +80,30 @@ extension SettingViewModel {
 extension SettingViewModel {
     private func handleViewOnAppear() {
         // 푸시 세팅값 불러오기
+        for type in PushType.allCases {
+            state.pushList.append(type)
+        }
     }
     
     private func allToggle() {
         state.isAllPushOn.toggle()
         
         if state.isAllPushOn {
-            state.isCommentPushOn = true
-            state.isLikePushOn = true
-            state.isFollowPushOn = true
+            for type in PushType.allCases {
+                state.pushList.append(type)
+            }
+        } else {
+            state.pushList = []
         }
     }
     
-    private func commentToggle() {
-        state.isCommentPushOn.toggle()
-    }
-    
-    private func likeToggle() {
-        state.isLikePushOn.toggle()
-    }
-    
-    private func followToggle() {
-        state.isFollowPushOn.toggle()
+    private func pushTypeToggle(type: PushType) {
+        if state.pushList.contains(type) {
+            guard let index = state.pushList.firstIndex(of: type) else { return }
+            state.pushList.remove(at: index)
+        } else {
+            state.pushList.append(type)
+        }
     }
     
     private func changeScreenType(_ type: ScreenType) {

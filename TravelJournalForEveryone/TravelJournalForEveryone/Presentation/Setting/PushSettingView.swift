@@ -30,6 +30,9 @@ struct PushSettingView: View {
                     .frame(width: 24, height: 24)
             }
         }
+        .onAppear {
+            viewModel.send(.viewOnAppear)
+        }
     }
 }
 
@@ -41,45 +44,25 @@ extension PushSettingView {
                     get: { viewModel.state.isAllPushOn },
                     set: { _ in
                         viewModel.send(.allToggleTapped)
-                    }
-                ))
-                    .frame(width: 51.adjustedW, height: 29.adjustedH)
-                    .tint(.tjPrimaryMain)
+                    })
+                )
+                .frame(width: 51.adjustedW, height: 29.adjustedH)
+                .tint(.tjPrimaryMain)
             } action: { }
             
             if viewModel.state.isAllPushOn {
-                MenuHorizontalView(text: "댓글 알림") {
-                    Toggle("", isOn: Binding(
-                        get: { viewModel.state.isCommentPushOn },
-                        set: { _ in
-                            viewModel.send(.commentToggleTapped)
-                        }
-                    ))
-                    .frame(width: 51.adjustedW, height: 29.adjustedH)
-                    .tint(.tjPrimaryMain)
-                } action: { }
-                
-                MenuHorizontalView(text: "좋아요 알림") {
-                    Toggle("", isOn: Binding(
-                        get: { viewModel.state.isLikePushOn },
-                        set: { _ in
-                            viewModel.send(.likeToggleTapped)
-                        }
-                    ))
-                    .frame(width: 51.adjustedW, height: 29.adjustedH)
-                    .tint(.tjPrimaryMain)
-                } action: { }
-                
-                MenuHorizontalView(text: "팔로우 요청 알림") {
-                    Toggle("", isOn: Binding(
-                        get: { viewModel.state.isFollowPushOn },
-                        set: { _ in
-                            viewModel.send(.followToggleTapped)
-                        }
-                    ))
-                    .frame(width: 51.adjustedW, height: 29.adjustedH)
-                    .tint(.tjPrimaryMain)
-                } action: { }
+                ForEach(PushType.allCases, id: \.self) { type in
+                    MenuHorizontalView(text: type.title) {
+                        Toggle("", isOn: Binding(
+                            get: { viewModel.state.pushList.contains(type) },
+                            set: { _ in
+                                viewModel.send(.pushTypeTapped(type: type))
+                            })
+                        )
+                        .frame(width: 51.adjustedW, height: 29.adjustedH)
+                        .tint(.tjPrimaryMain)
+                    } action: { }
+                }
             }
         }
     }
