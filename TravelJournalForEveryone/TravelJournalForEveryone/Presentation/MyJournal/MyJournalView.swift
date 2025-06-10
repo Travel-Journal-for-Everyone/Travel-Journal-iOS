@@ -12,6 +12,7 @@ struct MyJournalView: View {
     @EnvironmentObject private var coordinator: DefaultCoordinator
     
     @State private var isPresentingMenu = false
+    @State private var isPresentingBlockAlert = false
     @State private var isPresentingJournalListViewForAll = false
     @State private var isPresentingJournalListViewForRegion = false
     
@@ -32,8 +33,8 @@ struct MyJournalView: View {
                 .offset(
                     x: 76.adjustedW,
                     y: viewModel.state.isCurrentUser && viewModel.state.isInitialView
-                        ? 90.adjustedH
-                        : 115.adjustedH
+                    ? 90.adjustedH
+                    : 115.adjustedH
                 )
             
             userInfoView
@@ -99,6 +100,14 @@ struct MyJournalView: View {
             )
             .padding(.top)
             .presentationDragIndicator(.visible)
+        }
+        .customAlert(
+            isPresented: $isPresentingBlockAlert,
+            alertType: viewModel.state.isBlocked
+            ? .unblockUser(nickname: viewModel.state.user.nickname)
+            : .blockUser(nickname: viewModel.state.user.nickname)
+        ) {
+            viewModel.send(.tappedBlockButton)
         }
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
@@ -198,14 +207,14 @@ struct MyJournalView: View {
             
             VStack(alignment: .leading, spacing: 0) {
                 Button {
-                    viewModel.send(.tappedBlockButton)
+                    isPresentingBlockAlert.toggle()
                     
                     withAnimation(.smooth(duration: 0.25)) {
                         isPresentingMenu.toggle()
                     }
                 } label: {
                     HStack {
-                        Text("차단하기")
+                        Text(viewModel.state.isBlocked ? "차단 해제하기" : "차단하기")
                             .foregroundStyle(.tjBlack)
                             .font(.pretendardMedium(16))
                             .frame(height: 44)
@@ -242,7 +251,7 @@ struct MyJournalView: View {
                     .foregroundStyle(.white)
                     .shadow(color: .gray.opacity(0.2), radius: 10)
             }
-            .offset(y: 28.adjustedH)
+            .offset(y: 35.adjustedH)
             .padding(.trailing)
         }
         .zIndex(1)

@@ -48,14 +48,14 @@ struct UserSummaryView: View {
                         HStack(spacing: 2) {
                             Image(.tjJournal)
                                 .frame(width: 16, height: 16)
-                            Text("\(userSummary.travelJournalCount)")
+                            Text("\(userSummary.travelJournalCount ?? 0)")
                                 .font(.pretendardRegular(12))
                         }
                         
                         HStack(spacing: 2) {
                             Image(.tjPlace)
                                 .frame(width: 16, height: 16)
-                            Text("\(userSummary.placeCount)")
+                            Text("\(userSummary.placeCount ?? 0)")
                                 .font(.pretendardRegular(12))
                         }
                     }

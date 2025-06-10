@@ -94,7 +94,9 @@ final class DefaultCoordinator: CoordinatorProtocol {
                     fetchUserUseCase: DIContainer.shared.fetchUserUseCase,
                     followUseCase: DIContainer.shared.followUseCase,
                     unfollowUseCase: DIContainer.shared.unfollowUseCase,
-                    checkFollowUseCase: DIContainer.shared.checkFollowUseCase
+                    checkFollowUseCase: DIContainer.shared.checkFollowUseCase,
+                    blockUseCase: DIContainer.shared.blockUseCase,
+                    unblockUseCase: DIContainer.shared.unblockUseCase
                 )
             )
         case .followList(let memberID, let isCurrentUser, let nickname, let viewType):
@@ -119,7 +121,12 @@ final class DefaultCoordinator: CoordinatorProtocol {
                 )
             )
         case .blockedUserList:
-            BlockedUserListView(viewModel: .init())
+            BlockedUserListView(
+                viewModel: .init(
+                    fetchBlockedUsersUseCase: DIContainer.shared.fetchBlockedUsersUseCase,
+                    unblockUseCase: DIContainer.shared.unblockUseCase
+                )
+            )
         case .setting:
             SettingView()
         case .pushSetting:

@@ -15,6 +15,8 @@ final class MyJournalViewModel: ObservableObject {
     private let followUseCase: FollowUseCase
     private let unfollowUseCase: UnfollowUseCase
     private let checkFollowUseCase: CheckFollowUseCase
+    private let blockUseCase: BlockUseCase
+    private let unblockUseCase: UnblockUseCase
     
     private let followButtonTappedSubject = PassthroughSubject<Void, Never>()
     
@@ -28,12 +30,16 @@ final class MyJournalViewModel: ObservableObject {
         fetchUserUseCase: FetchUserUseCase,
         followUseCase: FollowUseCase,
         unfollowUseCase: UnfollowUseCase,
-        checkFollowUseCase: CheckFollowUseCase
+        checkFollowUseCase: CheckFollowUseCase,
+        blockUseCase: BlockUseCase,
+        unblockUseCase: UnblockUseCase
     ) {
         self.fetchUserUseCase = fetchUserUseCase
         self.followUseCase = followUseCase
         self.unfollowUseCase = unfollowUseCase
         self.checkFollowUseCase = checkFollowUseCase
+        self.blockUseCase = blockUseCase
+        self.unblockUseCase = unblockUseCase
         self.state.memberID = memberID
         
         guard let memberID else {
@@ -87,6 +93,7 @@ extension MyJournalViewModel {
         var isInitialView: Bool = true
         var isCurrentUser: Bool = true
         var isFollowing: Bool = false
+        var isBlocked: Bool = false
         var isTouchDisabled: Bool = false
         
         var isLoadingFollowState: Bool = true
@@ -158,8 +165,10 @@ extension MyJournalViewModel {
     }
     
     private func handleFollowAction() {
+        guard let memberID = self.state.memberID else { return }
+        
         if self.state.isFollowing {
-            unfollowUseCase.execute(memberID: self.state.memberID ?? 0)
+            unfollowUseCase.execute(memberID: memberID)
                 .sink { completion in
                     switch completion {
                     case .finished:
@@ -173,7 +182,7 @@ extension MyJournalViewModel {
                 }
                 .store(in: &cancellables)
         } else {
-            followUseCase.execute(memberID: self.state.memberID ?? 0)
+            followUseCase.execute(memberID: memberID)
                 .sink { completion in
                     switch completion {
                     case .finished:
@@ -190,7 +199,38 @@ extension MyJournalViewModel {
     }
     
     private func handleTappedBlockButton() {
+        // TODO: - 상대방과 차단인지 아닌지 체크하는 API 필요!?
+        guard let memberID = self.state.memberID else { return }
         
+        if self.state.isBlocked {
+            unblockUseCase.execute(memberID: memberID)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("⛔️ Unblock Error: \(error)")
+                    }
+                } receiveValue: { [weak self] isSuccess in
+                    guard let self else { return }
+                    self.state.isBlocked = false
+                }
+                .store(in: &cancellables)
+        } else {
+            blockUseCase.execute(memberID: memberID)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("⛔️ Block Error: \(error)")
+                    }
+                } receiveValue: { [weak self] isSuccess in
+                    guard let self else { return }
+                    self.state.isBlocked = true
+                }
+                .store(in: &cancellables)
+        }
     }
     
     private func handleTappedReportButton() {

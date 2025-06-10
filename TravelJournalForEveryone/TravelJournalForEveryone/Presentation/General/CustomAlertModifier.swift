@@ -85,32 +85,39 @@ struct CustomAlertModifier: ViewModifier {
 
 extension CustomAlertModifier {
     enum AlertType {
-        case unblockedUser(nickname: String)
+        case blockUser(nickname: String)
+        case unblockUser(nickname: String)
         
         var title: String {
             switch self {
-            case .unblockedUser(let nickname):
-                "\(nickname) 님을 차단 해제 하시겠습니까?"
+            case .blockUser(nickname: let nickname):
+                "\(nickname) 님을 차단하시겠습니까?"
+            case .unblockUser(let nickname):
+                "\(nickname) 님을 차단 해제하시겠습니까?"
             }
         }
         
         var description: String {
             switch self {
-            case .unblockedUser:
+            case .blockUser:
+                "상대방이 탐험하기와 검색 결과에서 보이지 않습니다."
+            case .unblockUser:
                 "상대방이 나를 팔로우 할 수 있습니다."
             }
         }
         
         var actionLabel: String {
             switch self {
-            case .unblockedUser:
-                "차단 해제"
+            case .blockUser:
+                "차단하기"
+            case .unblockUser:
+                "차단 해제하기"
             }
         }
         
         var cancelLabel: String {
             switch self {
-            case .unblockedUser:
+            case .blockUser, .unblockUser:
                 "취소하기"
             }
         }
@@ -118,11 +125,14 @@ extension CustomAlertModifier {
 }
 
 #Preview {
-    BlockedUserListView(viewModel: .init())
-        .customAlert(
-            isPresented: .constant(true),
-            alertType: .unblockedUser(nickname: "마루김마루입니다요")
-        ) {
-            
-        }
+    BlockedUserListView(
+        viewModel: .init(
+            fetchBlockedUsersUseCase: DIContainer.shared.fetchBlockedUsersUseCase,
+            unblockUseCase: DIContainer.shared.unblockUseCase
+        )
+    )
+    .customAlert(
+        isPresented: .constant(true),
+        alertType: .unblockUser(nickname: "마루김마루입니다요")
+    ) { }
 }
