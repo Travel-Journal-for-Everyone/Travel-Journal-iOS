@@ -11,8 +11,8 @@ struct UserSummary: Identifiable, Equatable {
     let id: Int
     let profileImageURLString: String
     let nickname: String
-    let travelJournalCount: Int
-    let placeCount: Int
+    let travelJournalCount: Int?
+    let placeCount: Int?
 }
 
 extension UserSummary {

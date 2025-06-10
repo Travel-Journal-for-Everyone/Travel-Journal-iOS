@@ -15,7 +15,7 @@ struct BlockedUserListView: View {
     
     var body: some View {
         Group {
-            if viewModel.state.isLoading {
+            if viewModel.state.isInitailLoading {
                 Spacer()
                 ProgressView()
                 Spacer()
@@ -29,7 +29,7 @@ struct BlockedUserListView: View {
                             .foregroundStyle(.tjGray2)
                         
                         RefreshButton {
-                            viewModel.send(.refreshList)
+                            viewModel.send(.refreshByButton)
                         }
                         
                         Spacer()
@@ -53,8 +53,7 @@ struct BlockedUserListView: View {
                                 )
                                 .contentShape(.rect)
                                 .onTapGesture {
-                                    // TODO: - 여행자 프로필 뷰로 이동
-                                    print("여행자(ID: \(userSummary.id)) 프로필로 이동")
+                                    coordinator.push(.myJournal(memberID: userSummary.id))
                                 }
                             }
                             
@@ -67,7 +66,7 @@ struct BlockedUserListView: View {
                         }
                     }
                     .refreshable {
-                        viewModel.send(.refreshList)
+                        viewModel.send(.refreshByPull)
                     }
                     .scrollIndicators(.visible)
                     .contentMargins(.horizontal, 16)
@@ -91,15 +90,22 @@ struct BlockedUserListView: View {
         }
         .customAlert(
             isPresented: $isShowingAlert,
-            alertType: .unblockedUser(nickname: "\(viewModel.state.selectedUserNickname ?? "")"),
+            alertType: .unblockUser(nickname: "\(viewModel.state.selectedUserNickname ?? "")"),
             action: { viewModel.send(.unblockedUser) }
         )
         .onAppear {
-            viewModel.send(.listViewOnAppear)
+            if viewModel.state.isInitailLoading {
+                viewModel.send(.listViewOnAppear)
+            }
         }
     }
 }
 
 #Preview {
-    BlockedUserListView(viewModel: .init())
+    BlockedUserListView(
+        viewModel: .init(
+            fetchBlockedUsersUseCase: DIContainer.shared.fetchBlockedUsersUseCase,
+            unblockUseCase: DIContainer.shared.unblockUseCase
+        )
+    )
 }

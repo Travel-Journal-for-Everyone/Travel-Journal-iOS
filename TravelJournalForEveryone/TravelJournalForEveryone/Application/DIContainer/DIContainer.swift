@@ -28,6 +28,7 @@ final class DIContainer {
     lazy var searchRepository = DefaultSearchRepository(networkService: networkService)
     lazy var followRepository = DefaultFollowRepository(networkService: networkService)
     lazy var exploreRepository = DefaultExploreRepository(networkService: networkService)
+    lazy var blockRepository = DefaultBlockRepository(networkService: networkService)
     
     // mock
     lazy var mockUserRepository = MockUserRepository()
@@ -63,6 +64,11 @@ final class DIContainer {
     // explore
     lazy var fetchExploreJournalsUseCase = DefaultFetchExploreJournalsUseCase(exploreRepository: exploreRepository)
     lazy var markJournalsUseCase = DefaultMarkJournalsUseCase(exploreRepository: exploreRepository)
+    
+    // block
+    lazy var blockUseCase = DefaultBlockUseCase(blockRepository: blockRepository)
+    lazy var unblockUseCase = DefaultUnblockUseCase(blockRepository: blockRepository)
+    lazy var fetchBlockedUsersUseCase = DefaultFetchBlockedUsersUseCase(blockRepository: blockRepository)
     
     
     // MARK: - Manager

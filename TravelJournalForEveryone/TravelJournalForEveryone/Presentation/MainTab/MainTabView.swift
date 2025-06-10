@@ -20,7 +20,9 @@ struct MainTabView: View {
                             fetchUserUseCase: DIContainer.shared.fetchUserUseCase,
                             followUseCase: DIContainer.shared.followUseCase,
                             unfollowUseCase: DIContainer.shared.unfollowUseCase,
-                            checkFollowUseCase: DIContainer.shared.checkFollowUseCase
+                            checkFollowUseCase: DIContainer.shared.checkFollowUseCase,
+                            blockUseCase: DIContainer.shared.blockUseCase,
+                            unblockUseCase: DIContainer.shared.unblockUseCase
                         )
                     )
                     .navigationDestination(for: Screen.self) { screen in
